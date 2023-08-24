@@ -5,12 +5,12 @@ import { ReactComponent as LayoutGridIcon } from "@assets/icon/layout-grid.svg";
 import { ReactComponent as PlusIcon } from "@assets/icon/plus.svg";
 import Button from "@components/common/Button";
 import GlobalStyle from "@styles/GlobalStyle";
-import { designSystem } from "@styles/designSystem";
+import { theme } from "@styles/designSystem";
 import styled, { ThemeProvider } from "styled-components";
 
 export default function App() {
   return (
-    <ThemeProvider theme={designSystem}>
+    <ThemeProvider theme={theme}>
       <GlobalStyle />
       <Button
         fontName="availableStrong16"

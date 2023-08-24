@@ -1,3 +1,5 @@
+import { DefaultTheme } from "styled-components";
+
 export type FontName = keyof typeof font;
 export type ColorName = keyof typeof designSystem.color;
 export type Radius = keyof typeof radius;
@@ -84,4 +86,8 @@ export const designSystem = {
   font,
   opacity,
   radius,
+};
+
+export const theme: DefaultTheme = {
+  ...designSystem,
 };

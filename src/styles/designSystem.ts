@@ -1,3 +1,7 @@
+export type FontName = keyof typeof font;
+export type ColorName = keyof typeof designSystem.color;
+export type Radius = keyof typeof radius;
+
 const colors = {
   white: "#FFF",
   grey50: "#FAFAFA",
@@ -16,6 +20,13 @@ const colors = {
   red: "#FF3B30",
 };
 
+const radius = {
+  8: "8px",
+  12: "12px",
+  16: "16px",
+  half: "50%",
+};
+
 const font = {
   displayStrong20: "700 20px Noto Sans KR, sans-serif",
   displayStrong16: "700 16px Noto Sans KR, sans-serif",
@@ -32,35 +43,38 @@ const font = {
   enabledStrong10: "700 10px Noto Sans KR, sans-serif",
 };
 
-export default {
+const opacity = {
+  hover: 0.8,
+  press: 0.64,
+  disabled: 0.32,
+  transparent: 0.04,
+};
+
+export const designSystem = {
   color: {
-    neutral: {
-      text: colors.grey900,
-      textWeak: colors.grey800,
-      textStrong: colors.black,
-      background: colors.white,
-      backgroundWeak: colors.grey50,
-      backgroundBold: colors.grey400,
-      backgroundBlur: colors.grey100,
-      border: colors.grey500,
-      borderStrong: colors.grey700,
-      overlay: colors.grey600,
-    },
-    accent: {
-      text: colors.white,
-      textWeak: colors.black,
-      primary: colors.purple,
-      secondary: colors.yellow,
-    },
-    system: {
-      warning: colors.red,
-      background: colors.white,
-      backgroundWeak: colors.grey200,
-    },
+    neutralText: colors.grey900,
+    neutralTextWeak: colors.grey800,
+    neutralTextStrong: colors.black,
+    neutralBackground: colors.white,
+    neutralBackgroundWeak: colors.grey50,
+    neutralBackgroundBold: colors.grey400,
+    neutralBackgroundBlur: colors.grey100,
+    neutralBorder: colors.grey500,
+    neutralBorderStrong: colors.grey700,
+    neutralOverlay: colors.grey600,
+
+    accentText: colors.white,
+    accentTextWeak: colors.black,
+    accentPrimary: colors.purple,
+    accentSecondary: colors.yellow,
+
+    systemWarning: colors.red,
+    systemBackground: colors.white,
+    systemBackgroundWeak: colors.grey200,
   },
   filter: {
     neutralTextWeak:
-      "brightness(0) saturate(100%) invert(15%) sepia(2%) saturate(5010%) hue-rotate(202deg) brightness(93%) contrast(73%)",
+      "opacity(60%) brightness(0) saturate(100%) invert(20%) sepia(2%) saturate(3198%) hue-rotate(202deg) brightness(93%) contrast(83%)",
     accentText:
       "invert(100%) sepia(97%) saturate(15%) hue-rotate(110deg) brightness(103%) contrast(102%)",
   },
@@ -68,4 +82,6 @@ export default {
     blur: "blur(8px)",
   },
   font,
+  opacity,
+  radius,
 };

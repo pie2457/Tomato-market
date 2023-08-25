@@ -3,7 +3,7 @@ import React from "react";
 import styled from "styled-components";
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  size?: { width: string; height: string };
+  size?: { width: number; height: number };
   direction?: "row" | "column";
   radius?: Radius;
   fontName?: FontName;
@@ -67,7 +67,7 @@ const ButtonContent = ({
 };
 
 const StyledButton = styled.button<{
-  $size?: { width: string; height: string };
+  $size?: { width: number; height: number };
   $direction?: "row" | "column";
   $color?: ColorName;
   $backgroundColor?: ColorName;
@@ -81,8 +81,8 @@ const StyledButton = styled.button<{
   gap: 4px;
   cursor: pointer;
 
-  width: ${({ $size }) => $size?.width};
-  height: ${({ $size }) => $size?.height};
+  width: ${({ $size }) => $size?.width + "px"};
+  height: ${({ $size }) => $size?.height + "px"};
   color: ${({ $color, theme: { color } }) => $color && color[$color]};
   flex-direction: ${({ $direction }) => $direction};
   font: ${({ $fontName, theme: { font } }) => $fontName && font[$fontName]};

@@ -77,8 +77,25 @@ export const designSystem = {
   filter: {
     neutralTextWeak:
       "opacity(60%) brightness(0) saturate(100%) invert(20%) sepia(2%) saturate(3198%) hue-rotate(202deg) brightness(93%) contrast(83%)",
+    neutralText: "",
+    neutralTextStrong: "",
+    neutralBackground: "",
+    neutralBackgroundWeak: "",
+    neutralBackgroundBold: "",
+    neutralBackgroundBlur: "",
+    neutralBorder: "",
+    neutralBorderStrong: "",
+    neutralOverlay: "",
+
     accentText:
       "invert(100%) sepia(97%) saturate(15%) hue-rotate(110deg) brightness(103%) contrast(102%)",
+    accentTextWeak: "",
+    accentPrimary: "",
+    accentSecondary: "",
+
+    systemWarning: "",
+    systemBackground: "",
+    systemBackgroundWeak: "",
   },
   backdropFilter: {
     blur: "blur(8px)",

@@ -39,7 +39,7 @@ export default function AddressIndicatorList({
           </AddressIndicator>
         ))}
         <Button
-          size={{ width: "288px", height: "56px" }}
+          size={{ width: 288, height: 56 }}
           leftIcon={<PlusIcon />}
           fontName="availableStrong16"
           color="accentTextWeak"

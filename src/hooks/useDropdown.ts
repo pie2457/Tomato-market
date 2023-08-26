@@ -1,10 +1,10 @@
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 
-type DropdownReturnType = [
-  boolean,
-  MutableRefObject<HTMLDivElement | null>,
-  () => void
-];
+type DropdownReturnType = {
+  isOpen: boolean;
+  ref: MutableRefObject<HTMLDivElement | null>;
+  toggleOpenState: () => void;
+};
 
 export default function useDropdown(): DropdownReturnType {
   const [isOpen, setIsOpen] = useState(false);
@@ -30,5 +30,9 @@ export default function useDropdown(): DropdownReturnType {
     };
   }, [isOpen]);
 
-  return [isOpen, ref, toggleOpenState];
+  return {
+    isOpen,
+    ref,
+    toggleOpenState,
+  };
 }

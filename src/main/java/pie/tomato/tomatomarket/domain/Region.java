@@ -17,5 +17,4 @@ public class Region {
 	@GeneratedValue(strategy = IDENTITY)
 	private Long id;
 	private String name;
-
 }

@@ -30,5 +30,4 @@ public class Chatroom {
 	@ManyToOne(fetch = LAZY)
 	@JoinColumn(name = "item_id")
 	private Item item;
-
 }

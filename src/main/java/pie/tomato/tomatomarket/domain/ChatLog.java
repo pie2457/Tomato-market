@@ -30,5 +30,4 @@ public class ChatLog {
 	@ManyToOne(fetch = LAZY)
 	@JoinColumn(name = "chatroom_id")
 	private Chatroom chatroom;
-
 }

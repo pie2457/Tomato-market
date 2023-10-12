@@ -19,5 +19,4 @@ public class Member {
 	private String loginId;
 	private String email;
 	private String profile;
-
 }

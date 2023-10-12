@@ -36,7 +36,7 @@ public class JwtProvider {
 			.signWith(secretKey, SignatureAlgorithm.HS256)
 			.setIssuedAt(now)
 			.setExpiration(accessTokenExpiration)
-			.setClaims(Map.of("memberId", memberId))
+			.addClaims(Map.of("memberId", memberId))
 			.compact();
 	}
 

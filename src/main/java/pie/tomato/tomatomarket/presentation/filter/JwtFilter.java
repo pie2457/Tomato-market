@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
+import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import pie.tomato.tomatomarket.exception.ErrorCode;
@@ -40,6 +41,11 @@ public class JwtFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
+		if (CorsUtils.isPreFlightRequest(request)) {
+			filterChain.doFilter(request, response);
+			return;
+		}
+
 		String token = extractJwt(request)
 			.orElseThrow(() -> new UnAuthorizedException(ErrorCode.INVALID_TOKEN));
 		jwtProvider.validateToken(token);

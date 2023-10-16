@@ -7,4 +7,5 @@ import pie.tomato.tomatomarket.domain.Member;
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
 	boolean existsMemberByEmail(String email);
+
 }

@@ -25,6 +25,12 @@ public class AuthService {
 		memberRepository.save(member);
 	}
 
+	public void login(String code) {
+		String accessToken = kakaoClient.getAccessToken(code);
+		Member member = kakaoClient.getUserInfo(accessToken);
+		validateDuplicateEmail(member.getEmail());
+	}
+
 	private void validateDuplicateEmail(String email) {
 		if (memberRepository.existsMemberByEmail(email)) {
 			throw new BadRequestException(ErrorCode.ALREADY_EXIST_MEMBER);

@@ -14,14 +14,12 @@ import org.springframework.web.client.RestTemplate;
 import lombok.RequiredArgsConstructor;
 import pie.tomato.tomatomarket.domain.Member;
 import pie.tomato.tomatomarket.infrastructure.config.properties.OauthProperties;
-import pie.tomato.tomatomarket.infrastructure.persistence.MemberRepository;
 
 @RequiredArgsConstructor
 @Component
 public class KakaoClient {
 
 	private final OauthProperties kakao;
-	private final MemberRepository memberRepository;
 
 	public String getAccessToken(String code) {
 		RestTemplate restTemplate = new RestTemplate();
@@ -37,7 +35,7 @@ public class KakaoClient {
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		params.add("grant_type", "authorization_code");
 		params.add("client_id", kakao.getClientId());
-		params.add("redirect_uri", "http://localhost:8080/api/auth/kakao/signup");
+		params.add("redirect_uri", "http://localhost:8080/api/auth/kakao/oauth");
 		params.add("code", code);
 		params.add("client_secret", kakao.getSecretId());
 		return params;

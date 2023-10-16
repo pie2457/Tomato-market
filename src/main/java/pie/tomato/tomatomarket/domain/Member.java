@@ -7,16 +7,24 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = PROTECTED)
+@Getter
 public class Member {
 
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
 	private Long id;
-	private String loginId;
+	private String nickname;
 	private String email;
 	private String profile;
+
+	public Member(String nickname, String email, String profile) {
+		this.nickname = nickname;
+		this.email = email;
+		this.profile = profile;
+	}
 }

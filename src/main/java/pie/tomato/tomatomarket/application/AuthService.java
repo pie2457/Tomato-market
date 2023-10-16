@@ -1,6 +1,7 @@
 package pie.tomato.tomatomarket.application;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import pie.tomato.tomatomarket.application.oauth.KakaoClient;
@@ -11,6 +12,7 @@ import pie.tomato.tomatomarket.infrastructure.persistence.MemberRepository;
 
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class AuthService {
 
 	private final KakaoClient kakaoClient;

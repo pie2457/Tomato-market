@@ -53,6 +53,31 @@ class AuthServiceTest {
 			.extracting("errorCode").isEqualTo(ErrorCode.ALREADY_EXIST_MEMBER);
 	}
 
+	@DisplayName("로그인에 성공한다.")
+	@Test
+	void login() {
+		// given
+		Member saveMember =
+			memberRepository.save(new Member("pie123", "pie-choco@pie.com", "pie/image.jpg"));
+		accessTokenAndUserInfo(saveMember);
+
+		// when & then
+		assertThat(authService.login("code")).isNotBlank();
+
+	}
+
+	@DisplayName("회원가입을 하지 않은 상태에서 로그인 시도 시 실패한다.")
+	@Test
+	void loginFail() {
+		// given
+		accessTokenAndUserInfo(new Member("pie123", "pie-choco@pie.com", "pie/image.jpg"));
+
+		// when & then
+		assertThatThrownBy(
+			() -> authService.login("code")).isInstanceOf(BadRequestException.class)
+			.extracting("errorCode").isEqualTo(ErrorCode.NOT_FOUND_MEMBER);
+	}
+
 	void accessTokenAndUserInfo(Member member) {
 		given(kakaoClient.getAccessToken(anyString())).willReturn("abc.abc.abc");
 		given(kakaoClient.getUserInfo(anyString())).

@@ -3,6 +3,8 @@ package pie.tomato.tomatomarket.application;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
+import java.util.Map;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +13,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import pie.tomato.tomatomarket.application.oauth.KakaoClient;
-import pie.tomato.tomatomarket.domain.Member;
+import pie.tomato.tomatomarket.domain.oauth.OAuthUser;
 import pie.tomato.tomatomarket.exception.BadRequestException;
 import pie.tomato.tomatomarket.exception.ErrorCode;
 import pie.tomato.tomatomarket.infrastructure.persistence.MemberRepository;
@@ -31,7 +33,7 @@ class AuthServiceTest {
 	@Test
 	void signup() {
 		// given
-		accessTokenAndUserInfo(new Member("pie123", "pie-choco@pie.com", "pie/image.jpg"));
+		accessTokenAndUserInfo();
 
 		// when
 		authService.signup("code");
@@ -44,8 +46,7 @@ class AuthServiceTest {
 	@Test
 	void DuplicateEmailSignupFail() {
 		// given
-		Member saveMember = memberRepository.save(new Member("pie123", "pie-choco@pie.com", "pie/image.jpg"));
-		accessTokenAndUserInfo(saveMember);
+		accessTokenAndUserInfo();
 
 		// when & then
 		assertThatThrownBy(
@@ -57,9 +58,7 @@ class AuthServiceTest {
 	@Test
 	void login() {
 		// given
-		Member saveMember =
-			memberRepository.save(new Member("pie123", "pie-choco@pie.com", "pie/image.jpg"));
-		accessTokenAndUserInfo(saveMember);
+		accessTokenAndUserInfo();
 
 		// when & then
 		assertThat(authService.login("code")).isNotBlank();
@@ -70,7 +69,7 @@ class AuthServiceTest {
 	@Test
 	void loginFail() {
 		// given
-		accessTokenAndUserInfo(new Member("pie123", "pie-choco@pie.com", "pie/image.jpg"));
+		accessTokenAndUserInfo();
 
 		// when & then
 		assertThatThrownBy(
@@ -78,9 +77,16 @@ class AuthServiceTest {
 			.extracting("errorCode").isEqualTo(ErrorCode.NOT_FOUND_MEMBER);
 	}
 
-	void accessTokenAndUserInfo(Member member) {
+	void accessTokenAndUserInfo() {
+		Map<String, Object> response = Map.of("kakao_account", Map.of(
+			"email", "pie-choco@pie.com",
+			"profile", Map.of(
+				"nickname", "pie123",
+				"profile_image_url", "pie/image.jpg"
+			)));
+		OAuthUser oAuthUser = OAuthUser.from(response);
+
 		given(kakaoClient.getAccessToken(anyString())).willReturn("abc.abc.abc");
-		given(kakaoClient.getUserInfo(anyString())).
-			willReturn(member);
+		given(kakaoClient.getUserInfo(anyString())).willReturn(oAuthUser);
 	}
 }

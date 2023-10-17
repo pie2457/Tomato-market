@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import pie.tomato.tomatomarket.application.AuthService;
+import pie.tomato.tomatomarket.application.oauth.response.LoginResponse;
 
 @RequiredArgsConstructor
 @RestController
@@ -26,8 +27,7 @@ public class AuthController {
 	}
 
 	@GetMapping("/login")
-	public ResponseEntity<Void> login(@RequestParam("code") String code) {
-		authService.login(code);
-		return ResponseEntity.status(OK).build();
+	public ResponseEntity<LoginResponse> login(@RequestParam("code") String code) {
+		return ResponseEntity.status(OK).body(new LoginResponse(authService.login(code)));
 	}
 }

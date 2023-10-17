@@ -8,6 +8,7 @@ import pie.tomato.tomatomarket.application.oauth.KakaoClient;
 import pie.tomato.tomatomarket.domain.Member;
 import pie.tomato.tomatomarket.exception.BadRequestException;
 import pie.tomato.tomatomarket.exception.ErrorCode;
+import pie.tomato.tomatomarket.infrastructure.config.jwt.JwtProvider;
 import pie.tomato.tomatomarket.infrastructure.persistence.MemberRepository;
 
 @RequiredArgsConstructor
@@ -17,6 +18,7 @@ public class AuthService {
 
 	private final KakaoClient kakaoClient;
 	private final MemberRepository memberRepository;
+	private final JwtProvider jwtProvider;
 
 	public void signup(String code) {
 		String accessToken = kakaoClient.getAccessToken(code);
@@ -25,10 +27,11 @@ public class AuthService {
 		memberRepository.save(member);
 	}
 
-	public void login(String code) {
+	public String login(String code) {
 		String accessToken = kakaoClient.getAccessToken(code);
 		Member member = kakaoClient.getUserInfo(accessToken);
 		validateExistEmail(member.getEmail());
+		return jwtProvider.createAccessToken(member.getId());
 	}
 
 	private void validateDuplicateEmail(String email) {

@@ -44,13 +44,14 @@ class AuthServiceTest {
 
 	@DisplayName("중복된 email로 회원가입 요청 시 실패한다.")
 	@Test
-	void DuplicateEmailSignupFail() {
+	void duplicateEmailSignupFail() {
 		// given
 		accessTokenAndUserInfo();
 
 		// when & then
 		assertThatThrownBy(
-			() -> authService.signup("code")).isInstanceOf(BadRequestException.class)
+			() -> authService.signup("code"))
+			.isInstanceOf(BadRequestException.class)
 			.extracting("errorCode").isEqualTo(ErrorCode.ALREADY_EXIST_MEMBER);
 	}
 
@@ -73,7 +74,8 @@ class AuthServiceTest {
 
 		// when & then
 		assertThatThrownBy(
-			() -> authService.login("code")).isInstanceOf(BadRequestException.class)
+			() -> authService.login("code"))
+			.isInstanceOf(BadRequestException.class)
 			.extracting("errorCode").isEqualTo(ErrorCode.NOT_FOUND_MEMBER);
 	}
 
@@ -84,6 +86,7 @@ class AuthServiceTest {
 				"nickname", "pie123",
 				"profile_image_url", "pie/image.jpg"
 			)));
+		
 		OAuthUser oAuthUser = OAuthUser.from(response);
 
 		given(kakaoClient.getAccessToken(anyString())).willReturn("abc.abc.abc");

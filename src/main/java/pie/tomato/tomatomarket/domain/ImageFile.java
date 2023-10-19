@@ -24,7 +24,7 @@ public class ImageFile {
 	private final Long fileSize;
 	private final InputStream imageInputStream;
 
-	public ImageFile(MultipartFile multipartFile) {
+	private ImageFile(MultipartFile multipartFile) {
 		this.fileName = getFileName(multipartFile);
 		this.contentType = getImageContentType(multipartFile);
 		this.imageInputStream = getImageInputStream(multipartFile);

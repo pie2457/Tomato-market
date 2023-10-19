@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
-@ConfigurationProperties("cloud.aws")
+@ConfigurationProperties("aws")
 public class S3Properties {
 
 	private final Credentials credentials;

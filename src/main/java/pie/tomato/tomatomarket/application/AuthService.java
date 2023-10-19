@@ -9,6 +9,7 @@ import pie.tomato.tomatomarket.domain.Member;
 import pie.tomato.tomatomarket.domain.oauth.OAuthUser;
 import pie.tomato.tomatomarket.exception.BadRequestException;
 import pie.tomato.tomatomarket.exception.ErrorCode;
+import pie.tomato.tomatomarket.exception.NotFoundException;
 import pie.tomato.tomatomarket.infrastructure.config.jwt.JwtProvider;
 import pie.tomato.tomatomarket.infrastructure.persistence.MemberRepository;
 
@@ -33,7 +34,7 @@ public class AuthService {
 		String accessToken = kakaoClient.getAccessToken(code);
 		OAuthUser oAuthUser = kakaoClient.getUserInfo(accessToken);
 		Member member = memberRepository.findByEmail(oAuthUser.getEmail())
-			.orElseThrow(() -> new BadRequestException(ErrorCode.NOT_FOUND_MEMBER));
+			.orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_MEMBER));
 		return jwtProvider.createAccessToken(member.getId());
 	}
 

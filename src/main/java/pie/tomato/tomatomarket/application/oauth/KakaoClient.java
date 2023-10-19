@@ -14,13 +14,12 @@ import lombok.RequiredArgsConstructor;
 import pie.tomato.tomatomarket.domain.oauth.OAuthUser;
 import pie.tomato.tomatomarket.infrastructure.config.properties.OauthProperties;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class KakaoClient {
 
 	private final OauthProperties kakao;
 	private final RestTemplate restTemplate;
-	private final OAuthUser oAuthUser;
 
 	public String getAccessToken(String code) {
 		HttpHeaders headers = new HttpHeaders();

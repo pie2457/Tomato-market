@@ -1,4 +1,4 @@
-package pie.tomato.tomatomarket.application;
+package pie.tomato.tomatomarket.application.unit;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
+import pie.tomato.tomatomarket.application.AuthService;
 import pie.tomato.tomatomarket.application.oauth.KakaoClient;
 import pie.tomato.tomatomarket.domain.oauth.OAuthUser;
 import pie.tomato.tomatomarket.exception.BadRequestException;

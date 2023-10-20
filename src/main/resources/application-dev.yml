@@ -3,3 +3,15 @@ spring:
     url: ${db.dev.datasource.url}
     username: ${db.dev.datasource.username}
     password: ${db.dev.datasource.password}
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${aws.credentials.access-key}
+      secret-key: ${aws.credentials.secret-key}
+    s3:
+      bucket: ${aws.s3.bucket}
+    region:
+      static: ${aws.region.static}
+  stack:
+    auto: false

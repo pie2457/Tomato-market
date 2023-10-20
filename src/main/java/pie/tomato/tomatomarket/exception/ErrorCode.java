@@ -17,7 +17,11 @@ public enum ErrorCode {
 	// Member
 	ALREADY_EXIST_MEMBER(HttpStatus.BAD_REQUEST, "이미 가입된 회원입니다."),
 	NOT_FOUND_MEMBER(HttpStatus.NOT_FOUND, "회원을 찾지 못하였습니다."),
-	ALREADY_EXIST_NICKNAME(HttpStatus.BAD_REQUEST, "이미 존재하는 닉네임입니다.");
+	ALREADY_EXIST_NICKNAME(HttpStatus.BAD_REQUEST, "이미 존재하는 닉네임입니다."),
+
+	// Image
+	INVALID_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "지원하지 않는 파일 확장자입니다."),
+	FILE_IO_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "파일 입출력에 실패했습니다.");
 
 	private final HttpStatus httpStatus;
 	private final String message;

@@ -78,9 +78,8 @@ public class ImageFile {
 		private final String contentType;
 
 		public static String findEnum(String contentType) {
-
 			for (ImageContentType imageContentType : ImageContentType.values()) {
-				if (imageContentType.getContentType().equals(contentType.toLowerCase())) {
+				if (imageContentType.getContentType().equalsIgnoreCase(contentType)) {
 					return imageContentType.getContentType();
 				}
 			}

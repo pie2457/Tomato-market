@@ -34,6 +34,7 @@ public class S3Properties {
 	@Getter
 	@RequiredArgsConstructor
 	public static class S3 {
+		
 		private final String bucket;
 	}
 }

@@ -3,14 +3,14 @@ package pie.tomato.tomatomarket.application.unit;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +20,7 @@ import pie.tomato.tomatomarket.application.ImageUploader;
 import pie.tomato.tomatomarket.domain.ImageFile;
 
 @Transactional
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class ImageServiceTest {
 
 	@InjectMocks
@@ -30,7 +30,7 @@ class ImageServiceTest {
 
 	@DisplayName("이미지 파일이 주어지면 업로드에 성공한다.")
 	@Test
-	void imageUpload() throws IOException {
+	void imageUpload() {
 		// given
 		MockMultipartFile mockMultipartFile = new MockMultipartFile(
 			"test-image", "test.png",

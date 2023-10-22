@@ -18,6 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import pie.tomato.tomatomarket.exception.ErrorCode;
 import pie.tomato.tomatomarket.exception.UnAuthorizedException;
 import pie.tomato.tomatomarket.infrastructure.config.jwt.JwtProvider;
+import pie.tomato.tomatomarket.presentation.support.AuthenticationContext;
 
 public class JwtFilter extends OncePerRequestFilter {
 
@@ -27,9 +28,11 @@ public class JwtFilter extends OncePerRequestFilter {
 	private final List<String> excludeUrlPatterns = List.of("/api/auth/**");
 
 	private final JwtProvider jwtProvider;
+	private final AuthenticationContext authenticationContext;
 
-	public JwtFilter(JwtProvider jwtProvider) {
+	public JwtFilter(JwtProvider jwtProvider, AuthenticationContext authenticationContext) {
 		this.jwtProvider = jwtProvider;
+		this.authenticationContext = authenticationContext;
 	}
 
 	@Override
@@ -49,6 +52,7 @@ public class JwtFilter extends OncePerRequestFilter {
 		String token = extractJwt(request)
 			.orElseThrow(() -> new UnAuthorizedException(ErrorCode.INVALID_TOKEN));
 		jwtProvider.validateToken(token);
+		authenticationContext.setPrincipal(jwtProvider.extractPrincipal(token));
 
 		filterChain.doFilter(request, response);
 	}

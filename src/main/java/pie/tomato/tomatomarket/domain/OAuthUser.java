@@ -1,4 +1,4 @@
-package pie.tomato.tomatomarket.domain.oauth;
+package pie.tomato.tomatomarket.domain;
 
 import java.util.Map;
 import java.util.UUID;

@@ -1,4 +1,4 @@
-package pie.tomato.config;
+package pie.tomato.tomatomarket.infrastructure.config;
 
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Configuration;

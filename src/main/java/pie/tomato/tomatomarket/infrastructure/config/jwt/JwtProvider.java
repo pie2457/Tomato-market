@@ -8,6 +8,7 @@ import javax.crypto.SecretKey;
 
 import org.springframework.stereotype.Component;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -16,6 +17,7 @@ import io.jsonwebtoken.security.Keys;
 import pie.tomato.tomatomarket.exception.ErrorCode;
 import pie.tomato.tomatomarket.exception.UnAuthorizedException;
 import pie.tomato.tomatomarket.infrastructure.config.properties.JwtProperties;
+import pie.tomato.tomatomarket.presentation.support.Principal;
 
 @Component
 public class JwtProvider {
@@ -51,5 +53,15 @@ public class JwtProvider {
 		} catch (JwtException e) {
 			throw new UnAuthorizedException(ErrorCode.INVALID_TOKEN);
 		}
+	}
+
+	public Principal extractPrincipal(final String token) {
+		final Claims claims = Jwts.parserBuilder()
+			.setSigningKey(secretKey)
+			.build()
+			.parseClaimsJws(token)
+			.getBody();
+
+		return Principal.from(claims);
 	}
 }

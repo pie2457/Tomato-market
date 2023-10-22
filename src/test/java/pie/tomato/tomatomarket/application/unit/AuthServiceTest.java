@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import pie.tomato.tomatomarket.application.AuthService;
 import pie.tomato.tomatomarket.application.oauth.KakaoClient;
-import pie.tomato.tomatomarket.domain.oauth.OAuthUser;
+import pie.tomato.tomatomarket.domain.OAuthUser;
 import pie.tomato.tomatomarket.exception.BadRequestException;
 import pie.tomato.tomatomarket.exception.ErrorCode;
 import pie.tomato.tomatomarket.infrastructure.persistence.MemberRepository;
@@ -87,7 +87,7 @@ class AuthServiceTest {
 				"nickname", "pie123",
 				"profile_image_url", "pie/image.jpg"
 			)));
-		
+
 		OAuthUser oAuthUser = OAuthUser.from(response);
 
 		given(kakaoClient.getAccessToken(anyString())).willReturn("abc.abc.abc");

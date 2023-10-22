@@ -11,7 +11,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.RequiredArgsConstructor;
-import pie.tomato.tomatomarket.domain.oauth.OAuthUser;
+import pie.tomato.tomatomarket.domain.OAuthUser;
 import pie.tomato.tomatomarket.infrastructure.config.properties.OauthProperties;
 
 @Component

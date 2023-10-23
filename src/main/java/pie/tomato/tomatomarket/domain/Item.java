@@ -12,9 +12,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = PROTECTED)
 public class Item {
 
@@ -39,4 +42,22 @@ public class Item {
 	@ManyToOne(fetch = LAZY)
 	@JoinColumn(name = "category_id")
 	private Category category;
+
+	@Builder
+	public Item(String title, String content, Long price, String thumbnail, String status, String region,
+		Long chatCount,
+		Long wishCount, Long viewCount, LocalDateTime createdAt, Member member, Category category) {
+		this.title = title;
+		this.content = content;
+		this.price = price;
+		this.thumbnail = thumbnail;
+		this.status = status;
+		this.region = region;
+		this.chatCount = chatCount;
+		this.wishCount = wishCount;
+		this.viewCount = viewCount;
+		this.createdAt = createdAt;
+		this.member = member;
+		this.category = category;
+	}
 }

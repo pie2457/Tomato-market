@@ -20,9 +20,17 @@ public class Image {
 	@GeneratedValue(strategy = IDENTITY)
 	private Long id;
 	private String imageUrl;
-	private boolean thumbnail;
 
 	@ManyToOne(fetch = LAZY)
 	@JoinColumn(name = "item_id")
 	private Item item;
+
+	private Image(String imageUrl, Item item) {
+		this.imageUrl = imageUrl;
+		this.item = item;
+	}
+
+	public static Image of(String imageUrl, Item item) {
+		return new Image(imageUrl, item);
+	}
 }

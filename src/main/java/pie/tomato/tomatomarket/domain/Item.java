@@ -28,7 +28,7 @@ public class Item {
 	private String content;
 	private Long price;
 	private String thumbnail;
-	private String status;
+	private ItemStatus status;
 	private String region;
 	private Long chatCount;
 	private Long wishCount;
@@ -44,7 +44,7 @@ public class Item {
 	private Category category;
 
 	@Builder
-	public Item(String title, String content, Long price, String thumbnail, String status, String region,
+	public Item(String title, String content, Long price, String thumbnail, ItemStatus status, String region,
 		Long chatCount,
 		Long wishCount, Long viewCount, LocalDateTime createdAt, Member member, Category category) {
 		this.title = title;

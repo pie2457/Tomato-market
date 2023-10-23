@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import pie.tomato.tomatomarket.domain.Category;
 import pie.tomato.tomatomarket.domain.Item;
+import pie.tomato.tomatomarket.domain.ItemStatus;
 import pie.tomato.tomatomarket.domain.Member;
 
 @Getter
@@ -27,12 +28,12 @@ public class ItemRegisterRequest {
 	private Long categoryId;
 
 	@Builder
-	public Item toEntity(Member member, String thumbnailUrl) {
+	public Item toEntity(Member member, String thumbnailUrl, ItemStatus itemStatus) {
 		return Item.builder()
 			.title(title)
 			.content(content)
 			.price(price)
-			.status(status)
+			.status(itemStatus)
 			.region(region)
 			.createdAt(LocalDateTime.now())
 			.thumbnail(thumbnailUrl)

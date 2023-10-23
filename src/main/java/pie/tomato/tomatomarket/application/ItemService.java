@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import lombok.RequiredArgsConstructor;
 import pie.tomato.tomatomarket.domain.Image;
 import pie.tomato.tomatomarket.domain.Item;
+import pie.tomato.tomatomarket.domain.ItemStatus;
 import pie.tomato.tomatomarket.domain.Member;
 import pie.tomato.tomatomarket.infrastructure.persistence.ImageRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.ItemRepository;
@@ -27,10 +28,11 @@ public class ItemService {
 
 	public void register(ItemRegisterRequest itemRegisterRequest, MultipartFile thumbnail,
 		List<MultipartFile> itemImages, Principal principal) {
+		ItemStatus itemStatus = ItemStatus.from(itemRegisterRequest.getStatus());
 		String thumbnailUrl = imageService.uploadImageToS3(thumbnail);
 
 		Member member = new Member(principal.getMemberId());
-		Item item = itemRepository.save(itemRegisterRequest.toEntity(member, thumbnailUrl));
+		Item item = itemRepository.save(itemRegisterRequest.toEntity(member, thumbnailUrl, itemStatus));
 
 		if (itemImages != null) {
 			List<String> images = imageService.uploadImagesToS3(itemImages);

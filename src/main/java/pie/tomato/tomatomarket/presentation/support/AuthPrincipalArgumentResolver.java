@@ -8,6 +8,8 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 import lombok.RequiredArgsConstructor;
+import pie.tomato.tomatomarket.exception.ErrorCode;
+import pie.tomato.tomatomarket.exception.UnAuthorizedException;
 
 @Component
 @RequiredArgsConstructor
@@ -24,6 +26,7 @@ public class AuthPrincipalArgumentResolver implements HandlerMethodArgumentResol
 	@Override
 	public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
 		NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
-		return authenticationContext.getPrincipal();
+		return authenticationContext.getPrincipal()
+			.orElseThrow(() -> new UnAuthorizedException(ErrorCode.NOT_LOGIN));
 	}
 }

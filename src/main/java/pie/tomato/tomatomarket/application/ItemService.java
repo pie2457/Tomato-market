@@ -26,6 +26,7 @@ public class ItemService {
 	private final ImageService imageService;
 	private final ImageRepository imageRepository;
 
+	@Transactional
 	public void register(ItemRegisterRequest itemRegisterRequest, MultipartFile thumbnail,
 		List<MultipartFile> itemImages, Principal principal) {
 		ItemStatus itemStatus = ItemStatus.from(itemRegisterRequest.getStatus());

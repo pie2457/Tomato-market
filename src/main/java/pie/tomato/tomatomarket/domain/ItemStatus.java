@@ -3,10 +3,12 @@ package pie.tomato.tomatomarket.domain;
 import java.util.Arrays;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import pie.tomato.tomatomarket.exception.BadRequestException;
 import pie.tomato.tomatomarket.exception.ErrorCode;
 
 @Getter
+@RequiredArgsConstructor
 public enum ItemStatus {
 
 	ON_SALE("판매중"),
@@ -14,10 +16,6 @@ public enum ItemStatus {
 	RESERVED("예약중");
 
 	private final String name;
-
-	ItemStatus(String name) {
-		this.name = name;
-	}
 
 	public static ItemStatus from(String status) {
 		return Arrays.stream(ItemStatus.values())

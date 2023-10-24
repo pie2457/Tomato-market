@@ -22,6 +22,7 @@ public class AuthService {
 	private final MemberRepository memberRepository;
 	private final JwtProvider jwtProvider;
 
+	@Transactional
 	public void signup(String code) {
 		String accessToken = kakaoClient.getAccessToken(code);
 		OAuthUser oAuthUser = kakaoClient.getUserInfo(accessToken);
@@ -35,7 +36,7 @@ public class AuthService {
 		OAuthUser oAuthUser = kakaoClient.getUserInfo(accessToken);
 		Member member = memberRepository.findByEmail(oAuthUser.getEmail())
 			.orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_MEMBER));
-		return jwtProvider.createAccessToken(member.getId());
+		return jwtProvider.createAccessToken(member.getId(), member.getEmail(), member.getNickname());
 	}
 
 	private void validateDuplicateEmail(String email) {

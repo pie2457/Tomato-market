@@ -2,7 +2,6 @@ package pie.tomato.tomatomarket.infrastructure.config.jwt;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.Map;
 
 import javax.crypto.SecretKey;
 
@@ -30,7 +29,7 @@ public class JwtProvider {
 		this.accessTokenExpirationTime = jwtProperties.getAccessTokenExpirationTime();
 	}
 
-	public String createAccessToken(Long memberId) {
+	public String createAccessToken(Long memberId, String email, String nickname) {
 		Date now = new Date();
 		Date accessTokenExpiration = new Date(now.getTime() + accessTokenExpirationTime);
 
@@ -38,7 +37,9 @@ public class JwtProvider {
 			.signWith(secretKey, SignatureAlgorithm.HS256)
 			.setIssuedAt(now)
 			.setExpiration(accessTokenExpiration)
-			.addClaims(Map.of("memberId", memberId))
+			.claim("memberId", memberId)
+			.claim("email", email)
+			.claim("nickname", nickname)
 			.compact();
 	}
 

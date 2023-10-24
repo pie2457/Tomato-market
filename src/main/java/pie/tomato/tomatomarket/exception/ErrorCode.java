@@ -25,6 +25,7 @@ public enum ErrorCode {
 
 	// Item
 	INVALID_STATUS(HttpStatus.BAD_REQUEST, "상태는 판매중, 예약중, 판매완료만 들어올 수 있습니다."),
+	ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다."),
 
 	// Auth
 	NOT_LOGIN(HttpStatus.UNAUTHORIZED, "로그인 상태가 아닙니다.");

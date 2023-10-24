@@ -22,6 +22,10 @@ public class Member {
 	private String email;
 	private String profile;
 
+	public Member(Long id) {
+		this.id = id;
+	}
+
 	public Member(String nickname, String email, String profile) {
 		this.nickname = nickname;
 		this.email = email;

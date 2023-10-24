@@ -11,12 +11,10 @@ public class JwtProperties {
 
 	private final String secretKey;
 	private final long accessTokenExpirationTime;
-	private final long refreshTokenExpirationTime;
 
 	@ConstructorBinding
-	public JwtProperties(String secretKey, long accessTokenExpirationTime, long refreshTokenExpirationTime) {
+	public JwtProperties(String secretKey, long accessTokenExpirationTime) {
 		this.secretKey = secretKey;
 		this.accessTokenExpirationTime = accessTokenExpirationTime;
-		this.refreshTokenExpirationTime = refreshTokenExpirationTime;
 	}
 }

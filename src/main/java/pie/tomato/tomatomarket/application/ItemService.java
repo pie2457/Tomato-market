@@ -38,7 +38,7 @@ public class ItemService {
 		ItemStatus itemStatus = ItemStatus.from(itemRegisterRequest.getStatus());
 		String thumbnailUrl = imageService.uploadImageToS3(thumbnail);
 
-		Member member = new Member(principal.getMemberId());
+		Member member = memberRepository.getReferenceById(principal.getMemberId());
 		Item item = itemRepository.save(itemRegisterRequest.toEntity(member, thumbnailUrl, itemStatus));
 
 		if (itemImages != null) {

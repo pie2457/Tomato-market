@@ -13,13 +13,13 @@ class JwtProviderTest {
 
 	private final String secretKey = "1e57a452a094728c291bc42bf2bc7eb8d9fd8844d1369da2bf728588b46c4e75";
 	private final JwtProvider jwtProvider = new JwtProvider(
-		new JwtProperties(secretKey, 100000, 100000));
+		new JwtProperties(secretKey, 100000));
 
 	@Test
 	@DisplayName("회원의 ID가 주어지면 토큰을 생성한다.")
 	void createToken() {
 		// given
-		String accessToken = jwtProvider.createAccessToken(1L);
+		String accessToken = jwtProvider.createAccessToken(1L, "123@123", "파이");
 
 		// when & then
 		assertThat(accessToken).isNotBlank();

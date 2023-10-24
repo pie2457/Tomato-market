@@ -24,7 +24,10 @@ public enum ErrorCode {
 	FILE_IO_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "파일 입출력에 실패했습니다."),
 
 	// Item
-	INVALID_STATUS(HttpStatus.BAD_REQUEST, "상태는 판매중, 예약중, 판매완료만 들어올 수 있습니다.");
+	INVALID_STATUS(HttpStatus.BAD_REQUEST, "상태는 판매중, 예약중, 판매완료만 들어올 수 있습니다."),
+
+	// Auth
+	NOT_LOGIN(HttpStatus.UNAUTHORIZED, "로그인 상태가 아닙니다.");
 
 	private final HttpStatus httpStatus;
 	private final String message;

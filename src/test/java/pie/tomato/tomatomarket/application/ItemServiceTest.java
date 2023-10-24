@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -18,8 +19,10 @@ import org.springframework.transaction.annotation.Transactional;
 import pie.tomato.tomatomarket.domain.Category;
 import pie.tomato.tomatomarket.domain.ImageFile;
 import pie.tomato.tomatomarket.domain.Item;
+import pie.tomato.tomatomarket.domain.ItemStatus;
 import pie.tomato.tomatomarket.domain.Member;
 import pie.tomato.tomatomarket.presentation.request.ItemRegisterRequest;
+import pie.tomato.tomatomarket.presentation.request.ItemStatusModifyRequest;
 import pie.tomato.tomatomarket.presentation.support.Principal;
 import pie.tomato.tomatomarket.support.SupportRepository;
 
@@ -80,5 +83,28 @@ class ItemServiceTest {
 			.hasFieldOrProperty("viewCount")
 			.hasFieldOrProperty("wishCount")
 			.hasFieldOrProperty("createdAt");
+	}
+
+	@DisplayName("상품 상태 수정에 성공한다.")
+	@Test
+	void modifyItemStatus() {
+		// given
+		Member member = supportRepository.save(new Member("파이", "123@123", "profile"));
+		Category category = supportRepository.save(new Category("잡화", "categoryImage"));
+		Item item = supportRepository.save(new Item("머리끈", "머리끈 100개 팝니다.", 3000L, "thumbnail", ItemStatus.ON_SALE,
+			"역삼1동", 0L, 0L, 0L, LocalDateTime.now(), member, category));
+
+		Principal principal = Principal.builder()
+			.nickname(member.getNickname())
+			.email(member.getEmail())
+			.memberId(member.getId())
+			.build();
+		ItemStatusModifyRequest request = new ItemStatusModifyRequest("예약중");
+		// when
+		itemService.modifyStatus(item.getId(), principal, request);
+		// then
+		Item findItem = supportRepository.findById(item.getId(), Item.class);
+		assertThat(findItem.getStatus()).isEqualTo(ItemStatus.RESERVED);
+
 	}
 }

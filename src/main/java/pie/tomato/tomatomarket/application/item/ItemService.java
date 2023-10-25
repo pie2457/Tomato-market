@@ -16,9 +16,9 @@ import pie.tomato.tomatomarket.domain.Member;
 import pie.tomato.tomatomarket.exception.BadRequestException;
 import pie.tomato.tomatomarket.exception.ErrorCode;
 import pie.tomato.tomatomarket.exception.NotFoundException;
-import pie.tomato.tomatomarket.infrastructure.persistence.ImageRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.ItemRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.MemberRepository;
+import pie.tomato.tomatomarket.infrastructure.persistence.image.ImageRepository;
 import pie.tomato.tomatomarket.presentation.request.item.ItemRegisterRequest;
 import pie.tomato.tomatomarket.presentation.request.item.ItemStatusModifyRequest;
 import pie.tomato.tomatomarket.presentation.support.Principal;
@@ -44,9 +44,10 @@ public class ItemService {
 
 		if (itemImages != null) {
 			List<String> images = imageService.uploadImagesToS3(itemImages);
-			imageRepository.saveAll(images.stream()
-				.map(url -> Image.of(url, item))
-				.collect(Collectors.toList()));
+			List<Image> imageList = images.stream()
+				.map(url -> Image.toEntity(url, item))
+				.collect(Collectors.toList());
+			imageRepository.saveAllImages(imageList);
 		}
 	}
 

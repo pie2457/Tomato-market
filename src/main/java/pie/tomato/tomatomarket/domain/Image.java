@@ -10,10 +10,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = PROTECTED)
+@Getter
 public class Image {
 
 	@Id
@@ -30,7 +32,7 @@ public class Image {
 		this.item = item;
 	}
 
-	public static Image of(String imageUrl, Item item) {
+	public static Image toEntity(String imageUrl, Item item) {
 		return new Image(imageUrl, item);
 	}
 }

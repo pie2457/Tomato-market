@@ -12,7 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
-import pie.tomato.tomatomarket.application.AuthService;
+import pie.tomato.tomatomarket.application.oauth.AuthService;
 import pie.tomato.tomatomarket.application.oauth.KakaoClient;
 import pie.tomato.tomatomarket.domain.OAuthUser;
 import pie.tomato.tomatomarket.exception.BadRequestException;

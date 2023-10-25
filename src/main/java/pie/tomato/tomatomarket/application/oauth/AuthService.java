@@ -1,10 +1,9 @@
-package pie.tomato.tomatomarket.application;
+package pie.tomato.tomatomarket.application.oauth;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import pie.tomato.tomatomarket.application.oauth.KakaoClient;
 import pie.tomato.tomatomarket.domain.Member;
 import pie.tomato.tomatomarket.domain.OAuthUser;
 import pie.tomato.tomatomarket.exception.BadRequestException;

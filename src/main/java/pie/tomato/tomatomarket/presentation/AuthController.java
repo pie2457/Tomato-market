@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import pie.tomato.tomatomarket.application.AuthService;
-import pie.tomato.tomatomarket.presentation.response.LoginResponse;
+import pie.tomato.tomatomarket.application.oauth.AuthService;
+import pie.tomato.tomatomarket.presentation.response.oauth.LoginResponse;
 
 @RequiredArgsConstructor
 @RestController

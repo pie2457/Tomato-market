@@ -7,6 +7,8 @@ import static lombok.AccessLevel.*;
 import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -28,6 +30,7 @@ public class Item {
 	private String content;
 	private Long price;
 	private String thumbnail;
+	@Enumerated(EnumType.STRING)
 	private ItemStatus status;
 	private String region;
 	private Long chatCount;
@@ -59,5 +62,9 @@ public class Item {
 		this.createdAt = createdAt;
 		this.member = member;
 		this.category = category;
+	}
+
+	public void changeStatus(ItemStatus status) {
+		this.status = status;
 	}
 }

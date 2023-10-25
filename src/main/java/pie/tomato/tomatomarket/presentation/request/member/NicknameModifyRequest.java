@@ -1,4 +1,4 @@
-package pie.tomato.tomatomarket.presentation.request;
+package pie.tomato.tomatomarket.presentation.request.member;
 
 import lombok.AccessLevel;
 import lombok.Getter;

@@ -38,8 +38,9 @@ public class ItemController {
 	}
 
 	@PutMapping("/{itemId}/status")
-	public ResponseEntity<Void> modifyStatus(@PathVariable Long itemId, @AuthPrincipal Principal principal
-		, @RequestBody ItemStatusModifyRequest request) {
+	public ResponseEntity<Void> modifyStatus(@PathVariable Long itemId,
+		@AuthPrincipal Principal principal,
+		@RequestBody ItemStatusModifyRequest request) {
 		itemService.modifyStatus(itemId, principal, request);
 		return ResponseEntity.ok().build();
 	}

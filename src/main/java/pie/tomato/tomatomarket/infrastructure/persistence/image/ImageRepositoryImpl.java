@@ -18,12 +18,14 @@ public class ImageRepositoryImpl implements ImageRepositoryCustom {
 	public void saveAllImages(List<Image> itemImages) {
 		String sql = "INSERT INTO image "
 			+ "(image_url, item_id) VALUES (:imageUrl, :itemId)";
+
 		MapSqlParameterSource[] params = itemImages.stream()
 			.map(itemImage -> new MapSqlParameterSource()
 				.addValue("imageUrl", itemImage.getImageUrl())
 				.addValue("itemId", itemImage.getItem().getId()))
 			.collect(Collectors.toList())
 			.toArray(MapSqlParameterSource[]::new);
+		
 		jdbcTemplate.batchUpdate(sql, params);
 	}
 }

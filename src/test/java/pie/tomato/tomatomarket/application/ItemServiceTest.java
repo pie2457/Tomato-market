@@ -102,11 +102,12 @@ class ItemServiceTest {
 			.memberId(member.getId())
 			.build();
 		ItemStatusModifyRequest request = new ItemStatusModifyRequest("예약중");
+		
 		// when
 		itemService.modifyStatus(item.getId(), principal, request);
+
 		// then
 		Item findItem = supportRepository.findById(item.getId(), Item.class);
 		assertThat(findItem.getStatus()).isEqualTo(ItemStatus.RESERVED);
-
 	}
 }

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import pie.tomato.tomatomarket.application.member.MemberService;
 import pie.tomato.tomatomarket.domain.Member;
 import pie.tomato.tomatomarket.support.SupportRepository;
 

@@ -1,4 +1,4 @@
-package pie.tomato.tomatomarket.presentation.request;
+package pie.tomato.tomatomarket.presentation.request.item;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

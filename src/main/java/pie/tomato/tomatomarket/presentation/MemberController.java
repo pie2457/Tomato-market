@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import pie.tomato.tomatomarket.application.MemberService;
-import pie.tomato.tomatomarket.presentation.request.NicknameModifyRequest;
+import pie.tomato.tomatomarket.application.member.MemberService;
+import pie.tomato.tomatomarket.presentation.request.member.NicknameModifyRequest;
 
 @RestController
 @RequiredArgsConstructor

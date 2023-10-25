@@ -16,13 +16,15 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 
+import pie.tomato.tomatomarket.application.image.ImageUploader;
+import pie.tomato.tomatomarket.application.item.ItemService;
 import pie.tomato.tomatomarket.domain.Category;
 import pie.tomato.tomatomarket.domain.ImageFile;
 import pie.tomato.tomatomarket.domain.Item;
 import pie.tomato.tomatomarket.domain.ItemStatus;
 import pie.tomato.tomatomarket.domain.Member;
-import pie.tomato.tomatomarket.presentation.request.ItemRegisterRequest;
-import pie.tomato.tomatomarket.presentation.request.ItemStatusModifyRequest;
+import pie.tomato.tomatomarket.presentation.request.item.ItemRegisterRequest;
+import pie.tomato.tomatomarket.presentation.request.item.ItemStatusModifyRequest;
 import pie.tomato.tomatomarket.presentation.support.Principal;
 import pie.tomato.tomatomarket.support.SupportRepository;
 

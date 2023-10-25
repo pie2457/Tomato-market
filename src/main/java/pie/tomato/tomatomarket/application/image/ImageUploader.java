@@ -1,4 +1,4 @@
-package pie.tomato.tomatomarket.application;
+package pie.tomato.tomatomarket.application.image;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;

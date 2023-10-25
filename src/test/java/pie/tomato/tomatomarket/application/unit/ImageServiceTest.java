@@ -15,8 +15,8 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 
-import pie.tomato.tomatomarket.application.ImageService;
-import pie.tomato.tomatomarket.application.ImageUploader;
+import pie.tomato.tomatomarket.application.image.ImageService;
+import pie.tomato.tomatomarket.application.image.ImageUploader;
 import pie.tomato.tomatomarket.domain.ImageFile;
 
 @Transactional

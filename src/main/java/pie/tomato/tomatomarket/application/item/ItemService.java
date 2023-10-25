@@ -1,4 +1,4 @@
-package pie.tomato.tomatomarket.application;
+package pie.tomato.tomatomarket.application.item;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
+import pie.tomato.tomatomarket.application.image.ImageService;
 import pie.tomato.tomatomarket.domain.Image;
 import pie.tomato.tomatomarket.domain.Item;
 import pie.tomato.tomatomarket.domain.ItemStatus;
@@ -18,8 +19,8 @@ import pie.tomato.tomatomarket.exception.NotFoundException;
 import pie.tomato.tomatomarket.infrastructure.persistence.ImageRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.ItemRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.MemberRepository;
-import pie.tomato.tomatomarket.presentation.request.ItemRegisterRequest;
-import pie.tomato.tomatomarket.presentation.request.ItemStatusModifyRequest;
+import pie.tomato.tomatomarket.presentation.request.item.ItemRegisterRequest;
+import pie.tomato.tomatomarket.presentation.request.item.ItemStatusModifyRequest;
 import pie.tomato.tomatomarket.presentation.support.Principal;
 
 @Service

@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
-import pie.tomato.tomatomarket.application.ItemService;
-import pie.tomato.tomatomarket.presentation.request.ItemRegisterRequest;
-import pie.tomato.tomatomarket.presentation.request.ItemStatusModifyRequest;
+import pie.tomato.tomatomarket.application.item.ItemService;
+import pie.tomato.tomatomarket.presentation.request.item.ItemRegisterRequest;
+import pie.tomato.tomatomarket.presentation.request.item.ItemStatusModifyRequest;
 import pie.tomato.tomatomarket.presentation.support.AuthPrincipal;
 import pie.tomato.tomatomarket.presentation.support.Principal;
 

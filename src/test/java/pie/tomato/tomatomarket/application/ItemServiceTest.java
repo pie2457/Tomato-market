@@ -23,7 +23,9 @@ import pie.tomato.tomatomarket.domain.ImageFile;
 import pie.tomato.tomatomarket.domain.Item;
 import pie.tomato.tomatomarket.domain.ItemStatus;
 import pie.tomato.tomatomarket.domain.Member;
+import pie.tomato.tomatomarket.presentation.dto.CustomSlice;
 import pie.tomato.tomatomarket.presentation.request.item.ItemRegisterRequest;
+import pie.tomato.tomatomarket.presentation.request.item.ItemResponse;
 import pie.tomato.tomatomarket.presentation.request.item.ItemStatusModifyRequest;
 import pie.tomato.tomatomarket.presentation.support.Principal;
 import pie.tomato.tomatomarket.support.SupportRepository;
@@ -46,7 +48,7 @@ class ItemServiceTest {
 		given(imageUploader.uploadImageToS3(any(ImageFile.class))).willReturn("url");
 		given(imageUploader.uploadImagesToS3(anyList())).willReturn(List.of("url"));
 
-		Category category = supportRepository.save(new Category("가구/잡화", "image"));
+		Category category = setupCategory();
 
 		ItemRegisterRequest request = new ItemRegisterRequest("수박",
 			5000L,
@@ -91,10 +93,9 @@ class ItemServiceTest {
 	@Test
 	void modifyItemStatus() {
 		// given
-		Member member = supportRepository.save(new Member("파이", "123@123", "profile"));
-		Category category = supportRepository.save(new Category("잡화", "categoryImage"));
+		Member member = setupMember();
 		Item item = supportRepository.save(new Item("머리끈", "머리끈 100개 팝니다.", 3000L, "thumbnail", ItemStatus.ON_SALE,
-			"역삼1동", 0L, 0L, 0L, LocalDateTime.now(), member, category));
+			"역삼1동", 0L, 0L, 0L, LocalDateTime.now(), member, setupCategory()));
 
 		Principal principal = Principal.builder()
 			.nickname(member.getNickname())
@@ -102,12 +103,61 @@ class ItemServiceTest {
 			.memberId(member.getId())
 			.build();
 		ItemStatusModifyRequest request = new ItemStatusModifyRequest("예약중");
-		
+
 		// when
 		itemService.modifyStatus(item.getId(), principal, request);
 
 		// then
 		Item findItem = supportRepository.findById(item.getId(), Item.class);
 		assertThat(findItem.getStatus()).isEqualTo(ItemStatus.RESERVED);
+	}
+
+	@DisplayName("상품 목록 조회에 성공한다.")
+	@Test
+	void findAllItem() {
+		// given
+		Member member = setupMember();
+		Category category = setupCategory();
+		for (int i = 0; i < 15; i++) {
+			supportRepository.save(new Item("머리끈", "머리끈 100개 팝니다.", 3000L, "thumbnail", ItemStatus.ON_SALE,
+				"역삼1동", 0L, 0L, 0L, LocalDateTime.now(), member, category));
+		}
+
+		// when
+		CustomSlice<ItemResponse> findItems = itemService.findAll(null, 10, null, null);
+
+		// then
+		assertThat(findItems.getContents().size()).isEqualTo(10);
+	}
+
+	@DisplayName("카테고리별 상품 목록 조회에 성공한다.")
+	@Test
+	void categoryByAllItem() {
+		// given
+		Member member = setupMember();
+		Category category = setupCategory();
+		Category category2 = supportRepository.save(new Category("가구", "categotyImage"));
+		for (int i = 0; i < 7; i++) {
+			supportRepository.save(new Item("머리끈", "머리끈 100개 팝니다.", 3000L, "thumbnail", ItemStatus.ON_SALE,
+				"역삼1동", 0L, 0L, 0L, LocalDateTime.now(), member, category));
+		}
+		for (int i = 0; i < 4; i++) {
+			supportRepository.save(new Item("머리끈", "머리끈 100개 팝니다.", 3000L, "thumbnail", ItemStatus.ON_SALE,
+				"역삼1동", 0L, 0L, 0L, LocalDateTime.now(), member, category2));
+		}
+
+		// when
+		CustomSlice<ItemResponse> items = itemService.findAll(null, 10, null, category.getId());
+
+		// then
+		assertThat(items.getContents().size()).isEqualTo(7);
+	}
+
+	Member setupMember() {
+		return supportRepository.save(new Member("파이", "123@123", "profile"));
+	}
+
+	Category setupCategory() {
+		return supportRepository.save(new Category("잡화", "categoryImage"));
 	}
 }

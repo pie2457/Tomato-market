@@ -3,6 +3,7 @@ package pie.tomato.tomatomarket.application.item;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,10 +17,13 @@ import pie.tomato.tomatomarket.domain.Member;
 import pie.tomato.tomatomarket.exception.BadRequestException;
 import pie.tomato.tomatomarket.exception.ErrorCode;
 import pie.tomato.tomatomarket.exception.NotFoundException;
-import pie.tomato.tomatomarket.infrastructure.persistence.ItemRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.MemberRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.image.ImageRepository;
+import pie.tomato.tomatomarket.infrastructure.persistence.item.ItemPaginationRepository;
+import pie.tomato.tomatomarket.infrastructure.persistence.item.ItemRepository;
+import pie.tomato.tomatomarket.presentation.dto.CustomSlice;
 import pie.tomato.tomatomarket.presentation.request.item.ItemRegisterRequest;
+import pie.tomato.tomatomarket.presentation.request.item.ItemResponse;
 import pie.tomato.tomatomarket.presentation.request.item.ItemStatusModifyRequest;
 import pie.tomato.tomatomarket.presentation.support.Principal;
 
@@ -32,6 +36,7 @@ public class ItemService {
 	private final ImageService imageService;
 	private final ImageRepository imageRepository;
 	private final MemberRepository memberRepository;
+	private final ItemPaginationRepository itemPaginationRepository;
 
 	@Transactional
 	public void register(ItemRegisterRequest itemRegisterRequest, MultipartFile thumbnail,
@@ -64,5 +69,22 @@ public class ItemService {
 		if (!memberRepository.existsMemberById(memberId)) {
 			throw new NotFoundException(ErrorCode.NOT_FOUND_MEMBER);
 		}
+	}
+
+	public CustomSlice<ItemResponse> findAll(String region, int size, Long itemId, Long categoryId) {
+		Slice<ItemResponse> response = itemPaginationRepository.findByIdAndRegion(itemId, region, size, categoryId);
+		List<ItemResponse> content = response.getContent();
+
+		Long nextCursor = setNextCursor(content);
+
+		return new CustomSlice<>(content, nextCursor, response.hasNext());
+	}
+
+	private Long setNextCursor(List<ItemResponse> content) {
+		Long nextCursor = null;
+		if (!content.isEmpty()) {
+			nextCursor = content.get(content.size() - 1).getItemId();
+		}
+		return nextCursor;
 	}
 }

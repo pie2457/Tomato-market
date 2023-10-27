@@ -25,4 +25,12 @@ public class ImageService {
 		List<ImageFile> imageFiles = ImageFile.from(multipartFiles);
 		return imageUploader.uploadImagesToS3(imageFiles);
 	}
+
+	public void deleteImageFromS3(String fileName) {
+		imageUploader.deleteImage(fileName);
+	}
+
+	public void deleteImagesFromS3(List<String> deleteUrls) {
+		deleteUrls.forEach(imageUploader::deleteImage);
+	}
 }

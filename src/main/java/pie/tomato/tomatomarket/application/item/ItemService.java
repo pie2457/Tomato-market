@@ -10,18 +10,22 @@ import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
 import pie.tomato.tomatomarket.application.image.ImageService;
+import pie.tomato.tomatomarket.domain.Category;
 import pie.tomato.tomatomarket.domain.Image;
 import pie.tomato.tomatomarket.domain.Item;
 import pie.tomato.tomatomarket.domain.ItemStatus;
 import pie.tomato.tomatomarket.domain.Member;
 import pie.tomato.tomatomarket.exception.BadRequestException;
 import pie.tomato.tomatomarket.exception.ErrorCode;
+import pie.tomato.tomatomarket.exception.ForbiddenException;
 import pie.tomato.tomatomarket.exception.NotFoundException;
+import pie.tomato.tomatomarket.infrastructure.persistence.CategoryRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.MemberRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.image.ImageRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.item.ItemPaginationRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.item.ItemRepository;
 import pie.tomato.tomatomarket.presentation.dto.CustomSlice;
+import pie.tomato.tomatomarket.presentation.request.item.ItemModifyRequest;
 import pie.tomato.tomatomarket.presentation.request.item.ItemRegisterRequest;
 import pie.tomato.tomatomarket.presentation.request.item.ItemResponse;
 import pie.tomato.tomatomarket.presentation.request.item.ItemStatusModifyRequest;
@@ -37,6 +41,7 @@ public class ItemService {
 	private final ImageRepository imageRepository;
 	private final MemberRepository memberRepository;
 	private final ItemPaginationRepository itemPaginationRepository;
+	private final CategoryRepository categoryRepository;
 
 	@Transactional
 	public void register(ItemRegisterRequest itemRegisterRequest, MultipartFile thumbnail,
@@ -60,15 +65,9 @@ public class ItemService {
 	public void modifyStatus(Long itemId, Principal principal, ItemStatusModifyRequest request) {
 		verifyExistsMember(principal.getMemberId());
 		Item item = itemRepository.findById(itemId)
-			.orElseThrow(() -> new BadRequestException(ErrorCode.ITEM_NOT_FOUND));
+			.orElseThrow(() -> new BadRequestException(ErrorCode.NOT_FOUND_ITEM));
 
 		item.changeStatus(ItemStatus.from(request.getStatus()));
-	}
-
-	private void verifyExistsMember(Long memberId) {
-		if (!memberRepository.existsMemberById(memberId)) {
-			throw new NotFoundException(ErrorCode.NOT_FOUND_MEMBER);
-		}
 	}
 
 	public CustomSlice<ItemResponse> findAll(String region, int size, Long itemId, Long categoryId) {
@@ -86,5 +85,63 @@ public class ItemService {
 			nextCursor = content.get(content.size() - 1).getItemId();
 		}
 		return nextCursor;
+	}
+
+	@Transactional
+	public void modifyItem(Long itemId, Principal principal, ItemModifyRequest modifyRequest,
+		List<MultipartFile> itemImages, MultipartFile thumbnail) {
+		verifyExistsMember(principal.getMemberId());
+		verifyExistsItem(itemId);
+
+		Item findItem = itemRepository.findItemByIdAndMemberId(itemId, principal.getMemberId())
+			.orElseThrow(() -> new ForbiddenException(ErrorCode.ITEM_FORBIDDEN));
+
+		deleteImages(modifyRequest, findItem);
+		updateImages(itemImages, findItem);
+
+		String thumbnailUrl = updateThumbnail(findItem, modifyRequest.getThumbnailImage(), thumbnail);
+		Category category = existsCategory(modifyRequest);
+
+		findItem.modify(modifyRequest, thumbnailUrl, category);
+	}
+
+	private void updateImages(List<MultipartFile> itemImages, Item findItem) {
+		if (!itemImages.isEmpty()) {
+			List<String> updateImageUrls = imageService.uploadImagesToS3(itemImages);
+			imageRepository.saveAllImages(Image.createImage(updateImageUrls, findItem));
+		}
+	}
+
+	private String updateThumbnail(Item item, String thumbnailUrl, MultipartFile thumbnail) {
+		if (thumbnailUrl.isEmpty()) {
+			return item.getThumbnail();
+		}
+		imageService.deleteImageFromS3(thumbnailUrl);
+		imageRepository.deleteImageByItemIdAndImageUrl(item.getId(), thumbnailUrl);
+		return imageService.uploadImageToS3(thumbnail);
+	}
+
+	private void deleteImages(ItemModifyRequest modifyRequest, Item item) {
+		if (!modifyRequest.getDeleteImageUrls().isEmpty()) {
+			imageService.deleteImagesFromS3(modifyRequest.getDeleteImageUrls());
+			imageRepository.deleteImageByItemIdAndImageUrls(item.getId(), modifyRequest.getDeleteImageUrls());
+		}
+	}
+
+	private Category existsCategory(ItemModifyRequest modifyRequest) {
+		return categoryRepository.findById(modifyRequest.getCategoryId())
+			.orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_CATEGORY));
+	}
+
+	private void verifyExistsMember(Long memberId) {
+		if (!memberRepository.existsMemberById(memberId)) {
+			throw new NotFoundException(ErrorCode.NOT_FOUND_MEMBER);
+		}
+	}
+
+	private void verifyExistsItem(Long itemId) {
+		if (!itemRepository.existsItemById(itemId)) {
+			throw new NotFoundException(ErrorCode.NOT_FOUND_ITEM);
+		}
 	}
 }

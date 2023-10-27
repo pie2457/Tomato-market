@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import lombok.RequiredArgsConstructor;
 import pie.tomato.tomatomarket.application.item.ItemService;
 import pie.tomato.tomatomarket.presentation.dto.CustomSlice;
+import pie.tomato.tomatomarket.presentation.request.item.ItemModifyRequest;
 import pie.tomato.tomatomarket.presentation.request.item.ItemRegisterRequest;
 import pie.tomato.tomatomarket.presentation.request.item.ItemResponse;
 import pie.tomato.tomatomarket.presentation.request.item.ItemStatusModifyRequest;
@@ -55,5 +57,15 @@ public class ItemController {
 		@RequestParam(required = false) Long cursor,
 		@RequestParam(required = false) Long categoryId) {
 		return ResponseEntity.ok().body(itemService.findAll(region, size, cursor, categoryId));
+	}
+
+	@PatchMapping("/{itemId}")
+	public ResponseEntity<Void> modifyItem(@PathVariable Long itemId,
+		@AuthPrincipal Principal principal,
+		@RequestPart("item") ItemModifyRequest modifyRequest,
+		@RequestPart(value = "images", required = false) List<MultipartFile> itemImages,
+		@RequestPart(value = "thumbnailImage", required = false) MultipartFile thumbnail) {
+		itemService.modifyItem(itemId, principal, modifyRequest, itemImages, thumbnail);
+		return ResponseEntity.ok().build();
 	}
 }

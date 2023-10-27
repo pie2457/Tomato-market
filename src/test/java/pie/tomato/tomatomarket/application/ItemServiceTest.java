@@ -1,6 +1,7 @@
 package pie.tomato.tomatomarket.application;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 import java.nio.charset.StandardCharsets;
@@ -127,7 +128,23 @@ class ItemServiceTest {
 		CustomSlice<ItemResponse> findItems = itemService.findAll(null, 10, null, null);
 
 		// then
-		assertThat(findItems.getContents().size()).isEqualTo(10);
+		assertAll(
+			() -> assertThat(findItems.getContents().size()).isEqualTo(10),
+			// 0번째로 나온 객체의 생성시간이 가장 마지막에 나온 객체의 생성시간보다 이후인지 확인하는 메서드
+			() -> assertThat(findItems.getContents().get(0).getCreatedAt())
+				.isAfter(findItems.getContents().get(findItems.getContents().size() - 1).getCreatedAt()),
+			() -> assertThat(findItems.getContents().get(0)).hasFieldOrProperty("itemId"),
+			() -> assertThat(findItems.getContents().get(0)).hasFieldOrProperty("thumbnailUrl"),
+			() -> assertThat(findItems.getContents().get(0)).hasFieldOrProperty("title"),
+			() -> assertThat(findItems.getContents().get(0)).hasFieldOrProperty("tradingRegion"),
+			() -> assertThat(findItems.getContents().get(0)).hasFieldOrProperty("createdAt"),
+			() -> assertThat(findItems.getContents().get(0)).hasFieldOrProperty("price"),
+			() -> assertThat(findItems.getContents().get(0)).hasFieldOrProperty("status"),
+			() -> assertThat(findItems.getContents().get(0)).hasFieldOrProperty("chatCount"),
+			() -> assertThat(findItems.getContents().get(0)).hasFieldOrProperty("wishCount"),
+			() -> assertThat(findItems.getContents().get(0)).hasFieldOrProperty("isSeller")
+		);
+
 	}
 
 	@DisplayName("카테고리별 상품 목록 조회에 성공한다.")

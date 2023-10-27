@@ -2,18 +2,14 @@ package pie.tomato.tomatomarket.infrastructure.persistence.item;
 
 import static pie.tomato.tomatomarket.domain.QItem.*;
 
-import java.util.List;
-
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 
 import pie.tomato.tomatomarket.domain.Item;
-import pie.tomato.tomatomarket.presentation.request.item.ItemResponse;
+import pie.tomato.tomatomarket.infrastructure.persistence.PaginationRepository;
 
-public interface ItemRepository extends JpaRepository<Item, Long> {
+public interface ItemRepository extends JpaRepository<Item, Long>, PaginationRepository {
 
 	default BooleanExpression lessThanItemId(Long itemId) {
 		if (itemId == null) {
@@ -36,17 +32,5 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 		}
 
 		return item.region.like(region + "%");
-	}
-
-	default SliceImpl<ItemResponse> checkLastPage(int size, List<ItemResponse> results) {
-
-		boolean hasNext = false;
-
-		if (results.size() > size) {
-			hasNext = true;
-			results.remove(size);
-		}
-
-		return new SliceImpl<>(results, PageRequest.ofSize(size), hasNext);
 	}
 }

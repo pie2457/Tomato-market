@@ -7,24 +7,26 @@ import static org.mockito.BDDMockito.*;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 
-import pie.tomato.tomatomarket.application.image.ImageUploader;
 import pie.tomato.tomatomarket.application.item.ItemService;
 import pie.tomato.tomatomarket.domain.Category;
+import pie.tomato.tomatomarket.domain.Image;
 import pie.tomato.tomatomarket.domain.ImageFile;
 import pie.tomato.tomatomarket.domain.Item;
 import pie.tomato.tomatomarket.domain.ItemStatus;
 import pie.tomato.tomatomarket.domain.Member;
+import pie.tomato.tomatomarket.infrastructure.persistence.image.ImageRepository;
 import pie.tomato.tomatomarket.presentation.dto.CustomSlice;
+import pie.tomato.tomatomarket.presentation.request.item.ItemModifyRequest;
 import pie.tomato.tomatomarket.presentation.request.item.ItemRegisterRequest;
 import pie.tomato.tomatomarket.presentation.request.item.ItemResponse;
 import pie.tomato.tomatomarket.presentation.request.item.ItemStatusModifyRequest;
@@ -37,8 +39,11 @@ class ItemServiceTest {
 
 	@Autowired
 	private ItemService itemService;
-	@MockBean
-	private ImageUploader imageUploader;
+	@Autowired
+	private ImageRepository imageRepository;
+
+	@Autowired
+	private FakeImageUploader imageUploader;
 	@Autowired
 	private SupportRepository supportRepository;
 
@@ -51,19 +56,9 @@ class ItemServiceTest {
 
 		Category category = setupCategory();
 
-		ItemRegisterRequest request = new ItemRegisterRequest("수박",
-			5000L,
-			"판매중",
-			"thumbnail",
-			"content",
-			"region",
-			category.getId());
-		MockMultipartFile thumbnail = new MockMultipartFile(
-			"test-image", "test.png",
-			MediaType.IMAGE_PNG_VALUE, "imageBytes".getBytes(StandardCharsets.UTF_8));
-		MockMultipartFile image = new MockMultipartFile(
-			"test-image", "test.png",
-			MediaType.IMAGE_PNG_VALUE, "imageBytes".getBytes(StandardCharsets.UTF_8));
+		ItemRegisterRequest request = createItemRegisterRequest(category);
+		MockMultipartFile thumbnail = createMockMultipartFile("test-image");
+		MockMultipartFile image = createMockMultipartFile("test-image");
 
 		Member member = supportRepository.save(new Member("파이", "123@123", "profile"));
 		Principal principal = Principal.builder()
@@ -168,6 +163,64 @@ class ItemServiceTest {
 
 		// then
 		assertThat(items.getContents().size()).isEqualTo(7);
+	}
+
+	@DisplayName("상품 수정에 성공한다. : 기존 썸네일 삭제, 새로운 썸네일 추가, 기존 이미지 삭제, 이미지 추가")
+	@Test
+	void modifyItemVer_1() {
+		// given
+		Member member = setupMember();
+		Category category = setupCategory();
+		Principal principal = Principal.builder()
+			.nickname(member.getNickname())
+			.email(member.getEmail())
+			.memberId(member.getId())
+			.build();
+
+		ItemRegisterRequest request = createItemRegisterRequest(category);
+		MockMultipartFile thumbnail = createMockMultipartFile("test-image");
+		MockMultipartFile image = createMockMultipartFile("test-image");
+
+		itemService.register(request, thumbnail, List.of(image), principal);
+
+		Item originItem = supportRepository.findAll(Item.class).get(0);
+		List<Image> images = imageRepository.findAll();
+		List<String> imageUrls = images.stream()
+			.map(Image::getImageUrl)
+			.collect(Collectors.toList());
+		String originItemThumbnail = originItem.getThumbnail();
+		ItemModifyRequest modifyRequest = createItemModifyRequest(category, originItem, imageUrls);
+		MockMultipartFile updateThumbnail = createMockMultipartFile("changed-test-image");
+		MockMultipartFile updateImage = createMockMultipartFile("changed-test-image");
+
+		// when
+		itemService.modifyItem(originItem.getId(), principal, modifyRequest, List.of(updateImage), updateThumbnail);
+
+		// then
+		Item updateItem = supportRepository.findAll(Item.class).get(0);
+		assertThat(updateItem.getThumbnail()).isNotEqualTo(originItemThumbnail);
+	}
+
+	private ItemRegisterRequest createItemRegisterRequest(Category category) {
+		return new ItemRegisterRequest("수박",
+			5000L,
+			"판매중",
+			"thumbnail",
+			"content",
+			"region",
+			category.getId());
+	}
+
+	private MockMultipartFile createMockMultipartFile(String filename) {
+		return new MockMultipartFile(
+			filename, "test.png",
+			MediaType.IMAGE_PNG_VALUE, "imageBytes".getBytes(StandardCharsets.UTF_8));
+	}
+
+	private ItemModifyRequest createItemModifyRequest(Category category, Item originItem,
+		List<String> imageUrls) {
+		return new ItemModifyRequest("사과", 5000L, "사과 팜", "역삼1동", "판매중",
+			category.getId(), imageUrls, originItem.getThumbnail());
 	}
 
 	Member setupMember() {

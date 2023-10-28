@@ -113,7 +113,7 @@ public class ItemService {
 	}
 
 	private String updateThumbnail(Item item, String thumbnailUrl, MultipartFile thumbnail) {
-		if (thumbnailUrl.isEmpty()) {
+		if (thumbnailUrl == null || thumbnailUrl.isEmpty()) {
 			return item.getThumbnail();
 		}
 		imageService.deleteImageFromS3(thumbnailUrl);

@@ -5,11 +5,9 @@ import java.util.List;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.SliceImpl;
 
-import pie.tomato.tomatomarket.presentation.request.item.ItemResponse;
+public interface PaginationRepository<T> {
 
-public interface PaginationRepository {
-
-	default SliceImpl<ItemResponse> checkLastPage(int size, List<ItemResponse> results) {
+	default SliceImpl<T> checkLastPage(int size, List<T> results) {
 
 		boolean hasNext = false;
 

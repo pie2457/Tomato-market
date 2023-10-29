@@ -11,6 +11,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
+import pie.tomato.tomatomarket.infrastructure.persistence.PaginationRepository;
 import pie.tomato.tomatomarket.presentation.request.item.ItemResponse;
 
 @RequiredArgsConstructor
@@ -19,6 +20,7 @@ public class ItemPaginationRepository {
 
 	private final JPAQueryFactory queryFactory;
 	private final ItemRepository itemRepository;
+	private final PaginationRepository paginationRepository;
 
 	public Slice<ItemResponse> findByIdAndRegion(Long itemId, String region, int size, Long categoryId) {
 		List<ItemResponse> itemResponses = queryFactory.select(Projections.fields(ItemResponse.class,
@@ -40,6 +42,6 @@ public class ItemPaginationRepository {
 			.orderBy(item.createdAt.desc())
 			.limit(size + 1)
 			.fetch();
-		return itemRepository.checkLastPage(size, itemResponses);
+		return paginationRepository.checkLastPage(size, itemResponses);
 	}
 }

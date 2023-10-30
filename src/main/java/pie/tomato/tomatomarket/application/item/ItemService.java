@@ -106,6 +106,9 @@ public class ItemService {
 	}
 
 	private void updateImages(List<MultipartFile> itemImages, Item findItem) {
+		if (itemImages == null || itemImages.isEmpty()) {
+			return;
+		}
 		if (!itemImages.isEmpty()) {
 			List<String> updateImageUrls = imageService.uploadImagesToS3(itemImages);
 			imageRepository.saveAllImages(Image.createImage(updateImageUrls, findItem));
@@ -122,6 +125,9 @@ public class ItemService {
 	}
 
 	private void deleteImages(ItemModifyRequest modifyRequest, Item item) {
+		if (modifyRequest.getDeleteImageUrls() == null) {
+			return;
+		}
 		if (!modifyRequest.getDeleteImageUrls().isEmpty()) {
 			imageService.deleteImagesFromS3(modifyRequest.getDeleteImageUrls());
 			imageRepository.deleteImageByItemIdAndImageUrls(item.getId(), modifyRequest.getDeleteImageUrls());

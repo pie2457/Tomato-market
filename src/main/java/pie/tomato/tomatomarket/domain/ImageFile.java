@@ -44,6 +44,9 @@ public class ImageFile {
 	}
 
 	public InputStream getImageInputStream(MultipartFile multipartFile) {
+		if (multipartFile == null || multipartFile.isEmpty()) {
+			return null;
+		}
 		try {
 			return multipartFile.getInputStream();
 		} catch (IOException e) {
@@ -52,10 +55,16 @@ public class ImageFile {
 	}
 
 	private String getImageContentType(MultipartFile multipartFile) {
+		if (multipartFile == null || multipartFile.isEmpty()) {
+			return "";
+		}
 		return ImageContentType.findEnum(StringUtils.getFilenameExtension(multipartFile.getOriginalFilename()));
 	}
 
 	private String getFileName(MultipartFile multipartFile) {
+		if (multipartFile == null) {
+			return "";
+		}
 		String ext = extractExt(multipartFile.getOriginalFilename());
 		String uuid = UUID.randomUUID().toString();
 		return uuid + "." + ext;

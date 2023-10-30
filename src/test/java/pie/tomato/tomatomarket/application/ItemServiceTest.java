@@ -189,6 +189,7 @@ class ItemServiceTest {
 			.map(Image::getImageUrl)
 			.collect(Collectors.toList());
 		String originItemThumbnail = originItem.getThumbnail();
+		String originItemImages = imageUrls.get(0);
 		ItemModifyRequest modifyRequest = createItemModifyRequest(category, originItem, imageUrls);
 		MockMultipartFile updateThumbnail = createMockMultipartFile("changed-test-image");
 		MockMultipartFile updateImage = createMockMultipartFile("changed-test-image");
@@ -198,7 +199,52 @@ class ItemServiceTest {
 
 		// then
 		Item updateItem = supportRepository.findAll(Item.class).get(0);
-		assertThat(updateItem.getThumbnail()).isNotEqualTo(originItemThumbnail);
+		List<Image> updateImages = imageRepository.findAll();
+		List<String> updateImageUrls = updateImages.stream()
+			.map(Image::getImageUrl)
+			.collect(Collectors.toList());
+
+		assertAll(
+			() -> assertThat(updateItem.getThumbnail()).isNotEqualTo(originItemThumbnail),
+			() -> assertThat(updateImageUrls.get(0)).isNotEqualTo(originItemImages)
+		);
+	}
+
+	@DisplayName("상품 수정에 성공한다. : 새로운 이미지만 추가")
+	@Test
+	void modifyItemVer_2() {
+		// given
+		Member member = setupMember();
+		Category category = setupCategory();
+		Principal principal = Principal.builder()
+			.nickname(member.getNickname())
+			.email(member.getEmail())
+			.memberId(member.getId())
+			.build();
+
+		ItemRegisterRequest request = createItemRegisterRequest(category);
+		MockMultipartFile thumbnail = createMockMultipartFile("test-image");
+		MockMultipartFile image = createMockMultipartFile("test-image");
+
+		itemService.register(request, thumbnail, List.of(image), principal);
+
+		Item originItem = supportRepository.findAll(Item.class).get(0);
+		List<Image> images = imageRepository.findAll();
+
+		ItemModifyRequest modifyRequest = new ItemModifyRequest("사과", 5000L, "사과 팜", "역삼1동", "판매중",
+			category.getId(), null, originItem.getThumbnail());
+		MockMultipartFile updateImage = createMockMultipartFile("changed-test-image");
+
+		// when
+		itemService.modifyItem(originItem.getId(), principal, modifyRequest, List.of(updateImage), null);
+
+		// then
+		List<Image> updateImages = imageRepository.findAll();
+
+		assertAll(
+			() -> assertThat(images.size()).isEqualTo(1),
+			() -> assertThat(updateImages.size()).isEqualTo(2)
+		);
 	}
 
 	private ItemRegisterRequest createItemRegisterRequest(Category category) {
@@ -211,16 +257,16 @@ class ItemServiceTest {
 			category.getId());
 	}
 
-	private MockMultipartFile createMockMultipartFile(String filename) {
-		return new MockMultipartFile(
-			filename, "test.png",
-			MediaType.IMAGE_PNG_VALUE, "imageBytes".getBytes(StandardCharsets.UTF_8));
-	}
-
 	private ItemModifyRequest createItemModifyRequest(Category category, Item originItem,
 		List<String> imageUrls) {
 		return new ItemModifyRequest("사과", 5000L, "사과 팜", "역삼1동", "판매중",
 			category.getId(), imageUrls, originItem.getThumbnail());
+	}
+
+	private MockMultipartFile createMockMultipartFile(String filename) {
+		return new MockMultipartFile(
+			filename, "test.png",
+			MediaType.IMAGE_PNG_VALUE, "imageBytes".getBytes(StandardCharsets.UTF_8));
 	}
 
 	Member setupMember() {

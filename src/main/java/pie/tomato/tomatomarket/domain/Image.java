@@ -6,6 +6,7 @@ import static lombok.AccessLevel.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -41,9 +42,9 @@ public class Image {
 
 	public static List<Image> createImage(List<String> imageUrls, Item item) {
 		List<Image> images = new ArrayList<>();
-		for (String imageUrl : imageUrls) {
-			images.add(new Image(imageUrl, item));
-		}
+		imageUrls.stream()
+			.map(url -> new Image(url, item))
+			.collect(Collectors.toList());
 		return images;
 	}
 }

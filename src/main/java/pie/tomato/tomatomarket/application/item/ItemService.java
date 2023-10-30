@@ -100,7 +100,7 @@ public class ItemService {
 		updateImages(itemImages, findItem);
 
 		String thumbnailUrl = updateThumbnail(findItem, modifyRequest.getThumbnailImage(), thumbnail);
-		Category category = existsCategory(modifyRequest);
+		Category category = findCategory(modifyRequest);
 
 		findItem.modify(modifyRequest, thumbnailUrl, category);
 	}
@@ -134,7 +134,7 @@ public class ItemService {
 		}
 	}
 
-	private Category existsCategory(ItemModifyRequest modifyRequest) {
+	private Category findCategory(ItemModifyRequest modifyRequest) {
 		return categoryRepository.findById(modifyRequest.getCategoryId())
 			.orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_CATEGORY));
 	}

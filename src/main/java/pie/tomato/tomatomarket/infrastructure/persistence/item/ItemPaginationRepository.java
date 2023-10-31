@@ -11,6 +11,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
+import pie.tomato.tomatomarket.infrastructure.persistence.util.PaginationUtil;
 import pie.tomato.tomatomarket.presentation.request.item.ItemResponse;
 
 @RequiredArgsConstructor
@@ -40,6 +41,6 @@ public class ItemPaginationRepository {
 			.orderBy(item.createdAt.desc())
 			.limit(size + 1)
 			.fetch();
-		return itemRepository.checkLastPage(size, itemResponses);
+		return PaginationUtil.checkLastPage(size, itemResponses);
 	}
 }

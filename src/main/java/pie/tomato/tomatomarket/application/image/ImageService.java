@@ -17,12 +17,26 @@ public class ImageService {
 	private final ImageUploader imageUploader;
 
 	public String uploadImageToS3(MultipartFile multipartFile) {
+		if (multipartFile == null || multipartFile.isEmpty()) {
+			return "";
+		}
 		ImageFile file = ImageFile.from(multipartFile);
 		return imageUploader.uploadImageToS3(file);
 	}
 
 	public List<String> uploadImagesToS3(List<MultipartFile> multipartFiles) {
+		if (multipartFiles == null || multipartFiles.isEmpty()) {
+			return List.of("");
+		}
 		List<ImageFile> imageFiles = ImageFile.from(multipartFiles);
 		return imageUploader.uploadImagesToS3(imageFiles);
+	}
+
+	public void deleteImageFromS3(String fileName) {
+		imageUploader.deleteImage(fileName);
+	}
+
+	public void deleteImagesFromS3(List<String> deleteUrls) {
+		deleteUrls.forEach(imageUploader::deleteImage);
 	}
 }

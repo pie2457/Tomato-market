@@ -1,15 +1,13 @@
-package pie.tomato.tomatomarket.infrastructure.persistence;
+package pie.tomato.tomatomarket.infrastructure.persistence.util;
 
 import java.util.List;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.SliceImpl;
 
-import pie.tomato.tomatomarket.presentation.request.item.ItemResponse;
+public class PaginationUtil<T> {
 
-public interface PaginationRepository {
-
-	default SliceImpl<ItemResponse> checkLastPage(int size, List<ItemResponse> results) {
+	public static <T> SliceImpl<T> checkLastPage(int size, List<T> results) {
 
 		boolean hasNext = false;
 

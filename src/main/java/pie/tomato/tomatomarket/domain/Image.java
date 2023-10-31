@@ -4,6 +4,10 @@ import static javax.persistence.FetchType.*;
 import static javax.persistence.GenerationType.*;
 import static lombok.AccessLevel.*;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -34,5 +38,13 @@ public class Image {
 
 	public static Image toEntity(String imageUrl, Item item) {
 		return new Image(imageUrl, item);
+	}
+
+	public static List<Image> createImage(List<String> imageUrls, Item item) {
+		List<Image> images = new ArrayList<>();
+		imageUrls.stream()
+			.map(url -> new Image(url, item))
+			.collect(Collectors.toList());
+		return images;
 	}
 }

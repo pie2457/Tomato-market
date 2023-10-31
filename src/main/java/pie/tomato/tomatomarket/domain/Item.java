@@ -17,6 +17,7 @@ import javax.persistence.ManyToOne;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import pie.tomato.tomatomarket.presentation.request.item.ItemModifyRequest;
 
 @Entity
 @Getter
@@ -64,7 +65,30 @@ public class Item {
 		this.category = category;
 	}
 
+	@Builder
+	public Item(String title, String content, Long price, String thumbnail, ItemStatus status, String region,
+		LocalDateTime createdAt, Category category) {
+		this.title = title;
+		this.content = content;
+		this.price = price;
+		this.thumbnail = thumbnail;
+		this.status = status;
+		this.region = region;
+		this.createdAt = createdAt;
+		this.category = category;
+	}
+
 	public void changeStatus(ItemStatus status) {
 		this.status = status;
+	}
+
+	public void modify(ItemModifyRequest request, String thumbnail, Category category) {
+		this.title = request.getTitle();
+		this.content = request.getContent();
+		this.price = request.getPrice();
+		this.region = request.getTradingRegion();
+		this.status = ItemStatus.from(request.getStatus());
+		this.category = category;
+		this.thumbnail = thumbnail;
 	}
 }

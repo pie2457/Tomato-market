@@ -20,4 +20,6 @@ public interface ImageRepository extends JpaRepository<Image, Long>, ImageReposi
 	@Query("delete from Image image where image.item.id = :itemId and image.imageUrl = :imageUrl")
 	void deleteImageByItemIdAndImageUrl(@Param("itemId") Long itemId,
 		@Param("imageUrl") String imageUrl);
+
+	void deleteByItemId(Long itemId);
 }

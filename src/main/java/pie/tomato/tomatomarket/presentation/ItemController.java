@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -66,6 +67,13 @@ public class ItemController {
 		@RequestPart(value = "images", required = false) List<MultipartFile> itemImages,
 		@RequestPart(value = "thumbnailImage", required = false) MultipartFile thumbnail) {
 		itemService.modifyItem(itemId, principal, modifyRequest, itemImages, thumbnail);
+		return ResponseEntity.ok().build();
+	}
+
+	@DeleteMapping("/{itemId}")
+	public ResponseEntity<Void> deleteItem(@PathVariable Long itemId,
+		@AuthPrincipal Principal principal) {
+		itemService.deleteItem(itemId, principal);
 		return ResponseEntity.ok().build();
 	}
 }

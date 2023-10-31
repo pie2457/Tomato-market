@@ -20,7 +20,9 @@ import pie.tomato.tomatomarket.exception.ErrorCode;
 import pie.tomato.tomatomarket.exception.ForbiddenException;
 import pie.tomato.tomatomarket.exception.NotFoundException;
 import pie.tomato.tomatomarket.infrastructure.persistence.CategoryRepository;
+import pie.tomato.tomatomarket.infrastructure.persistence.ChatroomRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.MemberRepository;
+import pie.tomato.tomatomarket.infrastructure.persistence.WishRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.image.ImageRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.item.ItemPaginationRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.item.ItemRepository;
@@ -42,6 +44,8 @@ public class ItemService {
 	private final MemberRepository memberRepository;
 	private final ItemPaginationRepository itemPaginationRepository;
 	private final CategoryRepository categoryRepository;
+	private final WishRepository wishRepository;
+	private final ChatroomRepository chatroomRepository;
 
 	@Transactional
 	public void register(ItemRegisterRequest itemRegisterRequest, MultipartFile thumbnail,
@@ -137,6 +141,26 @@ public class ItemService {
 	private Category findCategory(ItemModifyRequest modifyRequest) {
 		return categoryRepository.findById(modifyRequest.getCategoryId())
 			.orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_CATEGORY));
+	}
+
+	@Transactional
+	public void deleteItem(Long itemId, Principal principal) {
+		verifyExistsMember(principal.getMemberId());
+		verifyExistsItem(itemId);
+
+		Item findItem = itemRepository.findItemByIdAndMemberId(itemId, principal.getMemberId())
+			.orElseThrow(() -> new ForbiddenException(ErrorCode.ITEM_FORBIDDEN));
+
+		imageService.deleteImageFromS3(findItem.getThumbnail());
+		deleteAllRelatedItem(itemId, principal.getMemberId());
+
+	}
+
+	private void deleteAllRelatedItem(Long itemId, Long memberId) {
+		imageRepository.deleteByItemId(itemId);
+		wishRepository.deleteByItemIdAndMemberId(itemId, memberId);
+		chatroomRepository.deleteByItemId(itemId);
+		itemRepository.deleteItemByIdAndMemberId(itemId, memberId);
 	}
 
 	private void verifyExistsMember(Long memberId) {

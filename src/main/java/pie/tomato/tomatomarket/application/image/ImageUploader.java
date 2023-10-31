@@ -43,6 +43,7 @@ public class ImageUploader {
 	private String putImage(ImageFile imageFile) {
 		ObjectMetadata metadata = new ObjectMetadata();
 		metadata.setContentType(imageFile.getContentType());
+		metadata.setContentLength(imageFile.getFileSize());
 
 		final String fileName = UPLOADED_IMAGES_DIR + imageFile.getFileName();
 		amazonS3Client.putObject(bucket, fileName, imageFile.getImageInputStream(), metadata);

@@ -153,14 +153,13 @@ public class ItemService {
 
 		imageService.deleteImageFromS3(findItem.getThumbnail());
 		deleteAllRelatedItem(itemId, principal.getMemberId());
-
 	}
 
 	private void deleteAllRelatedItem(Long itemId, Long memberId) {
 		imageRepository.deleteByItemId(itemId);
 		wishRepository.deleteByItemIdAndMemberId(itemId, memberId);
-		chatroomRepository.deleteByItemId(itemId);
-		itemRepository.deleteItemByIdAndMemberId(itemId, memberId);
+		chatroomRepository.deleteAllByItemId(itemId);
+		itemRepository.deleteById(itemId);
 	}
 
 	private void verifyExistsMember(Long memberId) {

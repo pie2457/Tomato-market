@@ -41,7 +41,6 @@ class ItemServiceTest {
 	private ItemService itemService;
 	@Autowired
 	private ImageRepository imageRepository;
-
 	@Autowired
 	private FakeImageUploader imageUploader;
 	@Autowired
@@ -270,7 +269,6 @@ class ItemServiceTest {
 			() -> assertThat(supportRepository.findById(item.getId(), Item.class)).isNull(),
 			() -> assertThat(imageRepository.findById(item.getId())).isEmpty()
 		);
-
 	}
 
 	private ItemRegisterRequest createItemRegisterRequest(Category category) {

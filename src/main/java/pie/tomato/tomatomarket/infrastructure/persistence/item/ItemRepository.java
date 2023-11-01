@@ -16,8 +16,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
 	boolean existsItemById(Long itemId);
 
-	void deleteItemByIdAndMemberId(Long itemId, Long memberId);
-
 	default BooleanExpression lessThanItemId(Long itemId) {
 		if (itemId == null) {
 			return null;

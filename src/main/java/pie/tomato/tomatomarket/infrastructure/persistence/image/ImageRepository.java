@@ -11,13 +11,15 @@ import pie.tomato.tomatomarket.domain.Image;
 
 public interface ImageRepository extends JpaRepository<Image, Long>, ImageRepositoryCustom {
 
-	@Modifying
+	@Modifying(clearAutomatically = true, flushAutomatically = true)
 	@Query("delete from Image image where image.item.id = :itemId and image.imageUrl in :imageUrls")
 	void deleteImageByItemIdAndImageUrls(@Param("itemId") Long itemId,
 		@Param("imageUrls") List<String> imageUrls);
 
-	@Modifying
+	@Modifying(clearAutomatically = true, flushAutomatically = true)
 	@Query("delete from Image image where image.item.id = :itemId and image.imageUrl = :imageUrl")
 	void deleteImageByItemIdAndImageUrl(@Param("itemId") Long itemId,
 		@Param("imageUrl") String imageUrl);
+
+	void deleteByItemId(Long itemId);
 }

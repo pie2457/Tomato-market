@@ -41,7 +41,6 @@ class ItemServiceTest {
 	private ItemService itemService;
 	@Autowired
 	private ImageRepository imageRepository;
-
 	@Autowired
 	private FakeImageUploader imageUploader;
 	@Autowired
@@ -244,6 +243,31 @@ class ItemServiceTest {
 		assertAll(
 			() -> assertThat(images.size()).isEqualTo(1),
 			() -> assertThat(updateImages.size()).isEqualTo(2)
+		);
+	}
+
+	@DisplayName("상품 삭제에 성공한다.")
+	@Test
+	void deleteItem() {
+		// given
+		Member member = setupMember();
+		Category category = setupCategory();
+		Principal principal = Principal.builder()
+			.nickname(member.getNickname())
+			.email(member.getEmail())
+			.memberId(member.getId())
+			.build();
+
+		Item item = supportRepository.save(new Item("머리끈", "머리끈 100개 팝니다.", 3000L, "thumbnail", ItemStatus.ON_SALE,
+			"역삼1동", 0L, 0L, 0L, LocalDateTime.now(), member, category));
+
+		// when
+		itemService.deleteItem(item.getId(), principal);
+
+		// then
+		assertAll(
+			() -> assertThat(supportRepository.findById(item.getId(), Item.class)).isNull(),
+			() -> assertThat(imageRepository.findById(item.getId())).isEmpty()
 		);
 	}
 

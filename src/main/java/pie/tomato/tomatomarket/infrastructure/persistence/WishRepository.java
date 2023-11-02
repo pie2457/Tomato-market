@@ -7,4 +7,6 @@ import pie.tomato.tomatomarket.domain.Wish;
 public interface WishRepository extends JpaRepository<Wish, Long> {
 
 	void deleteByItemIdAndMemberId(Long itemId, Long memberId);
+
+	boolean existsByItemIdAndMemberId(Long itemId, Long memberId);
 }

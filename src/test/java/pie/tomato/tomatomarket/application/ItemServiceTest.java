@@ -28,8 +28,9 @@ import pie.tomato.tomatomarket.infrastructure.persistence.image.ImageRepository;
 import pie.tomato.tomatomarket.presentation.dto.CustomSlice;
 import pie.tomato.tomatomarket.presentation.request.item.ItemModifyRequest;
 import pie.tomato.tomatomarket.presentation.request.item.ItemRegisterRequest;
-import pie.tomato.tomatomarket.presentation.request.item.ItemResponse;
 import pie.tomato.tomatomarket.presentation.request.item.ItemStatusModifyRequest;
+import pie.tomato.tomatomarket.presentation.response.item.ItemDetailResponse;
+import pie.tomato.tomatomarket.presentation.response.item.ItemResponse;
 import pie.tomato.tomatomarket.presentation.support.Principal;
 import pie.tomato.tomatomarket.support.SupportRepository;
 
@@ -268,6 +269,36 @@ class ItemServiceTest {
 		assertAll(
 			() -> assertThat(supportRepository.findById(item.getId(), Item.class)).isNull(),
 			() -> assertThat(imageRepository.findById(item.getId())).isEmpty()
+		);
+	}
+
+	@DisplayName("상품 상세 조회에 성공한다.")
+	@Test
+	void itemDetails() {
+		// given
+		Member member = setupMember();
+		Category category = setupCategory();
+
+		Item item = supportRepository.save(new Item("머리끈", "머리끈 100개 팝니다.", 3000L, "thumbnail", ItemStatus.ON_SALE,
+			"역삼1동", 0L, 0L, 0L, LocalDateTime.now(), member, category));
+
+		// when
+		ItemDetailResponse itemDetailResponse = itemService.itemDetails(item.getId());
+
+		// then
+		assertAll(
+			() -> assertThat(itemDetailResponse).hasFieldOrProperty("title"),
+			() -> assertThat(itemDetailResponse).hasFieldOrProperty("nickname"),
+			() -> assertThat(itemDetailResponse).hasFieldOrProperty("status"),
+			() -> assertThat(itemDetailResponse).hasFieldOrProperty("createdAt"),
+			() -> assertThat(itemDetailResponse).hasFieldOrProperty("content"),
+			() -> assertThat(itemDetailResponse).hasFieldOrProperty("chatCount"),
+			() -> assertThat(itemDetailResponse).hasFieldOrProperty("wishCount"),
+			() -> assertThat(itemDetailResponse).hasFieldOrProperty("viewCount"),
+			() -> assertThat(itemDetailResponse).hasFieldOrProperty("price"),
+			() -> assertThat(itemDetailResponse).hasFieldOrProperty("thumbnail"),
+			() -> assertThat(itemDetailResponse).hasFieldOrProperty("images"),
+			() -> assertThat(itemDetailResponse.isInWishList()).isFalse()
 		);
 	}
 

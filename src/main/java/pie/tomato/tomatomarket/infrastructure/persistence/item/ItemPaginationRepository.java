@@ -12,7 +12,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
 import pie.tomato.tomatomarket.infrastructure.persistence.util.PaginationUtil;
-import pie.tomato.tomatomarket.presentation.request.item.ItemResponse;
+import pie.tomato.tomatomarket.presentation.response.item.ItemResponse;
 
 @RequiredArgsConstructor
 @Repository

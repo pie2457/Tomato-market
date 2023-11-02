@@ -12,7 +12,7 @@ import pie.tomato.tomatomarket.domain.Item;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
-	Optional<Item> findItemByIdAndMemberId(Long itemId, Long memberId);
+	Optional<Item> findByIdAndMemberId(Long itemId, Long memberId);
 
 	boolean existsItemById(Long itemId);
 

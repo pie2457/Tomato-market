@@ -27,4 +27,9 @@ public class Wish {
 	@ManyToOne(fetch = LAZY)
 	@JoinColumn(name = "item_id")
 	private Item item;
+
+	public Wish(Member member, Item item) {
+		this.member = member;
+		this.item = item;
+	}
 }

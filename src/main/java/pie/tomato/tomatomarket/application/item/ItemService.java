@@ -29,8 +29,8 @@ import pie.tomato.tomatomarket.infrastructure.persistence.item.ItemRepository;
 import pie.tomato.tomatomarket.presentation.dto.CustomSlice;
 import pie.tomato.tomatomarket.presentation.request.item.ItemModifyRequest;
 import pie.tomato.tomatomarket.presentation.request.item.ItemRegisterRequest;
-import pie.tomato.tomatomarket.presentation.request.item.ItemResponse;
 import pie.tomato.tomatomarket.presentation.request.item.ItemStatusModifyRequest;
+import pie.tomato.tomatomarket.presentation.response.item.ItemResponse;
 import pie.tomato.tomatomarket.presentation.support.Principal;
 
 @Service
@@ -97,7 +97,7 @@ public class ItemService {
 		verifyExistsMember(principal.getMemberId());
 		verifyExistsItem(itemId);
 
-		Item findItem = itemRepository.findItemByIdAndMemberId(itemId, principal.getMemberId())
+		Item findItem = itemRepository.findByIdAndMemberId(itemId, principal.getMemberId())
 			.orElseThrow(() -> new ForbiddenException(ErrorCode.ITEM_FORBIDDEN));
 
 		deleteImages(modifyRequest, findItem);
@@ -120,7 +120,7 @@ public class ItemService {
 	}
 
 	private String updateThumbnail(Item item, String thumbnailUrl, MultipartFile thumbnail) {
-		if (thumbnailUrl == null || thumbnailUrl.isEmpty()) {
+		if (thumbnailUrl == null || !thumbnailUrl.equals(item.getThumbnail())) {
 			return item.getThumbnail();
 		}
 		imageService.deleteImageFromS3(thumbnailUrl);
@@ -148,7 +148,7 @@ public class ItemService {
 		verifyExistsMember(principal.getMemberId());
 		verifyExistsItem(itemId);
 
-		Item findItem = itemRepository.findItemByIdAndMemberId(itemId, principal.getMemberId())
+		Item findItem = itemRepository.findByIdAndMemberId(itemId, principal.getMemberId())
 			.orElseThrow(() -> new ForbiddenException(ErrorCode.ITEM_FORBIDDEN));
 
 		imageService.deleteImageFromS3(findItem.getThumbnail());

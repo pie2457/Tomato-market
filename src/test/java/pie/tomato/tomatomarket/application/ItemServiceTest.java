@@ -296,9 +296,9 @@ class ItemServiceTest {
 			() -> assertThat(itemDetailResponse).hasFieldOrProperty("wishCount"),
 			() -> assertThat(itemDetailResponse).hasFieldOrProperty("viewCount"),
 			() -> assertThat(itemDetailResponse).hasFieldOrProperty("price"),
-			() -> assertThat(itemDetailResponse).hasFieldOrProperty("isInWishList"),
 			() -> assertThat(itemDetailResponse).hasFieldOrProperty("thumbnail"),
-			() -> assertThat(itemDetailResponse).hasFieldOrProperty("images")
+			() -> assertThat(itemDetailResponse).hasFieldOrProperty("images"),
+			() -> assertThat(itemDetailResponse.isInWishList()).isFalse()
 		);
 	}
 

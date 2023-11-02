@@ -23,8 +23,9 @@ import pie.tomato.tomatomarket.application.item.ItemService;
 import pie.tomato.tomatomarket.presentation.dto.CustomSlice;
 import pie.tomato.tomatomarket.presentation.request.item.ItemModifyRequest;
 import pie.tomato.tomatomarket.presentation.request.item.ItemRegisterRequest;
-import pie.tomato.tomatomarket.presentation.request.item.ItemResponse;
 import pie.tomato.tomatomarket.presentation.request.item.ItemStatusModifyRequest;
+import pie.tomato.tomatomarket.presentation.response.item.ItemDetailResponse;
+import pie.tomato.tomatomarket.presentation.response.item.ItemResponse;
 import pie.tomato.tomatomarket.presentation.support.AuthPrincipal;
 import pie.tomato.tomatomarket.presentation.support.Principal;
 
@@ -71,9 +72,13 @@ public class ItemController {
 	}
 
 	@DeleteMapping("/{itemId}")
-	public ResponseEntity<Void> deleteItem(@PathVariable Long itemId,
-		@AuthPrincipal Principal principal) {
+	public ResponseEntity<Void> deleteItem(@PathVariable Long itemId, @AuthPrincipal Principal principal) {
 		itemService.deleteItem(itemId, principal);
 		return ResponseEntity.ok().build();
+	}
+
+	@GetMapping("/{itemId}")
+	public ResponseEntity<ItemDetailResponse> itemDetails(@PathVariable Long itemId) {
+		return ResponseEntity.ok().body(itemService.itemDetails(itemId));
 	}
 }

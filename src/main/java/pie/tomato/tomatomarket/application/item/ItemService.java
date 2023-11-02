@@ -30,6 +30,7 @@ import pie.tomato.tomatomarket.presentation.dto.CustomSlice;
 import pie.tomato.tomatomarket.presentation.request.item.ItemModifyRequest;
 import pie.tomato.tomatomarket.presentation.request.item.ItemRegisterRequest;
 import pie.tomato.tomatomarket.presentation.request.item.ItemStatusModifyRequest;
+import pie.tomato.tomatomarket.presentation.response.item.ItemDetailResponse;
 import pie.tomato.tomatomarket.presentation.response.item.ItemResponse;
 import pie.tomato.tomatomarket.presentation.support.Principal;
 
@@ -153,6 +154,17 @@ public class ItemService {
 
 		imageService.deleteImageFromS3(findItem.getThumbnail());
 		deleteAllRelatedItem(itemId, principal.getMemberId());
+	}
+
+	public ItemDetailResponse itemDetails(Long itemId) {
+		Item findItem = itemRepository.findById(itemId)
+			.orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_ITEM));
+		boolean isInWishList = wishRepository.existsByItemIdAndMemberId(itemId, findItem.getMember().getId());
+		List<Image> images = imageRepository.findByItemId(itemId);
+		List<String> imageUrls = images.stream()
+			.map(Image::getImageUrl)
+			.collect(Collectors.toList());
+		return ItemDetailResponse.toEntity(findItem, isInWishList, imageUrls);
 	}
 
 	private void deleteAllRelatedItem(Long itemId, Long memberId) {

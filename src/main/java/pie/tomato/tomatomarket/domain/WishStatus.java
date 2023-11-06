@@ -14,7 +14,7 @@ public enum WishStatus {
 
 	public static WishStatus of(String status) {
 		return Arrays.stream(WishStatus.values())
-			.filter(wishStatus -> wishStatus.name().equals(status.toUpperCase()))
+			.filter(wishStatus -> wishStatus.name().equalsIgnoreCase(status))
 			.findFirst()
 			.orElseThrow(() -> new BadRequestException(ErrorCode.INVALID_PARAMETER));
 	}

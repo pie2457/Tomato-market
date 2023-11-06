@@ -28,24 +28,22 @@ public class WishItemService {
 	public void changeWishStatus(Long itemId, String wish, Principal principal) {
 		Item item = itemRepository.findById(itemId)
 			.orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_ITEM));
-
+		Member member = memberRepository.findById(principal.getMemberId())
+			.orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_MEMBER));
 		if (WishStatus.of(wish) == WishStatus.YES) {
-			register(item, principal);
+			register(item, member);
 		} else {
-			cancel(item);
+			cancel(item, member);
 		}
 	}
 
-	private void register(Item item, Principal principal) {
-		Member member = memberRepository.findById(principal.getMemberId())
-			.orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_MEMBER));
-
+	private void register(Item item, Member member) {
 		item.wishRegister();
 		wishRepository.save(new Wish(member, item));
 	}
 
-	private void cancel(Item item) {
+	private void cancel(Item item, Member member) {
 		item.wishCancel();
-		wishRepository.deleteByItemId(item.getId());
+		wishRepository.deleteByItemId(item.getId(), member.getId());
 	}
 }

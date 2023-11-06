@@ -1,6 +1,7 @@
 package pie.tomato.tomatomarket.infrastructure.persistence.item;
 
 import static pie.tomato.tomatomarket.domain.QItem.*;
+import static pie.tomato.tomatomarket.domain.QWish.*;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import pie.tomato.tomatomarket.infrastructure.persistence.util.PaginationUtil;
 import pie.tomato.tomatomarket.presentation.response.item.ItemResponse;
+import pie.tomato.tomatomarket.presentation.response.wish.WishListResponse;
 
 @RequiredArgsConstructor
 @Repository
@@ -42,5 +44,31 @@ public class ItemPaginationRepository {
 			.limit(size + 1)
 			.fetch();
 		return PaginationUtil.checkLastPage(size, itemResponses);
+	}
+
+	public Slice<WishListResponse> findByMemberIdAndCategoryId(Long memberId, Long categoryId,
+		int size, Long cursor) {
+		List<WishListResponse> wishListResponse = queryFactory.select(Projections.fields(WishListResponse.class,
+				item.id.as("cursor"),
+				item.thumbnail.as("thumbnailUrl"),
+				item.title,
+				item.region.as("tradingRegion"),
+				item.createdAt,
+				item.price,
+				item.status,
+				item.wishCount,
+				item.chatCount,
+				item.member.nickname.as("sellerId")))
+			.from(wish)
+			.innerJoin(wish.item, item)
+			.on(item.id.eq(wish.item.id))
+			.where(
+				itemRepository.lessThanItemId(cursor),
+				itemRepository.equalMemberId(memberId),
+				itemRepository.equalCategoryId(categoryId))
+			.orderBy(item.createdAt.desc())
+			.limit(size + 1)
+			.fetch();
+		return PaginationUtil.checkLastPage(size, wishListResponse);
 	}
 }

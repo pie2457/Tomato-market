@@ -1,5 +1,8 @@
 package pie.tomato.tomatomarket.application.wish;
 
+import java.util.List;
+
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,8 +14,11 @@ import pie.tomato.tomatomarket.domain.WishStatus;
 import pie.tomato.tomatomarket.exception.ErrorCode;
 import pie.tomato.tomatomarket.exception.NotFoundException;
 import pie.tomato.tomatomarket.infrastructure.persistence.MemberRepository;
-import pie.tomato.tomatomarket.infrastructure.persistence.WishRepository;
+import pie.tomato.tomatomarket.infrastructure.persistence.item.ItemPaginationRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.item.ItemRepository;
+import pie.tomato.tomatomarket.infrastructure.persistence.wish.WishRepository;
+import pie.tomato.tomatomarket.presentation.dto.CustomSlice;
+import pie.tomato.tomatomarket.presentation.response.wish.WishListResponse;
 import pie.tomato.tomatomarket.presentation.support.Principal;
 
 @Service
@@ -23,6 +29,7 @@ public class WishItemService {
 	private final ItemRepository itemRepository;
 	private final WishRepository wishRepository;
 	private final MemberRepository memberRepository;
+	private final ItemPaginationRepository itemPaginationRepository;
 
 	@Transactional
 	public void changeWishStatus(Long itemId, String wish, Principal principal) {
@@ -44,6 +51,23 @@ public class WishItemService {
 
 	private void cancel(Item item, Member member) {
 		item.wishCancel();
-		wishRepository.deleteByItemId(item.getId(), member.getId());
+		wishRepository.deleteByItemIdAndMemberId(item.getId(), member.getId());
+	}
+
+	public CustomSlice<WishListResponse> findWishList(Principal principal, Long categoryId,
+		int size, Long cursor) {
+		Slice<WishListResponse> wishListResponses = itemPaginationRepository.findByMemberIdAndCategoryId(
+			principal.getMemberId(), categoryId, size, cursor);
+		List<WishListResponse> content = wishListResponses.getContent();
+		Long nextCursor = setNextCursor(content);
+		return new CustomSlice<>(content, nextCursor, wishListResponses.hasNext());
+	}
+
+	private Long setNextCursor(List<WishListResponse> content) {
+		Long nextCursor = null;
+		if (!content.isEmpty()) {
+			nextCursor = content.get(content.size() - 1).getItemId();
+		}
+		return nextCursor;
 	}
 }

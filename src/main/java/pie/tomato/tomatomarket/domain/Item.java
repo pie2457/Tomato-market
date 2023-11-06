@@ -91,4 +91,12 @@ public class Item {
 		this.category = category;
 		this.thumbnail = thumbnail;
 	}
+
+	public void wishRegister() {
+		this.wishCount++;
+	}
+
+	public void wishCancel() {
+		this.wishCount--;
+	}
 }

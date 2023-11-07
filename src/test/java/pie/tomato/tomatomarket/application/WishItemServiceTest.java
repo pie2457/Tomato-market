@@ -102,11 +102,10 @@ class WishItemServiceTest {
 	}
 
 	Principal setPrincipal(Member member) {
-		Principal principal = Principal.builder()
+		return Principal.builder()
 			.nickname(member.getNickname())
 			.email(member.getEmail())
 			.memberId(member.getId())
 			.build();
-		return principal;
 	}
 }

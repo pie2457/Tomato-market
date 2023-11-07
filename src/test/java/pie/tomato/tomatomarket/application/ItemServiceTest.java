@@ -61,11 +61,7 @@ class ItemServiceTest {
 		MockMultipartFile image = createMockMultipartFile("test-image");
 
 		Member member = supportRepository.save(new Member("파이", "123@123", "profile"));
-		Principal principal = Principal.builder()
-			.nickname(member.getNickname())
-			.email(member.getEmail())
-			.memberId(member.getId())
-			.build();
+		Principal principal = setPrincipal(member);
 
 		// when
 		itemService.register(request, thumbnail, List.of(image), principal);
@@ -93,11 +89,7 @@ class ItemServiceTest {
 		Item item = supportRepository.save(new Item("머리끈", "머리끈 100개 팝니다.", 3000L, "thumbnail", ItemStatus.ON_SALE,
 			"역삼1동", 0L, 0L, 0L, LocalDateTime.now(), member, setupCategory()));
 
-		Principal principal = Principal.builder()
-			.nickname(member.getNickname())
-			.email(member.getEmail())
-			.memberId(member.getId())
-			.build();
+		Principal principal = setPrincipal(member);
 		ItemStatusModifyRequest request = new ItemStatusModifyRequest("예약중");
 
 		// when
@@ -171,11 +163,7 @@ class ItemServiceTest {
 		// given
 		Member member = setupMember();
 		Category category = setupCategory();
-		Principal principal = Principal.builder()
-			.nickname(member.getNickname())
-			.email(member.getEmail())
-			.memberId(member.getId())
-			.build();
+		Principal principal = setPrincipal(member);
 
 		ItemRegisterRequest request = createItemRegisterRequest(category);
 		MockMultipartFile thumbnail = createMockMultipartFile("test-image");
@@ -216,11 +204,7 @@ class ItemServiceTest {
 		// given
 		Member member = setupMember();
 		Category category = setupCategory();
-		Principal principal = Principal.builder()
-			.nickname(member.getNickname())
-			.email(member.getEmail())
-			.memberId(member.getId())
-			.build();
+		Principal principal = setPrincipal(member);
 
 		ItemRegisterRequest request = createItemRegisterRequest(category);
 		MockMultipartFile thumbnail = createMockMultipartFile("test-image");
@@ -253,11 +237,7 @@ class ItemServiceTest {
 		// given
 		Member member = setupMember();
 		Category category = setupCategory();
-		Principal principal = Principal.builder()
-			.nickname(member.getNickname())
-			.email(member.getEmail())
-			.memberId(member.getId())
-			.build();
+		Principal principal = setPrincipal(member);
 
 		Item item = supportRepository.save(new Item("머리끈", "머리끈 100개 팝니다.", 3000L, "thumbnail", ItemStatus.ON_SALE,
 			"역삼1동", 0L, 0L, 0L, LocalDateTime.now(), member, category));
@@ -322,6 +302,15 @@ class ItemServiceTest {
 		return new MockMultipartFile(
 			filename, "test.png",
 			MediaType.IMAGE_PNG_VALUE, "imageBytes".getBytes(StandardCharsets.UTF_8));
+	}
+
+	Principal setPrincipal(Member member) {
+		Principal principal = Principal.builder()
+			.nickname(member.getNickname())
+			.email(member.getEmail())
+			.memberId(member.getId())
+			.build();
+		return principal;
 	}
 
 	Member setupMember() {

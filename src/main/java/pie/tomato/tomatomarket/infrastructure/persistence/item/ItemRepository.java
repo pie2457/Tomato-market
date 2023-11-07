@@ -38,4 +38,11 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
 		return item.region.like(region + "%");
 	}
+
+	default BooleanExpression equalMemberId(Long memberId) {
+		if (memberId == null) {
+			return null;
+		}
+		return item.member.id.eq(memberId);
+	}
 }

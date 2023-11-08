@@ -1,5 +1,7 @@
 package pie.tomato.tomatomarket.presentation;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import pie.tomato.tomatomarket.application.wish.WishItemService;
 import pie.tomato.tomatomarket.presentation.dto.CustomSlice;
+import pie.tomato.tomatomarket.presentation.response.wish.CategoryWishListResponse;
 import pie.tomato.tomatomarket.presentation.response.wish.WishListResponse;
 import pie.tomato.tomatomarket.presentation.support.AuthPrincipal;
 import pie.tomato.tomatomarket.presentation.support.Principal;
@@ -35,5 +38,10 @@ public class WishItemController {
 		@RequestParam(required = false, defaultValue = "10") int size,
 		@RequestParam(required = false) Long cursor) {
 		return ResponseEntity.ok().body(wishItemService.findWishList(principal, categoryId, size, cursor));
+	}
+
+	@GetMapping("/categories")
+	public ResponseEntity<List<CategoryWishListResponse>> findCategoryWishList(@AuthPrincipal Principal principal) {
+		return ResponseEntity.ok().body(wishItemService.findCategoryWishList(principal));
 	}
 }

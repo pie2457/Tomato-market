@@ -1,8 +1,10 @@
 package pie.tomato.tomatomarket.application;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +18,7 @@ import pie.tomato.tomatomarket.domain.Item;
 import pie.tomato.tomatomarket.domain.ItemStatus;
 import pie.tomato.tomatomarket.domain.Member;
 import pie.tomato.tomatomarket.presentation.dto.CustomSlice;
+import pie.tomato.tomatomarket.presentation.response.wish.CategoryWishListResponse;
 import pie.tomato.tomatomarket.presentation.response.wish.WishListResponse;
 import pie.tomato.tomatomarket.presentation.support.Principal;
 import pie.tomato.tomatomarket.support.SupportRepository;
@@ -91,6 +94,37 @@ class WishItemServiceTest {
 
 		// then
 		assertThat(wishList.getContents().size()).isEqualTo(3);
+	}
+
+	@DisplayName("관심상품으로 등록된 상품의 카테고리들을 조회한다.")
+	@Test
+	void categoryOfWishList() {
+		// given
+		Category category = setupCategory();
+		Category category1 = supportRepository.save(new Category("가구", "categoryImage"));
+		Category category2 = supportRepository.save(new Category("스포츠", "categoryImage"));
+		Category category3 = supportRepository.save(new Category("전자", "categoryImage"));
+
+		Member member = setupMember();
+		Principal principal = setPrincipal(member);
+		Item item = supportRepository.save(new Item("머리끈", "머리끈 100개 팝니다.", 3000L, "thumbnail", ItemStatus.ON_SALE,
+			"역삼1동", 0L, 0L, 0L, LocalDateTime.now(), member, category));
+		Item item1 = supportRepository.save(new Item("머리끈", "머리끈 100개 팝니다.", 3000L, "thumbnail", ItemStatus.ON_SALE,
+			"역삼1동", 0L, 0L, 0L, LocalDateTime.now(), member, category1));
+		wishItemService.changeWishStatus(item.getId(), "yes", principal);
+		wishItemService.changeWishStatus(item1.getId(), "yes", principal);
+
+		// when
+		List<CategoryWishListResponse> categoryWishList = wishItemService.findCategoryWishList(principal);
+
+		// then
+		assertAll(
+			() -> assertThat(categoryWishList.size()).isEqualTo(2),
+			() -> assertThat(categoryWishList).anyMatch(
+				categoryWish -> !categoryWish.getCategoryId().equals(category2.getId())),
+			() -> assertThat(categoryWishList).anyMatch(
+				categoryWish -> !categoryWish.getCategoryId().equals(category3.getId()))
+		);
 	}
 
 	Member setupMember() {

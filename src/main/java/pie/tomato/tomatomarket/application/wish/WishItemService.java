@@ -16,8 +16,10 @@ import pie.tomato.tomatomarket.exception.NotFoundException;
 import pie.tomato.tomatomarket.infrastructure.persistence.MemberRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.item.ItemPaginationRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.item.ItemRepository;
+import pie.tomato.tomatomarket.infrastructure.persistence.wish.WishCategoryRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.wish.WishRepository;
 import pie.tomato.tomatomarket.presentation.dto.CustomSlice;
+import pie.tomato.tomatomarket.presentation.response.wish.CategoryWishListResponse;
 import pie.tomato.tomatomarket.presentation.response.wish.WishListResponse;
 import pie.tomato.tomatomarket.presentation.support.Principal;
 
@@ -30,6 +32,7 @@ public class WishItemService {
 	private final WishRepository wishRepository;
 	private final MemberRepository memberRepository;
 	private final ItemPaginationRepository itemPaginationRepository;
+	private final WishCategoryRepository wishCategoryRepository;
 
 	@Transactional
 	public void changeWishStatus(Long itemId, String wish, Principal principal) {
@@ -69,5 +72,9 @@ public class WishItemService {
 			nextCursor = content.get(content.size() - 1).getItemId();
 		}
 		return nextCursor;
+	}
+
+	public List<CategoryWishListResponse> findCategoryWishList(Principal principal) {
+		return wishCategoryRepository.findCategoryWishList(principal);
 	}
 }

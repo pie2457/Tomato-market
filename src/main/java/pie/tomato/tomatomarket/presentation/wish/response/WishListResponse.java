@@ -1,4 +1,4 @@
-package pie.tomato.tomatomarket.presentation.response.item;
+package pie.tomato.tomatomarket.presentation.wish.response;
 
 import java.time.LocalDateTime;
 
@@ -6,7 +6,7 @@ import lombok.Getter;
 import pie.tomato.tomatomarket.domain.ItemStatus;
 
 @Getter
-public class ItemResponse {
+public class WishListResponse {
 
 	private Long itemId;
 	private String thumbnailUrl;
@@ -15,7 +15,7 @@ public class ItemResponse {
 	private LocalDateTime createdAt;
 	private Long price;
 	private ItemStatus status;
-	private Long chatCount;
 	private Long wishCount;
-	private String isSeller;
+	private Long chatCount;
+	private String sellerId;
 }

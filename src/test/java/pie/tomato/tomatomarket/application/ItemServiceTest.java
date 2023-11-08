@@ -26,11 +26,11 @@ import pie.tomato.tomatomarket.domain.ItemStatus;
 import pie.tomato.tomatomarket.domain.Member;
 import pie.tomato.tomatomarket.infrastructure.persistence.image.ImageRepository;
 import pie.tomato.tomatomarket.presentation.dto.CustomSlice;
-import pie.tomato.tomatomarket.presentation.request.item.ItemModifyRequest;
-import pie.tomato.tomatomarket.presentation.request.item.ItemRegisterRequest;
-import pie.tomato.tomatomarket.presentation.request.item.ItemStatusModifyRequest;
-import pie.tomato.tomatomarket.presentation.response.item.ItemDetailResponse;
-import pie.tomato.tomatomarket.presentation.response.item.ItemResponse;
+import pie.tomato.tomatomarket.presentation.item.request.ItemModifyRequest;
+import pie.tomato.tomatomarket.presentation.item.request.ItemRegisterRequest;
+import pie.tomato.tomatomarket.presentation.item.request.ItemStatusModifyRequest;
+import pie.tomato.tomatomarket.presentation.item.response.ItemDetailResponse;
+import pie.tomato.tomatomarket.presentation.item.response.ItemResponse;
 import pie.tomato.tomatomarket.presentation.support.Principal;
 import pie.tomato.tomatomarket.support.SupportRepository;
 

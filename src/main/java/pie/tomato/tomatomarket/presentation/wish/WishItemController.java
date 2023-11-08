@@ -1,4 +1,4 @@
-package pie.tomato.tomatomarket.presentation;
+package pie.tomato.tomatomarket.presentation.wish;
 
 import java.util.List;
 
@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import pie.tomato.tomatomarket.application.wish.WishItemService;
 import pie.tomato.tomatomarket.presentation.dto.CustomSlice;
-import pie.tomato.tomatomarket.presentation.response.wish.CategoryWishListResponse;
-import pie.tomato.tomatomarket.presentation.response.wish.WishListResponse;
 import pie.tomato.tomatomarket.presentation.support.AuthPrincipal;
 import pie.tomato.tomatomarket.presentation.support.Principal;
+import pie.tomato.tomatomarket.presentation.wish.response.CategoryWishListResponse;
+import pie.tomato.tomatomarket.presentation.wish.response.WishListResponse;
 
 @RestController
 @RequestMapping("/api/wishes")

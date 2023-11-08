@@ -1,4 +1,4 @@
-package pie.tomato.tomatomarket.infrastructure.persistence;
+package pie.tomato.tomatomarket.infrastructure.persistence.category;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

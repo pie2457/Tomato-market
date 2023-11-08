@@ -17,7 +17,7 @@ import javax.persistence.ManyToOne;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import pie.tomato.tomatomarket.presentation.request.item.ItemModifyRequest;
+import pie.tomato.tomatomarket.presentation.item.request.ItemModifyRequest;
 
 @Entity
 @Getter

@@ -13,15 +13,15 @@ import pie.tomato.tomatomarket.domain.Wish;
 import pie.tomato.tomatomarket.domain.WishStatus;
 import pie.tomato.tomatomarket.exception.ErrorCode;
 import pie.tomato.tomatomarket.exception.NotFoundException;
-import pie.tomato.tomatomarket.infrastructure.persistence.MemberRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.item.ItemPaginationRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.item.ItemRepository;
+import pie.tomato.tomatomarket.infrastructure.persistence.member.MemberRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.wish.WishCategoryRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.wish.WishRepository;
 import pie.tomato.tomatomarket.presentation.dto.CustomSlice;
-import pie.tomato.tomatomarket.presentation.response.wish.CategoryWishListResponse;
-import pie.tomato.tomatomarket.presentation.response.wish.WishListResponse;
 import pie.tomato.tomatomarket.presentation.support.Principal;
+import pie.tomato.tomatomarket.presentation.wish.response.CategoryWishListResponse;
+import pie.tomato.tomatomarket.presentation.wish.response.WishListResponse;
 
 @Service
 @RequiredArgsConstructor

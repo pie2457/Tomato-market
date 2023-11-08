@@ -17,7 +17,7 @@ import pie.tomato.tomatomarket.application.oauth.KakaoClient;
 import pie.tomato.tomatomarket.domain.OAuthUser;
 import pie.tomato.tomatomarket.exception.BadRequestException;
 import pie.tomato.tomatomarket.exception.ErrorCode;
-import pie.tomato.tomatomarket.infrastructure.persistence.MemberRepository;
+import pie.tomato.tomatomarket.infrastructure.persistence.member.MemberRepository;
 
 @SpringBootTest
 @Transactional

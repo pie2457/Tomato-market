@@ -12,8 +12,8 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
-import pie.tomato.tomatomarket.presentation.response.wish.CategoryWishListResponse;
 import pie.tomato.tomatomarket.presentation.support.Principal;
+import pie.tomato.tomatomarket.presentation.wish.response.CategoryWishListResponse;
 
 @Repository
 @RequiredArgsConstructor

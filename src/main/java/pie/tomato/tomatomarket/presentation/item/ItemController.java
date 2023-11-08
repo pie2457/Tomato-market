@@ -1,4 +1,4 @@
-package pie.tomato.tomatomarket.presentation;
+package pie.tomato.tomatomarket.presentation.item;
 
 import java.util.List;
 
@@ -21,11 +21,11 @@ import org.springframework.web.multipart.MultipartFile;
 import lombok.RequiredArgsConstructor;
 import pie.tomato.tomatomarket.application.item.ItemService;
 import pie.tomato.tomatomarket.presentation.dto.CustomSlice;
-import pie.tomato.tomatomarket.presentation.request.item.ItemModifyRequest;
-import pie.tomato.tomatomarket.presentation.request.item.ItemRegisterRequest;
-import pie.tomato.tomatomarket.presentation.request.item.ItemStatusModifyRequest;
-import pie.tomato.tomatomarket.presentation.response.item.ItemDetailResponse;
-import pie.tomato.tomatomarket.presentation.response.item.ItemResponse;
+import pie.tomato.tomatomarket.presentation.item.request.ItemModifyRequest;
+import pie.tomato.tomatomarket.presentation.item.request.ItemRegisterRequest;
+import pie.tomato.tomatomarket.presentation.item.request.ItemStatusModifyRequest;
+import pie.tomato.tomatomarket.presentation.item.response.ItemDetailResponse;
+import pie.tomato.tomatomarket.presentation.item.response.ItemResponse;
 import pie.tomato.tomatomarket.presentation.support.AuthPrincipal;
 import pie.tomato.tomatomarket.presentation.support.Principal;
 
@@ -81,4 +81,5 @@ public class ItemController {
 	public ResponseEntity<ItemDetailResponse> itemDetails(@PathVariable Long itemId) {
 		return ResponseEntity.ok().body(itemService.itemDetails(itemId));
 	}
+
 }

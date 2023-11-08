@@ -19,19 +19,19 @@ import pie.tomato.tomatomarket.exception.BadRequestException;
 import pie.tomato.tomatomarket.exception.ErrorCode;
 import pie.tomato.tomatomarket.exception.ForbiddenException;
 import pie.tomato.tomatomarket.exception.NotFoundException;
-import pie.tomato.tomatomarket.infrastructure.persistence.CategoryRepository;
-import pie.tomato.tomatomarket.infrastructure.persistence.ChatroomRepository;
-import pie.tomato.tomatomarket.infrastructure.persistence.MemberRepository;
+import pie.tomato.tomatomarket.infrastructure.persistence.category.CategoryRepository;
+import pie.tomato.tomatomarket.infrastructure.persistence.chatroom.ChatroomRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.image.ImageRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.item.ItemPaginationRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.item.ItemRepository;
+import pie.tomato.tomatomarket.infrastructure.persistence.member.MemberRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.wish.WishRepository;
 import pie.tomato.tomatomarket.presentation.dto.CustomSlice;
-import pie.tomato.tomatomarket.presentation.request.item.ItemModifyRequest;
-import pie.tomato.tomatomarket.presentation.request.item.ItemRegisterRequest;
-import pie.tomato.tomatomarket.presentation.request.item.ItemStatusModifyRequest;
-import pie.tomato.tomatomarket.presentation.response.item.ItemDetailResponse;
-import pie.tomato.tomatomarket.presentation.response.item.ItemResponse;
+import pie.tomato.tomatomarket.presentation.item.request.ItemModifyRequest;
+import pie.tomato.tomatomarket.presentation.item.request.ItemRegisterRequest;
+import pie.tomato.tomatomarket.presentation.item.request.ItemStatusModifyRequest;
+import pie.tomato.tomatomarket.presentation.item.response.ItemDetailResponse;
+import pie.tomato.tomatomarket.presentation.item.response.ItemResponse;
 import pie.tomato.tomatomarket.presentation.support.Principal;
 
 @Service

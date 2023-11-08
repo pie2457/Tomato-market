@@ -8,7 +8,7 @@ import pie.tomato.tomatomarket.domain.Member;
 import pie.tomato.tomatomarket.exception.BadRequestException;
 import pie.tomato.tomatomarket.exception.ErrorCode;
 import pie.tomato.tomatomarket.exception.NotFoundException;
-import pie.tomato.tomatomarket.infrastructure.persistence.MemberRepository;
+import pie.tomato.tomatomarket.infrastructure.persistence.member.MemberRepository;
 
 @Service
 @Transactional(readOnly = true)

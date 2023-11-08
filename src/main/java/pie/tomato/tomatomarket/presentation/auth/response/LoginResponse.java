@@ -1,4 +1,4 @@
-package pie.tomato.tomatomarket.presentation.response.oauth;
+package pie.tomato.tomatomarket.presentation.auth.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

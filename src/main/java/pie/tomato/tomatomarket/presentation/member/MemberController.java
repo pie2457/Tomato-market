@@ -1,4 +1,4 @@
-package pie.tomato.tomatomarket.presentation;
+package pie.tomato.tomatomarket.presentation.member;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import pie.tomato.tomatomarket.application.member.MemberService;
-import pie.tomato.tomatomarket.presentation.request.member.NicknameModifyRequest;
+import pie.tomato.tomatomarket.presentation.member.request.NicknameModifyRequest;
 
 @RestController
 @RequiredArgsConstructor

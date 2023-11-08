@@ -1,6 +1,7 @@
 package pie.tomato.tomatomarket.application;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -100,7 +101,10 @@ class WishItemServiceTest {
 	void categoryOfWishList() {
 		// given
 		Category category = setupCategory();
-		Category category1 = supportRepository.save(new Category("잡화", "categoryImage"));
+		Category category1 = supportRepository.save(new Category("가구", "categoryImage"));
+		Category category2 = supportRepository.save(new Category("스포츠", "categoryImage"));
+		Category category3 = supportRepository.save(new Category("전자", "categoryImage"));
+
 		Member member = setupMember();
 		Principal principal = setPrincipal(member);
 		Item item = supportRepository.save(new Item("머리끈", "머리끈 100개 팝니다.", 3000L, "thumbnail", ItemStatus.ON_SALE,
@@ -114,7 +118,13 @@ class WishItemServiceTest {
 		List<CategoryWishListResponse> categoryWishList = wishItemService.findCategoryWishList(principal);
 
 		// then
-		assertThat(categoryWishList.size()).isEqualTo(2);
+		assertAll(
+			() -> assertThat(categoryWishList.size()).isEqualTo(2),
+			() -> assertThat(categoryWishList).anyMatch(
+				categoryWish -> !categoryWish.getCategoryId().equals(category2.getId())),
+			() -> assertThat(categoryWishList).anyMatch(
+				categoryWish -> !categoryWish.getCategoryId().equals(category3.getId()))
+		);
 	}
 
 	Member setupMember() {

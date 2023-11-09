@@ -18,9 +18,9 @@ import pie.tomato.tomatomarket.domain.Item;
 import pie.tomato.tomatomarket.domain.ItemStatus;
 import pie.tomato.tomatomarket.domain.Member;
 import pie.tomato.tomatomarket.presentation.dto.CustomSlice;
-import pie.tomato.tomatomarket.presentation.response.wish.CategoryWishListResponse;
-import pie.tomato.tomatomarket.presentation.response.wish.WishListResponse;
 import pie.tomato.tomatomarket.presentation.support.Principal;
+import pie.tomato.tomatomarket.presentation.wish.response.CategoryWishListResponse;
+import pie.tomato.tomatomarket.presentation.wish.response.WishListResponse;
 import pie.tomato.tomatomarket.support.SupportRepository;
 
 @SpringBootTest

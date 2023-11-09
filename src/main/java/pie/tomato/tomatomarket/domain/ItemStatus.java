@@ -23,4 +23,11 @@ public enum ItemStatus {
 			.findFirst()
 			.orElseThrow(() -> new BadRequestException(ErrorCode.INVALID_STATUS));
 	}
+
+	public static ItemStatus findStatus(String status) {
+		return Arrays.stream(ItemStatus.values())
+			.filter(itemStatus -> itemStatus.name().equalsIgnoreCase(status))
+			.findFirst()
+			.orElse(null);
+	}
 }

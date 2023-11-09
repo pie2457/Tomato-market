@@ -1,4 +1,4 @@
-package pie.tomato.tomatomarket.presentation;
+package pie.tomato.tomatomarket.presentation.item;
 
 import java.util.List;
 
@@ -21,11 +21,11 @@ import org.springframework.web.multipart.MultipartFile;
 import lombok.RequiredArgsConstructor;
 import pie.tomato.tomatomarket.application.item.ItemService;
 import pie.tomato.tomatomarket.presentation.dto.CustomSlice;
-import pie.tomato.tomatomarket.presentation.request.item.ItemModifyRequest;
-import pie.tomato.tomatomarket.presentation.request.item.ItemRegisterRequest;
-import pie.tomato.tomatomarket.presentation.request.item.ItemStatusModifyRequest;
-import pie.tomato.tomatomarket.presentation.response.item.ItemDetailResponse;
-import pie.tomato.tomatomarket.presentation.response.item.ItemResponse;
+import pie.tomato.tomatomarket.presentation.item.request.ItemModifyRequest;
+import pie.tomato.tomatomarket.presentation.item.request.ItemRegisterRequest;
+import pie.tomato.tomatomarket.presentation.item.request.ItemStatusModifyRequest;
+import pie.tomato.tomatomarket.presentation.item.response.ItemDetailResponse;
+import pie.tomato.tomatomarket.presentation.item.response.ItemResponse;
 import pie.tomato.tomatomarket.presentation.support.AuthPrincipal;
 import pie.tomato.tomatomarket.presentation.support.Principal;
 
@@ -53,7 +53,7 @@ public class ItemController {
 		return ResponseEntity.ok().build();
 	}
 
-	@GetMapping
+	@GetMapping()
 	public ResponseEntity<CustomSlice<ItemResponse>> findAll(@RequestParam String region,
 		@RequestParam(required = false, defaultValue = "10") int size,
 		@RequestParam(required = false) Long cursor,

@@ -26,11 +26,12 @@ import pie.tomato.tomatomarket.domain.ItemStatus;
 import pie.tomato.tomatomarket.domain.Member;
 import pie.tomato.tomatomarket.infrastructure.persistence.image.ImageRepository;
 import pie.tomato.tomatomarket.presentation.dto.CustomSlice;
-import pie.tomato.tomatomarket.presentation.request.item.ItemModifyRequest;
-import pie.tomato.tomatomarket.presentation.request.item.ItemRegisterRequest;
-import pie.tomato.tomatomarket.presentation.request.item.ItemStatusModifyRequest;
-import pie.tomato.tomatomarket.presentation.response.item.ItemDetailResponse;
-import pie.tomato.tomatomarket.presentation.response.item.ItemResponse;
+import pie.tomato.tomatomarket.presentation.item.request.ItemModifyRequest;
+import pie.tomato.tomatomarket.presentation.item.request.ItemRegisterRequest;
+import pie.tomato.tomatomarket.presentation.item.request.ItemStatusModifyRequest;
+import pie.tomato.tomatomarket.presentation.item.response.ItemDetailResponse;
+import pie.tomato.tomatomarket.presentation.item.response.ItemResponse;
+import pie.tomato.tomatomarket.presentation.item.response.SalesItemDetailResponse;
 import pie.tomato.tomatomarket.presentation.support.Principal;
 import pie.tomato.tomatomarket.support.SupportRepository;
 
@@ -279,6 +280,57 @@ class ItemServiceTest {
 			() -> assertThat(itemDetailResponse).hasFieldOrProperty("thumbnail"),
 			() -> assertThat(itemDetailResponse).hasFieldOrProperty("images"),
 			() -> assertThat(itemDetailResponse.isInWishList()).isFalse()
+		);
+	}
+
+	@DisplayName("판매내역 조회에 성공한다. : 전체조회")
+	@Test
+	void salesItemDetails_V1() {
+		// given
+		Category category = setupCategory();
+		Member member = setupMember();
+		Principal principal = setPrincipal(member);
+
+		Item item1 = supportRepository.save(new Item("1번", "내용1", 3000L, "thumbnail", ItemStatus.ON_SALE,
+			"역삼1동", 0L, 0L, 0L, LocalDateTime.now(), member, category));
+		Item item2 = supportRepository.save(new Item("2번", "내용2", 3000L, "thumbnail", ItemStatus.RESERVED,
+			"역삼1동", 0L, 0L, 0L, LocalDateTime.now(), member, category));
+		Item item3 = supportRepository.save(new Item("3번", "내용3", 3000L, "thumbnail", ItemStatus.SOLD_OUT,
+			"역삼1동", 0L, 0L, 0L, LocalDateTime.now(), member, category));
+
+		// when
+		CustomSlice<SalesItemDetailResponse> salesItemDetailResponse =
+			itemService.salesItemDetails("all", principal, 10, null);
+
+		// then
+		assertThat(salesItemDetailResponse.getContents().size()).isEqualTo(3);
+	}
+
+	@DisplayName("판매내역 조회에 성공한다. : 판매중(+예약중)만 조회, 판매완료만 조회")
+	@Test
+	void salesItemDetails_V2() {
+		// given
+		Category category = setupCategory();
+		Member member = setupMember();
+		Principal principal = setPrincipal(member);
+
+		supportRepository.save(new Item("1번", "내용1", 3000L, "thumbnail", ItemStatus.ON_SALE,
+			"역삼1동", 0L, 0L, 0L, LocalDateTime.now(), member, category));
+		supportRepository.save(new Item("2번", "내용2", 3000L, "thumbnail", ItemStatus.RESERVED,
+			"역삼1동", 0L, 0L, 0L, LocalDateTime.now(), member, category));
+		supportRepository.save(new Item("3번", "내용3", 3000L, "thumbnail", ItemStatus.SOLD_OUT,
+			"역삼1동", 0L, 0L, 0L, LocalDateTime.now(), member, category));
+
+		// when
+		CustomSlice<SalesItemDetailResponse> salesItemDetailResponse1 =
+			itemService.salesItemDetails("on_sale", principal, 10, null);
+		CustomSlice<SalesItemDetailResponse> salesItemDetailResponse2 = itemService.salesItemDetails(
+			"sold_out", principal, 10, null);
+
+		// then
+		assertAll(
+			() -> assertThat(salesItemDetailResponse1.getContents().size()).isEqualTo(2),
+			() -> assertThat(salesItemDetailResponse2.getContents().size()).isEqualTo(1)
 		);
 	}
 

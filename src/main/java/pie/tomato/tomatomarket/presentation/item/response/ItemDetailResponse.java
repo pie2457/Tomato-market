@@ -1,4 +1,4 @@
-package pie.tomato.tomatomarket.presentation.response.item;
+package pie.tomato.tomatomarket.presentation.item.response;
 
 import java.time.LocalDateTime;
 import java.util.List;

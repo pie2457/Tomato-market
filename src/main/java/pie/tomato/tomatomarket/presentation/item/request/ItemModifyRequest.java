@@ -1,4 +1,4 @@
-package pie.tomato.tomatomarket.presentation.request.item;
+package pie.tomato.tomatomarket.presentation.item.request;
 
 import java.util.List;
 

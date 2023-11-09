@@ -1,4 +1,4 @@
-package pie.tomato.tomatomarket.presentation.response.wish;
+package pie.tomato.tomatomarket.presentation.wish.response;
 
 import lombok.Getter;
 

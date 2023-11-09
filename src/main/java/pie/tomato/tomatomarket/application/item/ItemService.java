@@ -19,19 +19,20 @@ import pie.tomato.tomatomarket.exception.BadRequestException;
 import pie.tomato.tomatomarket.exception.ErrorCode;
 import pie.tomato.tomatomarket.exception.ForbiddenException;
 import pie.tomato.tomatomarket.exception.NotFoundException;
-import pie.tomato.tomatomarket.infrastructure.persistence.CategoryRepository;
-import pie.tomato.tomatomarket.infrastructure.persistence.ChatroomRepository;
-import pie.tomato.tomatomarket.infrastructure.persistence.MemberRepository;
+import pie.tomato.tomatomarket.infrastructure.persistence.category.CategoryRepository;
+import pie.tomato.tomatomarket.infrastructure.persistence.chatroom.ChatroomRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.image.ImageRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.item.ItemPaginationRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.item.ItemRepository;
+import pie.tomato.tomatomarket.infrastructure.persistence.member.MemberRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.wish.WishRepository;
 import pie.tomato.tomatomarket.presentation.dto.CustomSlice;
-import pie.tomato.tomatomarket.presentation.request.item.ItemModifyRequest;
-import pie.tomato.tomatomarket.presentation.request.item.ItemRegisterRequest;
-import pie.tomato.tomatomarket.presentation.request.item.ItemStatusModifyRequest;
-import pie.tomato.tomatomarket.presentation.response.item.ItemDetailResponse;
-import pie.tomato.tomatomarket.presentation.response.item.ItemResponse;
+import pie.tomato.tomatomarket.presentation.item.request.ItemModifyRequest;
+import pie.tomato.tomatomarket.presentation.item.request.ItemRegisterRequest;
+import pie.tomato.tomatomarket.presentation.item.request.ItemStatusModifyRequest;
+import pie.tomato.tomatomarket.presentation.item.response.ItemDetailResponse;
+import pie.tomato.tomatomarket.presentation.item.response.ItemResponse;
+import pie.tomato.tomatomarket.presentation.item.response.SalesItemDetailResponse;
 import pie.tomato.tomatomarket.presentation.support.Principal;
 
 @Service
@@ -79,17 +80,9 @@ public class ItemService {
 		Slice<ItemResponse> response = itemPaginationRepository.findByIdAndRegion(itemId, region, size, categoryId);
 		List<ItemResponse> content = response.getContent();
 
-		Long nextCursor = setNextCursor(content);
+		Long nextCursor = content.isEmpty() ? null : content.get(content.size() - 1).getItemId();
 
 		return new CustomSlice<>(content, nextCursor, response.hasNext());
-	}
-
-	private Long setNextCursor(List<ItemResponse> content) {
-		Long nextCursor = null;
-		if (!content.isEmpty()) {
-			nextCursor = content.get(content.size() - 1).getItemId();
-		}
-		return nextCursor;
 	}
 
 	@Transactional
@@ -156,17 +149,6 @@ public class ItemService {
 		deleteAllRelatedItem(itemId, principal.getMemberId());
 	}
 
-	public ItemDetailResponse itemDetails(Long itemId) {
-		Item findItem = itemRepository.findById(itemId)
-			.orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_ITEM));
-		boolean isInWishList = wishRepository.existsByItemIdAndMemberId(itemId, findItem.getMember().getId());
-		List<Image> images = imageRepository.findByItemId(itemId);
-		List<String> imageUrls = images.stream()
-			.map(Image::getImageUrl)
-			.collect(Collectors.toList());
-		return ItemDetailResponse.toEntity(findItem, isInWishList, imageUrls);
-	}
-
 	private void deleteAllRelatedItem(Long itemId, Long memberId) {
 		imageRepository.deleteByItemId(itemId);
 		wishRepository.deleteByItemIdAndMemberId(itemId, memberId);
@@ -184,5 +166,26 @@ public class ItemService {
 		if (!itemRepository.existsItemById(itemId)) {
 			throw new NotFoundException(ErrorCode.NOT_FOUND_ITEM);
 		}
+	}
+
+	public ItemDetailResponse itemDetails(Long itemId) {
+		Item findItem = itemRepository.findById(itemId)
+			.orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_ITEM));
+		boolean isInWishList = wishRepository.existsByItemIdAndMemberId(itemId, findItem.getMember().getId());
+		List<Image> images = imageRepository.findByItemId(itemId);
+		List<String> imageUrls = images.stream()
+			.map(Image::getImageUrl)
+			.collect(Collectors.toList());
+		return ItemDetailResponse.toEntity(findItem, isInWishList, imageUrls);
+	}
+
+	public CustomSlice<SalesItemDetailResponse> salesItemDetails(
+		String status, Principal principal, int size, Long cursor) {
+		ItemStatus findStatus = ItemStatus.findStatus(status);
+		Slice<SalesItemDetailResponse> responses =
+			itemPaginationRepository.findByMemberIdAndStatus(principal, findStatus, size, cursor);
+		List<SalesItemDetailResponse> content = responses.getContent();
+		Long nextCursor = content.isEmpty() ? null : content.get(content.size() - 1).getItemId();
+		return new CustomSlice<>(content, nextCursor, responses.hasNext());
 	}
 }

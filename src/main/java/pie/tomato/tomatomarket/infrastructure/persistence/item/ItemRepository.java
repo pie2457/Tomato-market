@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 
 import pie.tomato.tomatomarket.domain.Item;
+import pie.tomato.tomatomarket.domain.ItemStatus;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
@@ -44,5 +45,15 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 			return null;
 		}
 		return item.member.id.eq(memberId);
+	}
+
+	default BooleanExpression findStatus(ItemStatus status) {
+		if (status == null) {
+			return null;
+		} else if (status.equals(ItemStatus.SOLD_OUT)) {
+			return item.status.eq(status);
+		} else {
+			return item.status.ne(ItemStatus.SOLD_OUT);
+		}
 	}
 }

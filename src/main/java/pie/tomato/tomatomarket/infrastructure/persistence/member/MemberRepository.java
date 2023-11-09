@@ -1,4 +1,4 @@
-package pie.tomato.tomatomarket.infrastructure.persistence;
+package pie.tomato.tomatomarket.infrastructure.persistence.member;
 
 import java.util.Optional;
 

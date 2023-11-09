@@ -1,4 +1,4 @@
-package pie.tomato.tomatomarket.presentation;
+package pie.tomato.tomatomarket.presentation.auth;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import pie.tomato.tomatomarket.application.oauth.AuthService;
-import pie.tomato.tomatomarket.presentation.response.oauth.LoginResponse;
+import pie.tomato.tomatomarket.presentation.auth.response.LoginResponse;
 
 @RequiredArgsConstructor
 @RestController

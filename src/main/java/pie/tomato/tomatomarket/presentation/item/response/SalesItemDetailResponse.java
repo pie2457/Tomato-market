@@ -1,8 +1,9 @@
-package pie.tomato.tomatomarket.presentation.sales.response;
+package pie.tomato.tomatomarket.presentation.item.response;
 
 import java.time.LocalDateTime;
 
 import lombok.Getter;
+import pie.tomato.tomatomarket.domain.ItemStatus;
 
 @Getter
 public class SalesItemDetailResponse {
@@ -13,5 +14,5 @@ public class SalesItemDetailResponse {
 	private String tradingRegion;
 	private LocalDateTime createdAt;
 	private Long price;
-	private String status;
+	private ItemStatus status;
 }

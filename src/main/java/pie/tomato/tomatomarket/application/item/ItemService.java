@@ -19,6 +19,7 @@ import pie.tomato.tomatomarket.exception.BadRequestException;
 import pie.tomato.tomatomarket.exception.ErrorCode;
 import pie.tomato.tomatomarket.exception.ForbiddenException;
 import pie.tomato.tomatomarket.exception.NotFoundException;
+import pie.tomato.tomatomarket.exception.UnAuthorizedException;
 import pie.tomato.tomatomarket.infrastructure.persistence.category.CategoryRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.chatroom.ChatroomRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.image.ImageRepository;
@@ -32,6 +33,7 @@ import pie.tomato.tomatomarket.presentation.item.request.ItemRegisterRequest;
 import pie.tomato.tomatomarket.presentation.item.request.ItemStatusModifyRequest;
 import pie.tomato.tomatomarket.presentation.item.response.ItemDetailResponse;
 import pie.tomato.tomatomarket.presentation.item.response.ItemResponse;
+import pie.tomato.tomatomarket.presentation.item.response.SalesItemDetailResponse;
 import pie.tomato.tomatomarket.presentation.support.Principal;
 
 @Service
@@ -79,17 +81,9 @@ public class ItemService {
 		Slice<ItemResponse> response = itemPaginationRepository.findByIdAndRegion(itemId, region, size, categoryId);
 		List<ItemResponse> content = response.getContent();
 
-		Long nextCursor = setNextCursor(content);
+		Long nextCursor = content.isEmpty() ? null : content.get(content.size() - 1).getItemId();
 
 		return new CustomSlice<>(content, nextCursor, response.hasNext());
-	}
-
-	private Long setNextCursor(List<ItemResponse> content) {
-		Long nextCursor = null;
-		if (!content.isEmpty()) {
-			nextCursor = content.get(content.size() - 1).getItemId();
-		}
-		return nextCursor;
 	}
 
 	@Transactional
@@ -156,17 +150,6 @@ public class ItemService {
 		deleteAllRelatedItem(itemId, principal.getMemberId());
 	}
 
-	public ItemDetailResponse itemDetails(Long itemId) {
-		Item findItem = itemRepository.findById(itemId)
-			.orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_ITEM));
-		boolean isInWishList = wishRepository.existsByItemIdAndMemberId(itemId, findItem.getMember().getId());
-		List<Image> images = imageRepository.findByItemId(itemId);
-		List<String> imageUrls = images.stream()
-			.map(Image::getImageUrl)
-			.collect(Collectors.toList());
-		return ItemDetailResponse.toEntity(findItem, isInWishList, imageUrls);
-	}
-
 	private void deleteAllRelatedItem(Long itemId, Long memberId) {
 		imageRepository.deleteByItemId(itemId);
 		wishRepository.deleteByItemIdAndMemberId(itemId, memberId);
@@ -184,5 +167,38 @@ public class ItemService {
 		if (!itemRepository.existsItemById(itemId)) {
 			throw new NotFoundException(ErrorCode.NOT_FOUND_ITEM);
 		}
+	}
+
+	public ItemDetailResponse itemDetails(Long itemId) {
+		Item findItem = itemRepository.findById(itemId)
+			.orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_ITEM));
+		boolean isInWishList = wishRepository.existsByItemIdAndMemberId(itemId, findItem.getMember().getId());
+		List<Image> images = imageRepository.findByItemId(itemId);
+		List<String> imageUrls = images.stream()
+			.map(Image::getImageUrl)
+			.collect(Collectors.toList());
+		return ItemDetailResponse.toEntity(findItem, isInWishList, imageUrls);
+	}
+
+	public CustomSlice<SalesItemDetailResponse> salesItemDetails(
+		String status, Principal principal, int size, Long cursor) {
+		if (status.equalsIgnoreCase("null")) {
+			new UnAuthorizedException(ErrorCode.NOT_LOGIN);
+		}
+		ItemStatus findStatus = findStatus(status);
+		Slice<SalesItemDetailResponse> responses =
+			itemPaginationRepository.findByMemberIdAndStatus(principal, findStatus, size, cursor);
+		List<SalesItemDetailResponse> content = responses.getContent();
+		Long nextCursor = content.isEmpty() ? null : content.get(content.size() - 1).getItemId();
+		return new CustomSlice<>(content, nextCursor, responses.hasNext());
+	}
+
+	private ItemStatus findStatus(String status) {
+		if (status == "on_sale") {
+			return ItemStatus.ON_SALE;
+		} else if (status == "sold_out") {
+			return ItemStatus.SOLD_OUT;
+		}
+		return null;
 	}
 }

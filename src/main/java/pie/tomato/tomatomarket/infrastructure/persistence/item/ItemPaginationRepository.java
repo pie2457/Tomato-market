@@ -12,8 +12,11 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
+import pie.tomato.tomatomarket.domain.ItemStatus;
 import pie.tomato.tomatomarket.infrastructure.persistence.util.PaginationUtil;
 import pie.tomato.tomatomarket.presentation.item.response.ItemResponse;
+import pie.tomato.tomatomarket.presentation.item.response.SalesItemDetailResponse;
+import pie.tomato.tomatomarket.presentation.support.Principal;
 import pie.tomato.tomatomarket.presentation.wish.response.WishListResponse;
 
 @RequiredArgsConstructor
@@ -70,5 +73,26 @@ public class ItemPaginationRepository {
 			.limit(size + 1)
 			.fetch();
 		return PaginationUtil.checkLastPage(size, wishListResponse);
+	}
+
+	public Slice<SalesItemDetailResponse> findByMemberIdAndStatus(
+		Principal principal, ItemStatus status, int size, Long cursor) {
+		List<SalesItemDetailResponse> responses = queryFactory.select(Projections.fields(SalesItemDetailResponse.class,
+				item.id.as("itemId"),
+				item.thumbnail.as("thumbnailUrl"),
+				item.title,
+				item.region.as("tradingRegion"),
+				item.createdAt,
+				item.price,
+				item.status))
+			.from(item)
+			.where(
+				itemRepository.lessThanItemId(cursor),
+				itemRepository.equalMemberId(principal.getMemberId()),
+				itemRepository.findStatus(status))
+			.orderBy(item.createdAt.desc())
+			.limit(size + 1)
+			.fetch();
+		return PaginationUtil.checkLastPage(size, responses);
 	}
 }

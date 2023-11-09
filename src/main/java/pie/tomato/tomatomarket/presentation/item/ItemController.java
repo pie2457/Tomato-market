@@ -26,6 +26,7 @@ import pie.tomato.tomatomarket.presentation.item.request.ItemRegisterRequest;
 import pie.tomato.tomatomarket.presentation.item.request.ItemStatusModifyRequest;
 import pie.tomato.tomatomarket.presentation.item.response.ItemDetailResponse;
 import pie.tomato.tomatomarket.presentation.item.response.ItemResponse;
+import pie.tomato.tomatomarket.presentation.item.response.SalesItemDetailResponse;
 import pie.tomato.tomatomarket.presentation.support.AuthPrincipal;
 import pie.tomato.tomatomarket.presentation.support.Principal;
 
@@ -82,4 +83,12 @@ public class ItemController {
 		return ResponseEntity.ok().body(itemService.itemDetails(itemId));
 	}
 
+	@GetMapping("/api/sales/history")
+	public ResponseEntity<CustomSlice<SalesItemDetailResponse>> salesItemDetails(
+		@AuthPrincipal Principal principal,
+		@RequestParam(required = false) String status,
+		@RequestParam(required = false, defaultValue = "10") int size,
+		@RequestParam(required = false) Long cursor) {
+		return ResponseEntity.ok().body(itemService.salesItemDetails(status, principal, size, cursor));
+	}
 }

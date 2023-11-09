@@ -314,11 +314,11 @@ class ItemServiceTest {
 		Member member = setupMember();
 		Principal principal = setPrincipal(member);
 
-		Item item1 = supportRepository.save(new Item("1번", "내용1", 3000L, "thumbnail", ItemStatus.ON_SALE,
+		supportRepository.save(new Item("1번", "내용1", 3000L, "thumbnail", ItemStatus.ON_SALE,
 			"역삼1동", 0L, 0L, 0L, LocalDateTime.now(), member, category));
-		Item item2 = supportRepository.save(new Item("2번", "내용2", 3000L, "thumbnail", ItemStatus.RESERVED,
+		supportRepository.save(new Item("2번", "내용2", 3000L, "thumbnail", ItemStatus.RESERVED,
 			"역삼1동", 0L, 0L, 0L, LocalDateTime.now(), member, category));
-		Item item3 = supportRepository.save(new Item("3번", "내용3", 3000L, "thumbnail", ItemStatus.SOLD_OUT,
+		supportRepository.save(new Item("3번", "내용3", 3000L, "thumbnail", ItemStatus.SOLD_OUT,
 			"역삼1동", 0L, 0L, 0L, LocalDateTime.now(), member, category));
 
 		// when
@@ -328,8 +328,10 @@ class ItemServiceTest {
 			"sold_out", principal, 10, null);
 
 		// then
-		assertThat(salesItemDetailResponse1.getContents().size()).isEqualTo(2);
-		assertThat(salesItemDetailResponse2.getContents().size()).isEqualTo(1);
+		assertAll(
+			() -> assertThat(salesItemDetailResponse1.getContents().size()).isEqualTo(2),
+			() -> assertThat(salesItemDetailResponse2.getContents().size()).isEqualTo(1)
+		);
 	}
 
 	private ItemRegisterRequest createItemRegisterRequest(Category category) {

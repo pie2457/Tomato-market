@@ -19,7 +19,6 @@ import pie.tomato.tomatomarket.exception.BadRequestException;
 import pie.tomato.tomatomarket.exception.ErrorCode;
 import pie.tomato.tomatomarket.exception.ForbiddenException;
 import pie.tomato.tomatomarket.exception.NotFoundException;
-import pie.tomato.tomatomarket.exception.UnAuthorizedException;
 import pie.tomato.tomatomarket.infrastructure.persistence.category.CategoryRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.chatroom.ChatroomRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.image.ImageRepository;
@@ -182,23 +181,11 @@ public class ItemService {
 
 	public CustomSlice<SalesItemDetailResponse> salesItemDetails(
 		String status, Principal principal, int size, Long cursor) {
-		if (status.equalsIgnoreCase("null")) {
-			new UnAuthorizedException(ErrorCode.NOT_LOGIN);
-		}
-		ItemStatus findStatus = findStatus(status);
+		ItemStatus findStatus = ItemStatus.findStatus(status);
 		Slice<SalesItemDetailResponse> responses =
 			itemPaginationRepository.findByMemberIdAndStatus(principal, findStatus, size, cursor);
 		List<SalesItemDetailResponse> content = responses.getContent();
 		Long nextCursor = content.isEmpty() ? null : content.get(content.size() - 1).getItemId();
 		return new CustomSlice<>(content, nextCursor, responses.hasNext());
-	}
-
-	private ItemStatus findStatus(String status) {
-		if (status == "on_sale") {
-			return ItemStatus.ON_SALE;
-		} else if (status == "sold_out") {
-			return ItemStatus.SOLD_OUT;
-		}
-		return null;
 	}
 }

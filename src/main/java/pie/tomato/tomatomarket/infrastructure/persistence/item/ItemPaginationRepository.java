@@ -52,7 +52,7 @@ public class ItemPaginationRepository {
 	public Slice<WishListResponse> findByMemberIdAndCategoryId(Long memberId, Long categoryId,
 		int size, Long cursor) {
 		List<WishListResponse> wishListResponse = queryFactory.select(Projections.fields(WishListResponse.class,
-				item.id.as("cursor"),
+				item.id.as("itemId"),
 				item.thumbnail.as("thumbnailUrl"),
 				item.title,
 				item.region.as("tradingRegion"),

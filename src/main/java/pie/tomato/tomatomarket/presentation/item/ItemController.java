@@ -31,13 +31,13 @@ import pie.tomato.tomatomarket.presentation.support.AuthPrincipal;
 import pie.tomato.tomatomarket.presentation.support.Principal;
 
 @RestController
-@RequestMapping("/api/items")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class ItemController {
 
 	private final ItemService itemService;
 
-	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@PostMapping(value = "/items", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<Void> register(@RequestPart("item") ItemRegisterRequest itemRegisterRequest,
 		@RequestPart(value = "images", required = false) List<MultipartFile> itemImages,
 		@RequestPart("thumbnailImage") MultipartFile thumbnail,
@@ -46,7 +46,7 @@ public class ItemController {
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
-	@PutMapping("/{itemId}/status")
+	@PutMapping("/items/{itemId}/status")
 	public ResponseEntity<Void> modifyStatus(@PathVariable Long itemId,
 		@AuthPrincipal Principal principal,
 		@RequestBody ItemStatusModifyRequest request) {
@@ -54,7 +54,7 @@ public class ItemController {
 		return ResponseEntity.ok().build();
 	}
 
-	@GetMapping
+	@GetMapping("/items")
 	public ResponseEntity<CustomSlice<ItemResponse>> findAll(@RequestParam String region,
 		@RequestParam(required = false, defaultValue = "10") int size,
 		@RequestParam(required = false) Long cursor,
@@ -62,7 +62,7 @@ public class ItemController {
 		return ResponseEntity.ok().body(itemService.findAll(region, size, cursor, categoryId));
 	}
 
-	@PatchMapping("/{itemId}")
+	@PatchMapping("/items/{itemId}")
 	public ResponseEntity<Void> modifyItem(@PathVariable Long itemId,
 		@AuthPrincipal Principal principal,
 		@RequestPart("item") ItemModifyRequest modifyRequest,
@@ -72,18 +72,18 @@ public class ItemController {
 		return ResponseEntity.ok().build();
 	}
 
-	@DeleteMapping("/{itemId}")
+	@DeleteMapping("/items/{itemId}")
 	public ResponseEntity<Void> deleteItem(@PathVariable Long itemId, @AuthPrincipal Principal principal) {
 		itemService.deleteItem(itemId, principal);
 		return ResponseEntity.ok().build();
 	}
 
-	@GetMapping("/{itemId}")
+	@GetMapping("/items/{itemId}")
 	public ResponseEntity<ItemDetailResponse> itemDetails(@PathVariable Long itemId) {
 		return ResponseEntity.ok().body(itemService.itemDetails(itemId));
 	}
 
-	@GetMapping("/api/sales/history")
+	@GetMapping("/sales/history")
 	public ResponseEntity<CustomSlice<SalesItemDetailResponse>> salesItemDetails(
 		@AuthPrincipal Principal principal,
 		@RequestParam(required = false) String status,

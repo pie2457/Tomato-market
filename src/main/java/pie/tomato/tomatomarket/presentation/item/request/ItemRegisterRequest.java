@@ -1,5 +1,7 @@
 package pie.tomato.tomatomarket.presentation.item.request;
 
+import static lombok.AccessLevel.*;
+
 import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotBlank;
@@ -15,7 +17,7 @@ import pie.tomato.tomatomarket.domain.Member;
 
 @Getter
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = PROTECTED)
 public class ItemRegisterRequest {
 
 	@NotBlank(message = "제목을 입력해주세요.")

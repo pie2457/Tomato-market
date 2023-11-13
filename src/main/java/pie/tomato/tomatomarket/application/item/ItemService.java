@@ -61,7 +61,7 @@ public class ItemService {
 		if (itemImages != null) {
 			List<String> images = imageService.uploadImagesToS3(itemImages);
 			List<Image> imageList = images.stream()
-				.map(url -> Image.toEntity(url, item))
+				.map(url -> Image.of(url, item))
 				.collect(Collectors.toList());
 			imageRepository.saveAllImages(imageList);
 		}

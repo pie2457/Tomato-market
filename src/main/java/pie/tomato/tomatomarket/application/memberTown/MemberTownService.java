@@ -24,6 +24,8 @@ import pie.tomato.tomatomarket.presentation.support.Principal;
 @RequiredArgsConstructor
 public class MemberTownService {
 
+	public static final int MEMBER_TOWN_MAXIMUM_SIZE = 1;
+
 	private final MemberTownRepository memberTownRepository;
 	private final RegionRepository regionRepository;
 	private final MemberRepository memberRepository;
@@ -36,21 +38,21 @@ public class MemberTownService {
 
 		validateMemberTownSizeAndDuplicateRegion(principal, memberTownRequest);
 
-		memberTownRepository.save(MemberTown.of(region, member, true));
+		memberTownRepository.save(MemberTown.of(region, member));
 	}
 
 	private void validateMemberTownSizeAndDuplicateRegion(
 		Principal principal, AddMemberTownRequest memberTownRequest) {
 		List<MemberTown> memberTowns = memberTownRepository.findAllByMemberId(principal.getMemberId());
 		Optional<MemberTown> duplicated = memberTowns.stream()
-			.filter(memberTown -> memberTown.getRegion().getId().equals(memberTownRequest.getAddressId()))
+			.filter(memberTown -> memberTown.isSameRegionId(memberTownRequest.getAddressId()))
 			.findAny();
 
 		if (duplicated.isPresent()) {
 			throw new BadRequestException(ErrorCode.ALREADY_ADDRESS);
 		}
 
-		if (memberTowns.size() > 1) {
+		if (memberTowns.size() > MEMBER_TOWN_MAXIMUM_SIZE) {
 			throw new BadRequestException(ErrorCode.MAXIMUM_MEMBER_TOWN_SIZE);
 		}
 	}

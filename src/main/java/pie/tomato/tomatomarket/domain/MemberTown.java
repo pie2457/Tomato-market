@@ -40,4 +40,8 @@ public class MemberTown {
 	public static MemberTown of(Region region, Member member) {
 		return new MemberTown(region.getAddressName(), member, region);
 	}
+
+	public boolean isSameRegionId(Long regionId) {
+		return this.region.getId().equals(regionId);
+	}
 }

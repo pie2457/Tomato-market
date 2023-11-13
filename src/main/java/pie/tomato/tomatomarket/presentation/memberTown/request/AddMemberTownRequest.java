@@ -1,4 +1,4 @@
-package pie.tomato.tomatomarket.presentation.item.request;
+package pie.tomato.tomatomarket.presentation.memberTown.request;
 
 import static lombok.AccessLevel.*;
 
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = PROTECTED)
-public class ItemStatusModifyRequest {
+public class AddMemberTownRequest {
 
-	private String status;
+	private Long addressId;
 }

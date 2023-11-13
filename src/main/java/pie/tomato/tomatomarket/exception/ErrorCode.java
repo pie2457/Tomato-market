@@ -28,6 +28,13 @@ public enum ErrorCode {
 	NOT_FOUND_ITEM(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다."),
 	ITEM_FORBIDDEN(HttpStatus.FORBIDDEN, "상품에 대한 권한이 없습니다."),
 
+	// MemberTown
+	ALREADY_ADDRESS(HttpStatus.CONFLICT, "이미 존재하는 동네입니다."),
+	MAXIMUM_MEMBER_TOWN_SIZE(HttpStatus.BAD_REQUEST, "회원이 가질 수 있는 개수(최대2개)를 초과하였습니다."),
+
+	// Region
+	NOT_FOUND_REGION(HttpStatus.NOT_FOUND, "주소를 찾을 수 없습니다."),
+
 	// Category
 	NOT_FOUND_CATEGORY(HttpStatus.NOT_FOUND, "카테고리를 찾을 수 없습니다."),
 

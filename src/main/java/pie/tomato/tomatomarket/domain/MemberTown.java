@@ -10,8 +10,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
 @Entity
 @NoArgsConstructor(access = PROTECTED)
 public class MemberTown {
@@ -28,4 +30,18 @@ public class MemberTown {
 	@ManyToOne(fetch = LAZY)
 	@JoinColumn(name = "region_id")
 	private Region region;
+
+	private MemberTown(String name, Member member, Region region) {
+		this.name = name;
+		this.member = member;
+		this.region = region;
+	}
+
+	public static MemberTown of(Region region, Member member) {
+		return new MemberTown(region.getAddressName(), member, region);
+	}
+
+	public boolean isSameRegionId(Long regionId) {
+		return this.region.getId().equals(regionId);
+	}
 }

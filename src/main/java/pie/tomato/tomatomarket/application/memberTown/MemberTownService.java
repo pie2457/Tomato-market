@@ -34,6 +34,13 @@ public class MemberTownService {
 		Region region = regionRepository.findById(memberTownRequest.getAddressId())
 			.orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_REGION));
 
+		validateMemberTownSizeAndDuplicateRegion(principal, memberTownRequest);
+
+		memberTownRepository.save(MemberTown.of(region, member, true));
+	}
+
+	private void validateMemberTownSizeAndDuplicateRegion(
+		Principal principal, AddMemberTownRequest memberTownRequest) {
 		List<MemberTown> memberTowns = memberTownRepository.findAllByMemberId(principal.getMemberId());
 		Optional<MemberTown> duplicated = memberTowns.stream()
 			.filter(memberTown -> memberTown.getRegion().getId().equals(memberTownRequest.getAddressId()))
@@ -46,8 +53,6 @@ public class MemberTownService {
 		if (memberTowns.size() > 1) {
 			throw new BadRequestException(ErrorCode.MAXIMUM_MEMBER_TOWN_SIZE);
 		}
-
-		memberTownRepository.save(MemberTown.of(region, member));
 	}
 
 	private Member getMember(Principal principal) {

@@ -8,4 +8,9 @@ import lombok.RequiredArgsConstructor;
 public class TomatoMarketException extends RuntimeException {
 
 	private final ErrorCode errorCode;
+	private final String message;
+
+	public TomatoMarketException(ErrorCode errorCode) {
+		this(errorCode, errorCode.getMessage());
+	}
 }

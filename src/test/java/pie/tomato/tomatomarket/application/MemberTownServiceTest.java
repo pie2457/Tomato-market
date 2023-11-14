@@ -1,6 +1,7 @@
 package pie.tomato.tomatomarket.application;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
@@ -109,8 +110,10 @@ class MemberTownServiceTest {
 		// then
 		MemberTown SelectMemberTown = supportRepository.findById(1L, MemberTown.class);
 		MemberTown nonSelectMemberTown = supportRepository.findById(2L, MemberTown.class);
-		assertThat(SelectMemberTown.isSelected()).isTrue();
-		assertThat(nonSelectMemberTown.isSelected()).isFalse();
+		assertAll(
+			() -> assertThat(SelectMemberTown.isSelected()).isTrue(),
+			() -> assertThat(nonSelectMemberTown.isSelected()).isFalse()
+		);
 	}
 
 	Region setupRegion(String fullName, String shortName) {

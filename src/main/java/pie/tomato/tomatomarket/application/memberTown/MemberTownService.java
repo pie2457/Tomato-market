@@ -70,11 +70,9 @@ public class MemberTownService {
 		MemberTown selectMemberTown = getMemberTown(selectMemberTownRequest, memberTowns);
 		selectMemberTown.changeIsSelectedTrue();
 
-		for (MemberTown memberTown : memberTowns) {
-			if (!memberTown.isSameRegionId(selectMemberTown.getId())) {
-				memberTown.changeIsSelectedFalse();
-			}
-		}
+		memberTowns.stream()
+			.filter(memberTown -> !memberTown.isSameRegionId(selectMemberTown.getId()))
+			.forEach(MemberTown::changeIsSelectedFalse);
 	}
 
 	private MemberTown getMemberTown(SelectMemberTownRequest selectMemberTownRequest,

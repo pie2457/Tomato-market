@@ -53,7 +53,7 @@ public class ItemController {
 		return ResponseEntity.ok().build();
 	}
 
-	@GetMapping()
+	@GetMapping
 	public ResponseEntity<CustomSlice<ItemResponse>> findAll(@RequestParam String region,
 		@RequestParam(required = false, defaultValue = "10") int size,
 		@RequestParam(required = false) Long cursor,

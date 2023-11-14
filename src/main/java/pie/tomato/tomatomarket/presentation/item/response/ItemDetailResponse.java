@@ -1,5 +1,7 @@
 package pie.tomato.tomatomarket.presentation.item.response;
 
+import static lombok.AccessLevel.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -8,7 +10,7 @@ import lombok.Getter;
 import pie.tomato.tomatomarket.domain.Item;
 
 @Getter
-@AllArgsConstructor
+@AllArgsConstructor(access = PROTECTED)
 public class ItemDetailResponse {
 
 	private String nickname;

@@ -23,6 +23,6 @@ public interface RegionRepository extends JpaRepository<Region, Long> {
 			return null;
 		}
 
-		return region.fullAddressName.like("%" + addressName + "%");
+		return region.fullAddressName.contains(addressName);
 	}
 }

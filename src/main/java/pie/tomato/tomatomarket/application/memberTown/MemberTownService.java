@@ -49,7 +49,7 @@ public class MemberTownService {
 
 	private void validateMemberTownSizeAndDuplicateRegion(
 		Principal principal, AddMemberTownRequest memberTownRequest) {
-		List<MemberTown> memberTowns = memberTownRepository.findAllByMemberId(principal.getMemberId());
+		List<MemberTown> memberTowns = getMemberTowns(principal);
 		Optional<MemberTown> duplicated = memberTowns.stream()
 			.filter(memberTown -> memberTown.isSameRegionId(memberTownRequest.getAddressId()))
 			.findAny();
@@ -63,6 +63,10 @@ public class MemberTownService {
 		}
 	}
 
+	private List<MemberTown> getMemberTowns(Principal principal) {
+		return memberTownRepository.findAllByMemberId(principal.getMemberId());
+	}
+
 	private Member getMember(Principal principal) {
 		return memberRepository.findById(principal.getMemberId())
 			.orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_MEMBER));
@@ -70,7 +74,7 @@ public class MemberTownService {
 
 	@Transactional
 	public void selectMemberTown(Principal principal, SelectMemberTownRequest selectMemberTownRequest) {
-		List<MemberTown> memberTowns = memberTownRepository.findAllByMemberId(principal.getMemberId());
+		List<MemberTown> memberTowns = getMemberTowns(principal);
 
 		MemberTown selectMemberTown = getMemberTown(selectMemberTownRequest, memberTowns);
 		selectMemberTown.changeIsSelectedTrue();

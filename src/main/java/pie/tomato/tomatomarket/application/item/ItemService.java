@@ -176,7 +176,7 @@ public class ItemService {
 		List<String> imageUrls = images.stream()
 			.map(Image::getImageUrl)
 			.collect(Collectors.toList());
-		return ItemDetailResponse.toEntity(findItem, isInWishList, imageUrls);
+		return ItemDetailResponse.of(findItem, isInWishList, imageUrls);
 	}
 
 	public CustomSlice<SalesItemDetailResponse> salesItemDetails(

@@ -24,7 +24,7 @@ public class ItemDetailResponse {
 	private Long viewCount;
 	private boolean isInWishList;
 
-	public static ItemDetailResponse toEntity(Item item, boolean isInWishList, List<String> images) {
+	public static ItemDetailResponse of(Item item, boolean isInWishList, List<String> images) {
 		return new ItemDetailResponse(
 			item.getMember().getNickname(),
 			item.getStatus().getName(),

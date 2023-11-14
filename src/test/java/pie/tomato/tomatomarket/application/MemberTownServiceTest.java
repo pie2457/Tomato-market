@@ -19,6 +19,7 @@ import pie.tomato.tomatomarket.exception.BadRequestException;
 import pie.tomato.tomatomarket.exception.ErrorCode;
 import pie.tomato.tomatomarket.presentation.dto.CustomSlice;
 import pie.tomato.tomatomarket.presentation.memberTown.request.AddMemberTownRequest;
+import pie.tomato.tomatomarket.presentation.memberTown.request.DeleteMemberTownRequest;
 import pie.tomato.tomatomarket.presentation.memberTown.request.SelectMemberTownRequest;
 import pie.tomato.tomatomarket.presentation.memberTown.response.MemberTownListResponse;
 import pie.tomato.tomatomarket.presentation.support.Principal;
@@ -122,8 +123,6 @@ class MemberTownServiceTest {
 	@Test
 	void findAllMemberTown() {
 		// given
-		Member member = setupMember();
-		Principal principal = setPrincipal(member);
 		setupRegion("서울특별시 강남구 역삼1동", "역삼1동");
 		setupRegion("서울특별시 강남구 역삼2동", "역삼2동");
 		setupRegion("서울특별시 강남구 신사동", "신사동");
@@ -136,6 +135,50 @@ class MemberTownServiceTest {
 
 		// then
 		assertThat(response1.getContents().size()).isEqualTo(3);
+	}
+
+	@DisplayName("지역(동네) 삭제에 성공한다. : 선택된 동네가 2개 일 시")
+	@Test
+	void deleteMemberTown_ver1() {
+		// given
+		Member member = setupMember();
+		Principal principal = setPrincipal(member);
+		setupRegion("서울특별시 강남구 역삼1동", "역삼1동");
+		setupRegion("서울특별시 강남구 역삼2동", "역삼2동");
+		setupRegion("서울특별시 강남구 신사동", "신사동");
+		memberTownService.addMemberTown(principal, new AddMemberTownRequest(1L));
+		memberTownService.addMemberTown(principal, new AddMemberTownRequest(2L));
+		memberTownService.selectMemberTown(principal, new SelectMemberTownRequest(1L));
+
+		// when
+		memberTownService.deleteMemberTown(principal, new DeleteMemberTownRequest(1L));
+		MemberTown memberTown = supportRepository.findById(2L, MemberTown.class);
+		List<MemberTown> memberTowns = supportRepository.findAll(MemberTown.class);
+
+		// then
+		assertAll(
+			() -> assertThat(memberTown.isSelected()).isTrue(),
+			() -> assertThat(memberTowns.size()).isEqualTo(1)
+		);
+	}
+
+	@DisplayName("지역(동네) 삭제에 실패한다. : 선택된 동네가 1개 일 시")
+	@Test
+	void deleteMemberTown_ver2() {
+		// given
+		Member member = setupMember();
+		Principal principal = setPrincipal(member);
+		setupRegion("서울특별시 강남구 역삼1동", "역삼1동");
+		setupRegion("서울특별시 강남구 역삼2동", "역삼2동");
+		setupRegion("서울특별시 강남구 신사동", "신사동");
+		memberTownService.addMemberTown(principal, new AddMemberTownRequest(1L));
+
+		// when & then
+		assertThatThrownBy(
+			() -> memberTownService.deleteMemberTown(principal, new DeleteMemberTownRequest(1L)))
+			.isInstanceOf(BadRequestException.class)
+			.extracting("ErrorCode")
+			.isEqualTo(ErrorCode.MINIMUM_MEMBER_TOWN_SIZE);
 	}
 
 	Region setupRegion(String fullName, String shortName) {

@@ -20,6 +20,7 @@ import pie.tomato.tomatomarket.infrastructure.persistence.memberTown.MemberTownR
 import pie.tomato.tomatomarket.infrastructure.persistence.region.RegionRepository;
 import pie.tomato.tomatomarket.presentation.dto.CustomSlice;
 import pie.tomato.tomatomarket.presentation.memberTown.request.AddMemberTownRequest;
+import pie.tomato.tomatomarket.presentation.memberTown.request.DeleteMemberTownRequest;
 import pie.tomato.tomatomarket.presentation.memberTown.request.SelectMemberTownRequest;
 import pie.tomato.tomatomarket.presentation.memberTown.response.MemberTownListResponse;
 import pie.tomato.tomatomarket.presentation.support.Principal;
@@ -102,5 +103,28 @@ public class MemberTownService {
 		Long nextCursor = content.isEmpty() ? null : content.get(content.size() - 1).getAddressId();
 
 		return new CustomSlice<>(content, nextCursor, responses.hasNext());
+	}
+
+	@Transactional
+	public void deleteMemberTown(Principal principal, DeleteMemberTownRequest deleteMemberTownRequest) {
+		List<MemberTown> memberTowns = getMemberTowns(principal);
+
+		if (memberTowns.size() <= MEMBER_TOWN_MINIMUM_SIZE) {
+			throw new BadRequestException(ErrorCode.MINIMUM_MEMBER_TOWN_SIZE);
+		}
+
+		for (MemberTown memberTown : memberTowns) {
+			deleteMemberTownAndChangeIsSelected(principal, deleteMemberTownRequest, memberTown);
+		}
+	}
+
+	private void deleteMemberTownAndChangeIsSelected(Principal principal,
+		DeleteMemberTownRequest deleteMemberTownRequest, MemberTown memberTown) {
+		if (memberTown.isSameRegionId(deleteMemberTownRequest.getAddressId())) {
+			memberTownRepository.deleteByMemberIdAndRegionId(
+				principal.getMemberId(), deleteMemberTownRequest.getAddressId());
+			return;
+		}
+		memberTown.changeIsSelectedTrue();
 	}
 }

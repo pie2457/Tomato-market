@@ -17,8 +17,10 @@ import pie.tomato.tomatomarket.domain.MemberTown;
 import pie.tomato.tomatomarket.domain.Region;
 import pie.tomato.tomatomarket.exception.BadRequestException;
 import pie.tomato.tomatomarket.exception.ErrorCode;
+import pie.tomato.tomatomarket.presentation.dto.CustomSlice;
 import pie.tomato.tomatomarket.presentation.memberTown.request.AddMemberTownRequest;
 import pie.tomato.tomatomarket.presentation.memberTown.request.SelectMemberTownRequest;
+import pie.tomato.tomatomarket.presentation.memberTown.response.MemberTownListResponse;
 import pie.tomato.tomatomarket.presentation.support.Principal;
 import pie.tomato.tomatomarket.support.SupportRepository;
 
@@ -114,6 +116,26 @@ class MemberTownServiceTest {
 			() -> assertThat(SelectMemberTown.isSelected()).isTrue(),
 			() -> assertThat(nonSelectMemberTown.isSelected()).isFalse()
 		);
+	}
+
+	@DisplayName("주어진 지역 이름으로 지역(동네) 조회에 성공한다.")
+	@Test
+	void findAllMemberTown() {
+		// given
+		Member member = setupMember();
+		Principal principal = setPrincipal(member);
+		setupRegion("서울특별시 강남구 역삼1동", "역삼1동");
+		setupRegion("서울특별시 강남구 역삼2동", "역삼2동");
+		setupRegion("서울특별시 강남구 신사동", "신사동");
+		setupRegion("서울특별시 종로구 사직동", "사직동");
+		setupRegion("서울특별시 종로구 삼청동", "삼청동");
+
+		// when
+		CustomSlice<MemberTownListResponse> response1 =
+			memberTownService.findAll("강남구", 10, null);
+
+		// then
+		assertThat(response1.getContents().size()).isEqualTo(3);
 	}
 
 	Region setupRegion(String fullName, String shortName) {

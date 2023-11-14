@@ -1,5 +1,7 @@
 package pie.tomato.tomatomarket.presentation.item.response;
 
+import static lombok.AccessLevel.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -8,7 +10,7 @@ import lombok.Getter;
 import pie.tomato.tomatomarket.domain.Item;
 
 @Getter
-@AllArgsConstructor
+@AllArgsConstructor(access = PROTECTED)
 public class ItemDetailResponse {
 
 	private String nickname;
@@ -24,7 +26,7 @@ public class ItemDetailResponse {
 	private Long viewCount;
 	private boolean isInWishList;
 
-	public static ItemDetailResponse toEntity(Item item, boolean isInWishList, List<String> images) {
+	public static ItemDetailResponse of(Item item, boolean isInWishList, List<String> images) {
 		return new ItemDetailResponse(
 			item.getMember().getNickname(),
 			item.getStatus().getName(),

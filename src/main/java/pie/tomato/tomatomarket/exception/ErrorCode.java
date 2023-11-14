@@ -30,7 +30,8 @@ public enum ErrorCode {
 
 	// MemberTown
 	ALREADY_ADDRESS(HttpStatus.CONFLICT, "이미 존재하는 동네입니다."),
-	MAXIMUM_MEMBER_TOWN_SIZE(HttpStatus.BAD_REQUEST, "회원이 가질 수 있는 개수(최대2개)를 초과하였습니다."),
+	MAXIMUM_MEMBER_TOWN_SIZE(HttpStatus.BAD_REQUEST, "지역 선택은 최대 2개까지 가능합니다."),
+	NOT_FOUND_MEMBER_TOWN(HttpStatus.NOT_FOUND, "등록된 주소를 찾을 수 없습니다."),
 
 	// Region
 	NOT_FOUND_REGION(HttpStatus.NOT_FOUND, "주소를 찾을 수 없습니다."),

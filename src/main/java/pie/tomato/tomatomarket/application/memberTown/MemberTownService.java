@@ -17,6 +17,7 @@ import pie.tomato.tomatomarket.infrastructure.persistence.member.MemberRepositor
 import pie.tomato.tomatomarket.infrastructure.persistence.memberTown.MemberTownRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.region.RegionRepository;
 import pie.tomato.tomatomarket.presentation.memberTown.request.AddMemberTownRequest;
+import pie.tomato.tomatomarket.presentation.memberTown.request.SelectMemberTownRequest;
 import pie.tomato.tomatomarket.presentation.support.Principal;
 
 @Service
@@ -38,7 +39,7 @@ public class MemberTownService {
 
 		validateMemberTownSizeAndDuplicateRegion(principal, memberTownRequest);
 
-		memberTownRepository.save(MemberTown.of(region, member));
+		memberTownRepository.save(MemberTown.of(region, member, true));
 	}
 
 	private void validateMemberTownSizeAndDuplicateRegion(
@@ -60,5 +61,25 @@ public class MemberTownService {
 	private Member getMember(Principal principal) {
 		return memberRepository.findById(principal.getMemberId())
 			.orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_MEMBER));
+	}
+
+	@Transactional
+	public void selectMemberTown(Principal principal, SelectMemberTownRequest selectMemberTownRequest) {
+		List<MemberTown> memberTowns = memberTownRepository.findAllByMemberId(principal.getMemberId());
+
+		MemberTown selectMemberTown = getMemberTown(selectMemberTownRequest, memberTowns);
+		selectMemberTown.changeIsSelectedTrue();
+
+		memberTowns.stream()
+			.filter(memberTown -> !memberTown.isSameRegionId(selectMemberTown.getId()))
+			.forEach(MemberTown::changeIsSelectedFalse);
+	}
+
+	private MemberTown getMemberTown(SelectMemberTownRequest selectMemberTownRequest,
+		List<MemberTown> memberTowns) {
+		return memberTowns.stream()
+			.filter(memberTown -> memberTown.isSameRegionId(selectMemberTownRequest.getSelectedAddressId()))
+			.findAny()
+			.orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_MEMBER_TOWN));
 	}
 }

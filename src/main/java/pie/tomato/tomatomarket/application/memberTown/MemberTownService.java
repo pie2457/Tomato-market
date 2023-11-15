@@ -55,13 +55,16 @@ public class MemberTownService {
 		Optional<MemberTown> duplicated = memberTowns.stream()
 			.filter(memberTown -> memberTown.isSameRegionId(memberTownRequest.getAddressId()))
 			.findAny();
+		if (memberTowns.size() == MEMBER_TOWN_MINIMUM_SIZE) {
+			changeIsSelectedFalse(memberTowns, memberTownRequest.getAddressId());
+			return;
+		}
 
 		if (duplicated.isPresent()) {
 			throw new BadRequestException(ErrorCode.ALREADY_ADDRESS);
 		}
 
 		if (memberTowns.size() > MEMBER_TOWN_MINIMUM_SIZE) {
-			changeIsSelectedFalse(memberTowns, memberTownRequest.getAddressId());
 			throw new BadRequestException(ErrorCode.MAXIMUM_MEMBER_TOWN_SIZE);
 		}
 	}

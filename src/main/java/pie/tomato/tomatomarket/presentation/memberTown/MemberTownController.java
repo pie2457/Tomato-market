@@ -52,6 +52,6 @@ public class MemberTownController {
 	public ResponseEntity<Void> deleteMemberTown(@AuthPrincipal Principal principal,
 		@RequestBody DeleteMemberTownRequest deleteMemberTownRequest) {
 		memberTownService.deleteMemberTown(principal, deleteMemberTownRequest);
-		return ResponseEntity.ok().build();
+		return ResponseEntity.noContent().build();
 	}
 }

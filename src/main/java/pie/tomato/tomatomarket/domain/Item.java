@@ -99,4 +99,8 @@ public class Item {
 	public void wishCancel() {
 		this.wishCount--;
 	}
+
+	public void changeItemViewCount(Long viewCount) {
+		this.viewCount = viewCount;
+	}
 }

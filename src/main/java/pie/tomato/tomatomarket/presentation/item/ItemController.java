@@ -78,7 +78,8 @@ public class ItemController {
 	}
 
 	@GetMapping("/{itemId}")
-	public ResponseEntity<ItemDetailResponse> itemDetails(@PathVariable Long itemId) {
-		return ResponseEntity.ok().body(itemService.itemDetails(itemId));
+	public ResponseEntity<ItemDetailResponse> itemDetails(@AuthPrincipal Principal principal,
+		@PathVariable Long itemId) {
+		return ResponseEntity.ok().body(itemService.itemDetails(principal, itemId));
 	}
 }

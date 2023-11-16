@@ -13,6 +13,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,6 +48,8 @@ class ItemServiceTest {
 	private FakeImageUploader imageUploader;
 	@Autowired
 	private SupportRepository supportRepository;
+	@Autowired
+	private RedisTemplate<String, String> redisTemplate;
 
 	@DisplayName("상품 등록 요청에 성공한다.")
 	@Test
@@ -259,12 +262,12 @@ class ItemServiceTest {
 		// given
 		Member member = setupMember();
 		Category category = setupCategory();
-
+		Principal principal = setPrincipal(member);
 		Item item = supportRepository.save(new Item("머리끈", "머리끈 100개 팝니다.", 3000L, "thumbnail", ItemStatus.ON_SALE,
 			"역삼1동", 0L, 0L, 0L, LocalDateTime.now(), member, category));
 
 		// when
-		ItemDetailResponse itemDetailResponse = itemService.itemDetails(item.getId());
+		ItemDetailResponse itemDetailResponse = itemService.itemDetails(principal, item.getId());
 
 		// then
 		assertAll(
@@ -283,6 +286,28 @@ class ItemServiceTest {
 		);
 	}
 
+	@DisplayName("한 사람이 상품을 중복 조회해도 뷰카운트는 증가하지 않는다.")
+	@Test
+	void itemViewCount() {
+		// given
+		Member member = supportRepository.save(new Member("파이파이", "123@123", "profile"));
+		Category category = setupCategory();
+		Principal principal = setPrincipal(member);
+		Item item = supportRepository.save(new Item("머리끈", "머리끈 100개 팝니다.", 3000L, "thumbnail", ItemStatus.ON_SALE,
+			"역삼1동", 0L, 0L, 0L, LocalDateTime.now(), member, category));
+
+		// when
+		itemService.itemDetails(principal, item.getId());
+		itemService.itemDetails(principal, item.getId());
+
+		String key = "itemId: " + item.getId();
+		String s = redisTemplate.opsForValue().get(key);
+
+		// then
+		assertThat(s).isEqualTo("1");
+		redisTemplate.delete("파이파이");
+	}
+
 	@DisplayName("판매내역 조회에 성공한다. : 전체조회")
 	@Test
 	void salesItemDetails_V1() {
@@ -291,11 +316,11 @@ class ItemServiceTest {
 		Member member = setupMember();
 		Principal principal = setPrincipal(member);
 
-		Item item1 = supportRepository.save(new Item("1번", "내용1", 3000L, "thumbnail", ItemStatus.ON_SALE,
+		supportRepository.save(new Item("1번", "내용1", 3000L, "thumbnail", ItemStatus.ON_SALE,
 			"역삼1동", 0L, 0L, 0L, LocalDateTime.now(), member, category));
-		Item item2 = supportRepository.save(new Item("2번", "내용2", 3000L, "thumbnail", ItemStatus.RESERVED,
+		supportRepository.save(new Item("2번", "내용2", 3000L, "thumbnail", ItemStatus.RESERVED,
 			"역삼1동", 0L, 0L, 0L, LocalDateTime.now(), member, category));
-		Item item3 = supportRepository.save(new Item("3번", "내용3", 3000L, "thumbnail", ItemStatus.SOLD_OUT,
+		supportRepository.save(new Item("3번", "내용3", 3000L, "thumbnail", ItemStatus.SOLD_OUT,
 			"역삼1동", 0L, 0L, 0L, LocalDateTime.now(), member, category));
 
 		// when

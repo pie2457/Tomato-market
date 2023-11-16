@@ -19,32 +19,32 @@ import pie.tomato.tomatomarket.infrastructure.persistence.item.ItemRepository;
 @RequiredArgsConstructor
 public class ItemViewCountRedisService {
 
-	public static final String ITEM_ID_PREFIX = "itemId: ";
+	public static final String ITEM_VIEW_COUNT_ID_PREFIX = "itemId: ";
 	private static final Pattern ITEM_ID_PATTERN = Pattern.compile("itemId:*");
 
 	private final RedisTemplate<String, String> redisTemplate;
 	private final ItemRepository itemRepository;
 
 	public void addViewCount(String nickname, Long itemId) {
-		String key = ITEM_ID_PREFIX + itemId;
-		String duplicateKey = nickname;
 		ValueOperations<String, String> value = redisTemplate.opsForValue();
 
-		if (isNotFirstView(duplicateKey)) {
+		String nicknameKey = nickname + itemId;
+		if (isNotFirstView(nicknameKey)) {
 			return;
 		}
 
-		if (value.get(key) != null) {
-			value.increment(key);
+		String itemViewCountKey = ITEM_VIEW_COUNT_ID_PREFIX + itemId;
+		if (value.get(itemViewCountKey) != null) {
+			value.increment(itemViewCountKey);
 			return;
 		}
 
-		value.set(duplicateKey, String.valueOf(itemId));
-		value.set(key, "1", Duration.ofMinutes(1));
+		value.set(nicknameKey, String.valueOf(itemId));
+		value.set(itemViewCountKey, "1", Duration.ofMinutes(2));
 	}
 
 	private boolean isNotFirstView(String duplicateKey) {
-		return Boolean.TRUE.equals(redisTemplate.hasKey(duplicateKey));
+		return redisTemplate.hasKey(duplicateKey);
 	}
 
 	@Transactional
@@ -56,10 +56,10 @@ public class ItemViewCountRedisService {
 		for (String key : keys) {
 			Long itemId = Long.parseLong(key.split(" ")[1]);
 			Long viewCount = Long.valueOf(Optional.ofNullable(redisTemplate.opsForValue().get(key)).orElse("0"));
-			Long originViewCount = itemRepository.findViewCountById(itemId);
-			itemRepository.addViewCountFromRedis(itemId, originViewCount + viewCount);
+			itemRepository.findById(itemId)
+				.ifPresent(item -> item.changeItemViewCount(item.getViewCount() + viewCount));
 			redisTemplate.delete(key);
-			redisTemplate.delete("itemId: " + itemId);
+			redisTemplate.delete(ITEM_VIEW_COUNT_ID_PREFIX + itemId);
 		}
 	}
 }

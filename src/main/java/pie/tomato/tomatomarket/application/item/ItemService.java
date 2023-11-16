@@ -171,10 +171,13 @@ public class ItemService {
 	}
 
 	public ItemDetailResponse itemDetails(Principal principal, Long itemId) {
-		itemViewCountRedisService.addViewCount(principal.getNickname(), itemId);
 		Item findItem = itemRepository.findById(itemId)
 			.orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_ITEM));
+
+		itemViewCountRedisService.addViewCount(principal.getNickname(), itemId);
+
 		boolean isInWishList = wishRepository.existsByItemIdAndMemberId(itemId, findItem.getMember().getId());
+
 		List<Image> images = imageRepository.findByItemId(itemId);
 		List<String> imageUrls = images.stream()
 			.map(Image::getImageUrl)
@@ -185,8 +188,10 @@ public class ItemService {
 	public CustomSlice<SalesItemDetailResponse> salesItemDetails(
 		String status, Principal principal, int size, Long cursor) {
 		ItemStatus findStatus = ItemStatus.findStatus(status);
+
 		Slice<SalesItemDetailResponse> responses =
 			itemPaginationRepository.findByMemberIdAndStatus(principal, findStatus, size, cursor);
+
 		List<SalesItemDetailResponse> content = responses.getContent();
 		Long nextCursor = content.isEmpty() ? null : content.get(content.size() - 1).getItemId();
 		return new CustomSlice<>(content, nextCursor, responses.hasNext());

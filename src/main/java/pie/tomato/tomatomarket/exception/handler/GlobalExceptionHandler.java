@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import pie.tomato.tomatomarket.exception.BadRequestException;
+import pie.tomato.tomatomarket.exception.ConflictException;
 import pie.tomato.tomatomarket.exception.ErrorResponse;
 import pie.tomato.tomatomarket.exception.ForbiddenException;
 import pie.tomato.tomatomarket.exception.InternalServerException;
@@ -40,8 +41,14 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(ForbiddenException.class)
-	public ResponseEntity<ErrorResponse> handleForbiddenException(InternalServerException e) {
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	public ResponseEntity<ErrorResponse> handleForbiddenException(ForbiddenException e) {
+		return ResponseEntity.status(HttpStatus.FORBIDDEN)
 			.body(new ErrorResponse(403, e.getMessage()));
+	}
+
+	@ExceptionHandler(ConflictException.class)
+	public ResponseEntity<ErrorResponse> handleConflictException(ConflictException e) {
+		return ResponseEntity.status(HttpStatus.CONFLICT)
+			.body(new ErrorResponse(409, e.getMessage()));
 	}
 }

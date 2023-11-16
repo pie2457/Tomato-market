@@ -20,6 +20,7 @@ import pie.tomato.tomatomarket.infrastructure.persistence.memberTown.MemberTownR
 import pie.tomato.tomatomarket.infrastructure.persistence.region.RegionRepository;
 import pie.tomato.tomatomarket.presentation.dto.CustomSlice;
 import pie.tomato.tomatomarket.presentation.memberTown.request.AddMemberTownRequest;
+import pie.tomato.tomatomarket.presentation.memberTown.request.DeleteMemberTownRequest;
 import pie.tomato.tomatomarket.presentation.memberTown.request.SelectMemberTownRequest;
 import pie.tomato.tomatomarket.presentation.memberTown.response.MemberTownListResponse;
 import pie.tomato.tomatomarket.presentation.support.Principal;
@@ -29,7 +30,7 @@ import pie.tomato.tomatomarket.presentation.support.Principal;
 @RequiredArgsConstructor
 public class MemberTownService {
 
-	public static final int MEMBER_TOWN_MAXIMUM_SIZE = 1;
+	public static final int MEMBER_TOWN_MINIMUM_SIZE = 1;
 
 	private final MemberTownRepository memberTownRepository;
 	private final RegionRepository regionRepository;
@@ -38,7 +39,8 @@ public class MemberTownService {
 
 	@Transactional
 	public void addMemberTown(Principal principal, AddMemberTownRequest memberTownRequest) {
-		Member member = getMember(principal);
+		Member member = memberRepository.findById(principal.getMemberId())
+			.orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_MEMBER));
 		Region region = regionRepository.findById(memberTownRequest.getAddressId())
 			.orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_REGION));
 
@@ -53,23 +55,29 @@ public class MemberTownService {
 		Optional<MemberTown> duplicated = memberTowns.stream()
 			.filter(memberTown -> memberTown.isSameRegionId(memberTownRequest.getAddressId()))
 			.findAny();
+		if (memberTowns.size() == MEMBER_TOWN_MINIMUM_SIZE) {
+			changeIsSelectedFalse(memberTowns, memberTownRequest.getAddressId());
+			return;
+		}
 
 		if (duplicated.isPresent()) {
 			throw new BadRequestException(ErrorCode.ALREADY_ADDRESS);
 		}
 
-		if (memberTowns.size() > MEMBER_TOWN_MAXIMUM_SIZE) {
+		if (memberTowns.size() > MEMBER_TOWN_MINIMUM_SIZE) {
 			throw new BadRequestException(ErrorCode.MAXIMUM_MEMBER_TOWN_SIZE);
 		}
 	}
 
-	private List<MemberTown> getMemberTowns(Principal principal) {
-		return memberTownRepository.findAllByMemberId(principal.getMemberId());
+	private void changeIsSelectedFalse(List<MemberTown> memberTowns, Long addressId) {
+		memberTowns.stream()
+			.filter(memberTown -> !memberTown.isSameRegionId(addressId))
+			.forEach(MemberTown::changeIsSelectedFalse);
 	}
 
-	private Member getMember(Principal principal) {
-		return memberRepository.findById(principal.getMemberId())
-			.orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_MEMBER));
+	private List<MemberTown> getMemberTowns(Principal principal) {
+		return memberTownRepository.findAllByMemberId(principal.getMemberId())
+			.orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_MEMBER_TOWN));
 	}
 
 	@Transactional
@@ -79,9 +87,7 @@ public class MemberTownService {
 		MemberTown selectMemberTown = getMemberTown(selectMemberTownRequest, memberTowns);
 		selectMemberTown.changeIsSelectedTrue();
 
-		memberTowns.stream()
-			.filter(memberTown -> !memberTown.isSameRegionId(selectMemberTown.getId()))
-			.forEach(MemberTown::changeIsSelectedFalse);
+		changeIsSelectedFalse(memberTowns, selectMemberTown.getId());
 	}
 
 	private MemberTown getMemberTown(SelectMemberTownRequest selectMemberTownRequest,
@@ -93,12 +99,35 @@ public class MemberTownService {
 	}
 
 	public CustomSlice<MemberTownListResponse> findAll(String addressName, int size, Long cursor) {
-		Slice<MemberTownListResponse> responses = memberTownPaginationRepository.findByAddressName(addressName,
-			size, cursor);
+		Slice<MemberTownListResponse> responses =
+			memberTownPaginationRepository.findByAddressName(addressName, size, cursor);
 		List<MemberTownListResponse> content = responses.getContent();
 
 		Long nextCursor = content.isEmpty() ? null : content.get(content.size() - 1).getAddressId();
 
 		return new CustomSlice<>(content, nextCursor, responses.hasNext());
+	}
+
+	@Transactional
+	public void deleteMemberTown(Principal principal, DeleteMemberTownRequest deleteMemberTownRequest) {
+		List<MemberTown> memberTowns = getMemberTowns(principal);
+
+		if (memberTowns.size() <= MEMBER_TOWN_MINIMUM_SIZE) {
+			throw new BadRequestException(ErrorCode.MINIMUM_MEMBER_TOWN_SIZE);
+		}
+
+		for (MemberTown memberTown : memberTowns) {
+			deleteMemberTownAndChangeIsSelected(principal, deleteMemberTownRequest, memberTown);
+		}
+	}
+
+	private void deleteMemberTownAndChangeIsSelected(Principal principal,
+		DeleteMemberTownRequest deleteMemberTownRequest, MemberTown memberTown) {
+		if (memberTown.isSameRegionId(deleteMemberTownRequest.getAddressId())) {
+			memberTownRepository.deleteByMemberIdAndRegionId(
+				principal.getMemberId(), deleteMemberTownRequest.getAddressId());
+			return;
+		}
+		memberTown.changeIsSelectedTrue();
 	}
 }

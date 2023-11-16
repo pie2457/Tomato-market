@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
 import pie.tomato.tomatomarket.application.image.ImageService;
+import pie.tomato.tomatomarket.application.redis.ItemViewCountRedisService;
 import pie.tomato.tomatomarket.domain.Category;
 import pie.tomato.tomatomarket.domain.Image;
 import pie.tomato.tomatomarket.domain.Item;
@@ -48,6 +49,7 @@ public class ItemService {
 	private final CategoryRepository categoryRepository;
 	private final WishRepository wishRepository;
 	private final ChatroomRepository chatroomRepository;
+	private final ItemViewCountRedisService itemViewCountRedisService;
 
 	@Transactional
 	public void register(ItemRegisterRequest itemRegisterRequest, MultipartFile thumbnail,
@@ -168,7 +170,8 @@ public class ItemService {
 		}
 	}
 
-	public ItemDetailResponse itemDetails(Long itemId) {
+	public ItemDetailResponse itemDetails(Principal principal, Long itemId) {
+		itemViewCountRedisService.addViewCount(principal.getNickname(), itemId);
 		Item findItem = itemRepository.findById(itemId)
 			.orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_ITEM));
 		boolean isInWishList = wishRepository.existsByItemIdAndMemberId(itemId, findItem.getMember().getId());

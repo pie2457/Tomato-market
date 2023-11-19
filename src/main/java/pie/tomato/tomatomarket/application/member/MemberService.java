@@ -2,8 +2,10 @@ package pie.tomato.tomatomarket.application.member;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
+import pie.tomato.tomatomarket.application.image.ImageService;
 import pie.tomato.tomatomarket.domain.Member;
 import pie.tomato.tomatomarket.exception.BadRequestException;
 import pie.tomato.tomatomarket.exception.ErrorCode;
@@ -16,6 +18,7 @@ import pie.tomato.tomatomarket.infrastructure.persistence.member.MemberRepositor
 public class MemberService {
 
 	private final MemberRepository memberRepository;
+	private final ImageService imageService;
 
 	@Transactional
 	public void modifyNickname(Long memberId, String nickname) {
@@ -29,5 +32,14 @@ public class MemberService {
 		if (memberRepository.existsByNickname(nickname)) {
 			throw new BadRequestException(ErrorCode.ALREADY_EXIST_NICKNAME);
 		}
+	}
+
+	@Transactional
+	public void modifyProfile(Long memberId, MultipartFile profile) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_MEMBER));
+		imageService.deleteImageFromS3(member.getProfile());
+		String updateThumbnail = imageService.uploadImageToS3(profile);
+		member.changeThumbnail(updateThumbnail);
 	}
 }

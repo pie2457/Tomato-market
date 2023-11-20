@@ -17,4 +17,6 @@ public interface MemberTownRepository extends JpaRepository<MemberTown, Long> {
 	@Query("delete from MemberTown memberTown where memberTown.member.id = :memberId and memberTown.region.id = :regionId")
 	@Modifying
 	void deleteByMemberIdAndRegionId(@Param("memberId") Long memberId, @Param("regionId") Long regionId);
+
+	List<MemberTown> findByMemberId(Long memberId);
 }

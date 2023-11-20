@@ -1,6 +1,9 @@
 package pie.tomato.tomatomarket.presentation.member;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -13,6 +16,9 @@ import org.springframework.web.multipart.MultipartFile;
 import lombok.RequiredArgsConstructor;
 import pie.tomato.tomatomarket.application.member.MemberService;
 import pie.tomato.tomatomarket.presentation.member.request.NicknameModifyRequest;
+import pie.tomato.tomatomarket.presentation.member.response.MemberRegionResponse;
+import pie.tomato.tomatomarket.presentation.support.AuthPrincipal;
+import pie.tomato.tomatomarket.presentation.support.Principal;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,5 +39,10 @@ public class MemberController {
 		@RequestPart("updateImageFile") MultipartFile profile) {
 		memberService.modifyProfile(memberId, profile);
 		return ResponseEntity.ok().build();
+	}
+
+	@GetMapping("/regions")
+	public ResponseEntity<List<MemberRegionResponse>> findAllRegions(@AuthPrincipal Principal principal) {
+		return ResponseEntity.ok(memberService.findAllRegions(principal));
 	}
 }

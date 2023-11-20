@@ -31,4 +31,8 @@ public class Member {
 	public void changeNickname(String nickname) {
 		this.nickname = nickname;
 	}
+
+	public void changeThumbnail(String profile) {
+		this.profile = profile;
+	}
 }

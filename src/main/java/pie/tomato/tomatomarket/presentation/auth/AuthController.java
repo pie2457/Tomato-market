@@ -21,13 +21,13 @@ public class AuthController {
 	private final AuthService authService;
 
 	@GetMapping("/signup")
-	public ResponseEntity<Void> signup(@RequestParam("code") String code) {
+	public ResponseEntity<Void> signup(@RequestParam String code) {
 		authService.signup(code);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
 	@GetMapping("/login")
-	public ResponseEntity<LoginResponse> login(@RequestParam("code") String code) {
+	public ResponseEntity<LoginResponse> login(@RequestParam String code) {
 		return ResponseEntity.status(OK).body(new LoginResponse(authService.login(code)));
 	}
 }

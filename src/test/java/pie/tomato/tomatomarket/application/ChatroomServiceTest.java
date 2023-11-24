@@ -35,11 +35,12 @@ class ChatroomServiceTest {
 	@Test
 	void findAllChatroom() {
 		// given
-		Member member = setupMember("파이", "123@123", "profile");
-		Principal principal = setPrincipal(member);
+		Member seller = setupMember("파이", "123@123", "profile");
+		Member buyer = setupMember("브루니", "2121@1211", "profile2");
+		Principal principal = setPrincipal(seller);
 		Category category = setupCategory();
-		Item item = setupItem(member, category);
-		Chatroom chatroom = new Chatroom(LocalDateTime.now().minusSeconds(5), member, item);
+		Item item = setupItem(seller, category);
+		Chatroom chatroom = new Chatroom(LocalDateTime.now().minusSeconds(5), seller, buyer, item);
 		supportRepository.save(chatroom);
 		supportRepository.save(new ChatLog("얼마에요", "브루니", "파이", LocalDateTime.now(), 0L, chatroom));
 

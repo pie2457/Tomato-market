@@ -15,7 +15,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
 import pie.tomato.tomatomarket.infrastructure.persistence.util.PaginationUtil;
-import pie.tomato.tomatomarket.presentation.chat.ChatroomListResponse;
+import pie.tomato.tomatomarket.presentation.chat.response.ChatroomListResponse;
 
 @Repository
 @RequiredArgsConstructor

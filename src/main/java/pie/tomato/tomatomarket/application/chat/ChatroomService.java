@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import pie.tomato.tomatomarket.infrastructure.persistence.chatroom.ChatPaginationRepository;
-import pie.tomato.tomatomarket.presentation.chat.ChatroomListResponse;
+import pie.tomato.tomatomarket.presentation.chat.response.ChatroomListResponse;
 import pie.tomato.tomatomarket.presentation.dto.CustomSlice;
 import pie.tomato.tomatomarket.presentation.support.Principal;
 

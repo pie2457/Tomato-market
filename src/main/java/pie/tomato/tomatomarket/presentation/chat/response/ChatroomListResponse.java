@@ -1,4 +1,4 @@
-package pie.tomato.tomatomarket.presentation.chat;
+package pie.tomato.tomatomarket.presentation.chat.response;
 
 import java.time.LocalDateTime;
 

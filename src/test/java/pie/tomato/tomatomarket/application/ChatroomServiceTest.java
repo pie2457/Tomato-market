@@ -17,7 +17,7 @@ import pie.tomato.tomatomarket.domain.Chatroom;
 import pie.tomato.tomatomarket.domain.Item;
 import pie.tomato.tomatomarket.domain.ItemStatus;
 import pie.tomato.tomatomarket.domain.Member;
-import pie.tomato.tomatomarket.presentation.chat.ChatroomListResponse;
+import pie.tomato.tomatomarket.presentation.chat.response.ChatroomListResponse;
 import pie.tomato.tomatomarket.presentation.dto.CustomSlice;
 import pie.tomato.tomatomarket.presentation.support.Principal;
 import pie.tomato.tomatomarket.support.SupportRepository;

@@ -143,7 +143,7 @@ CREATE TABLE IF NOT EXISTS `mydb`.`wish`
 -- -----------------------------------------------------
 -- Table `mydb`.`chat_room`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`chat_room`
+CREATE TABLE IF NOT EXISTS `mydb`.`chatroom`
 (
     `id`         BIGINT    NOT NULL AUTO_INCREMENT,
     `created_at` TIMESTAMP NOT NULL,
@@ -171,18 +171,18 @@ CREATE TABLE IF NOT EXISTS `mydb`.`chat_room`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mydb`.`chat_log`
 (
-    `id`           BIGINT       NOT NULL AUTO_INCREMENT,
-    `message`      VARCHAR(512) NOT NULL,
-    `to`           VARCHAR(45)  NOT NULL,
-    `form`         VARCHAR(45)  NOT NULL,
-    `created_at`   TIMESTAMP    NOT NULL,
-    `new_massage`  BIGINT       NOT NULL,
-    `chat_room_id` BIGINT       NOT NULL,
+    `id`          BIGINT       NOT NULL AUTO_INCREMENT,
+    `message`     VARCHAR(512) NOT NULL,
+    `seller`      VARCHAR(45)  NOT NULL,
+    `buyer`       VARCHAR(45)  NOT NULL,
+    `created_at`  TIMESTAMP    NOT NULL,
+    `new_massage` BIGINT       NOT NULL,
+    chatroom_id   BIGINT       NOT NULL,
     PRIMARY KEY (`id`),
-    INDEX `fk_chat_log_chat_room2_idx` (`chat_room_id` ASC) VISIBLE,
+    INDEX `fk_chat_log_chat_room2_idx` (chatroom_id ASC) VISIBLE,
     CONSTRAINT `fk_chat_log_chat_room2`
-        FOREIGN KEY (`chat_room_id`)
-            REFERENCES `mydb`.`chat_room` (`id`)
+        FOREIGN KEY (chatroom_id)
+            REFERENCES `mydb`.`chatroom` (`id`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 )

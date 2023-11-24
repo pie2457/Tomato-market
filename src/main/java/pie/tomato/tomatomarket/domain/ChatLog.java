@@ -22,12 +22,22 @@ public class ChatLog {
 	@GeneratedValue(strategy = IDENTITY)
 	private Long id;
 	private String message;
-	private String to;
-	private String from;
+	private String seller;
+	private String buyer;
 	private LocalDateTime createdAt;
 	private Long newMessage;
 
 	@ManyToOne(fetch = LAZY)
 	@JoinColumn(name = "chatroom_id")
 	private Chatroom chatroom;
+
+	public ChatLog(String message, String seller, String buyer, LocalDateTime createdAt, Long newMessage,
+		Chatroom chatroom) {
+		this.message = message;
+		this.seller = seller;
+		this.buyer = buyer;
+		this.createdAt = createdAt;
+		this.newMessage = newMessage;
+		this.chatroom = chatroom;
+	}
 }

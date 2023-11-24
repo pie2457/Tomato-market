@@ -30,4 +30,10 @@ public class Chatroom {
 	@ManyToOne(fetch = LAZY)
 	@JoinColumn(name = "item_id")
 	private Item item;
+
+	public Chatroom(LocalDateTime createdAt, Member member, Item item) {
+		this.createdAt = createdAt;
+		this.member = member;
+		this.item = item;
+	}
 }

@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS `mydb`.`member`
     `email`    VARCHAR(150) NOT NULL,
     `profile`  VARCHAR(256) NOT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE INDEX `login_id_UNIQUE` (`nickname` ASC) VISIBLE
+    UNIQUE INDEX `login_id_UNIQUE` (`nickname` ASC)
 )
     ENGINE = InnoDB;
 
@@ -61,8 +61,8 @@ CREATE TABLE IF NOT EXISTS `mydb`.`item`
     `member_id`   BIGINT       NOT NULL,
     `category_id` BIGINT       NOT NULL,
     PRIMARY KEY (`id`),
-    INDEX `fk_item_member2_idx` (`member_id` ASC) VISIBLE,
-    INDEX `fk_item_category2_idx` (`category_id` ASC) VISIBLE,
+    INDEX `fk_item_member2_idx` (`member_id` ASC),
+    INDEX `fk_item_category2_idx` (`category_id` ASC),
     CONSTRAINT `fk_item_member2`
         FOREIGN KEY (`member_id`)
             REFERENCES `mydb`.`member` (`id`)
@@ -100,8 +100,8 @@ CREATE TABLE IF NOT EXISTS `mydb`.`memberTown`
     `region_id`   BIGINT       NOT NULL,
     `is_selected` TINYINT      NOT NULL,
     PRIMARY KEY (`id`, `member_id`),
-    INDEX `fk_memberTown_Member1_idx` (`member_id` ASC) VISIBLE,
-    INDEX `fk_memberTown_region1_idx` (`region_id` ASC) VISIBLE,
+    INDEX `fk_memberTown_Member1_idx` (`member_id` ASC),
+    INDEX `fk_memberTown_region1_idx` (`region_id` ASC),
     CONSTRAINT `fk_memberTown_Member1`
         FOREIGN KEY (`member_id`)
             REFERENCES `mydb`.`member` (`id`)
@@ -125,8 +125,8 @@ CREATE TABLE IF NOT EXISTS `mydb`.`wish`
     `member_id` BIGINT NOT NULL,
     `item_id`   BIGINT NOT NULL,
     PRIMARY KEY (`id`),
-    INDEX `fk_wish_member1_idx` (`member_id` ASC) VISIBLE,
-    INDEX `fk_wish_item1_idx` (`item_id` ASC) VISIBLE,
+    INDEX `fk_wish_member1_idx` (`member_id` ASC),
+    INDEX `fk_wish_item1_idx` (`item_id` ASC),
     CONSTRAINT `fk_wish_member1`
         FOREIGN KEY (`member_id`)
             REFERENCES `mydb`.`member` (`id`)
@@ -147,21 +147,10 @@ CREATE TABLE IF NOT EXISTS `mydb`.`chatroom`
 (
     `id`         BIGINT    NOT NULL AUTO_INCREMENT,
     `created_at` TIMESTAMP NOT NULL,
-    `member_id`  BIGINT    NOT NULL,
+    seller_id    BIGINT    NOT NULL,
+    buyer_id     BIGINT    NOT NULL,
     `item_id`    BIGINT    NOT NULL,
-    PRIMARY KEY (`id`),
-    INDEX `fk_chat_room_member2_idx` (`member_id` ASC) VISIBLE,
-    INDEX `fk_chat_room_item2_idx` (`item_id` ASC) VISIBLE,
-    CONSTRAINT `fk_chat_room_member2`
-        FOREIGN KEY (`member_id`)
-            REFERENCES `mydb`.`member` (`id`)
-            ON DELETE NO ACTION
-            ON UPDATE NO ACTION,
-    CONSTRAINT `fk_chat_room_item2`
-        FOREIGN KEY (`item_id`)
-            REFERENCES `mydb`.`item` (`id`)
-            ON DELETE NO ACTION
-            ON UPDATE NO ACTION
+    PRIMARY KEY (`id`)
 )
     ENGINE = InnoDB;
 
@@ -179,7 +168,7 @@ CREATE TABLE IF NOT EXISTS `mydb`.`chat_log`
     `new_massage` BIGINT       NOT NULL,
     chatroom_id   BIGINT       NOT NULL,
     PRIMARY KEY (`id`),
-    INDEX `fk_chat_log_chat_room2_idx` (chatroom_id ASC) VISIBLE,
+    INDEX `fk_chat_log_chat_room2_idx` (chatroom_id ASC),
     CONSTRAINT `fk_chat_log_chat_room2`
         FOREIGN KEY (chatroom_id)
             REFERENCES `mydb`.`chatroom` (`id`)
@@ -199,7 +188,7 @@ CREATE TABLE IF NOT EXISTS `mydb`.`image`
     `thumbnail` TINYINT      NOT NULL,
     `item_id`   BIGINT       NOT NULL,
     PRIMARY KEY (`id`),
-    INDEX `fk_image_item2_idx` (`item_id` ASC) VISIBLE,
+    INDEX `fk_image_item2_idx` (`item_id` ASC),
     CONSTRAINT `fk_image_item2`
         FOREIGN KEY (`item_id`)
             REFERENCES `mydb`.`item` (`id`)
@@ -219,7 +208,7 @@ CREATE TABLE IF NOT EXISTS `mydb`.`member`
     `email`    VARCHAR(150) NOT NULL,
     `profile`  VARCHAR(256) NOT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE INDEX `login_id_UNIQUE` (`nickname` ASC) VISIBLE
+    UNIQUE INDEX `login_id_UNIQUE` (`nickname` ASC)
 )
     ENGINE = InnoDB;
 
@@ -246,8 +235,8 @@ CREATE TABLE IF NOT EXISTS `mydb`.`member_town`
     `member_id` BIGINT      NOT NULL,
     `region_id` BIGINT      NOT NULL,
     PRIMARY KEY (`id`),
-    INDEX `fk_member_town_member1_idx` (`member_id` ASC) VISIBLE,
-    INDEX `fk_member_town_region1_idx` (`region_id` ASC) VISIBLE,
+    INDEX `fk_member_town_member1_idx` (`member_id` ASC),
+    INDEX `fk_member_town_region1_idx` (`region_id` ASC),
     CONSTRAINT `fk_member_town_member1`
         FOREIGN KEY (`member_id`)
             REFERENCES `mydb`.`member` (`id`)
@@ -294,8 +283,8 @@ CREATE TABLE IF NOT EXISTS `mydb`.`item`
     `member_id`   BIGINT       NOT NULL,
     `category_id` BIGINT       NOT NULL,
     PRIMARY KEY (`id`),
-    INDEX `fk_item_member2_idx` (`member_id` ASC) VISIBLE,
-    INDEX `fk_item_category2_idx` (`category_id` ASC) VISIBLE,
+    INDEX `fk_item_member2_idx` (`member_id` ASC),
+    INDEX `fk_item_category2_idx` (`category_id` ASC),
     CONSTRAINT `fk_item_member2`
         FOREIGN KEY (`member_id`)
             REFERENCES `mydb`.`member` (`id`)
@@ -320,7 +309,7 @@ CREATE TABLE IF NOT EXISTS `mydb`.`image`
     `thumbnail` TINYINT      NOT NULL,
     `item_id`   BIGINT       NOT NULL,
     PRIMARY KEY (`id`),
-    INDEX `fk_image_item2_idx` (`item_id` ASC) VISIBLE,
+    INDEX `fk_image_item2_idx` (`item_id` ASC),
     CONSTRAINT `fk_image_item2`
         FOREIGN KEY (`item_id`)
             REFERENCES `mydb`.`item` (`id`)
@@ -339,8 +328,8 @@ CREATE TABLE IF NOT EXISTS `mydb`.`wish`
     `member_id` BIGINT NOT NULL,
     `item_id`   BIGINT NOT NULL,
     PRIMARY KEY (`id`),
-    INDEX `fk_wish_member1_idx` (`member_id` ASC) VISIBLE,
-    INDEX `fk_wish_item1_idx` (`item_id` ASC) VISIBLE,
+    INDEX `fk_wish_member1_idx` (`member_id` ASC),
+    INDEX `fk_wish_item1_idx` (`item_id` ASC),
     CONSTRAINT `fk_wish_member1`
         FOREIGN KEY (`member_id`)
             REFERENCES `mydb`.`member` (`id`)
@@ -365,8 +354,8 @@ CREATE TABLE IF NOT EXISTS `mydb`.`chat_room`
     `member_id`  BIGINT    NOT NULL,
     `item_id`    BIGINT    NOT NULL,
     PRIMARY KEY (`id`),
-    INDEX `fk_chat_room_member2_idx` (`member_id` ASC) VISIBLE,
-    INDEX `fk_chat_room_item2_idx` (`item_id` ASC) VISIBLE,
+    INDEX `fk_chat_room_member2_idx` (`member_id` ASC),
+    INDEX `fk_chat_room_item2_idx` (`item_id` ASC),
     CONSTRAINT `fk_chat_room_member2`
         FOREIGN KEY (`member_id`)
             REFERENCES `mydb`.`member` (`id`)
@@ -394,7 +383,7 @@ CREATE TABLE IF NOT EXISTS `mydb`.`chat_log`
     `new_massage`  BIGINT       NOT NULL,
     `chat_room_id` BIGINT       NOT NULL,
     PRIMARY KEY (`id`),
-    INDEX `fk_chat_log_chat_room2_idx` (`chat_room_id` ASC) VISIBLE,
+    INDEX `fk_chat_log_chat_room2_idx` (`chat_room_id` ASC),
     CONSTRAINT `fk_chat_log_chat_room2`
         FOREIGN KEY (`chat_room_id`)
             REFERENCES `mydb`.`chat_room` (`id`)

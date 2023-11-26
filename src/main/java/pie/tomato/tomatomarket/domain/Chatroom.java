@@ -12,9 +12,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = PROTECTED)
 public class Chatroom {
 
@@ -24,16 +26,21 @@ public class Chatroom {
 	private LocalDateTime createdAt;
 
 	@ManyToOne(fetch = LAZY)
-	@JoinColumn(name = "member_id")
-	private Member member;
+	@JoinColumn(name = "seller_id")
+	private Member seller;
+
+	@ManyToOne(fetch = LAZY)
+	@JoinColumn(name = "buyer_id")
+	private Member buyer;
 
 	@ManyToOne(fetch = LAZY)
 	@JoinColumn(name = "item_id")
 	private Item item;
 
-	public Chatroom(LocalDateTime createdAt, Member member, Item item) {
+	public Chatroom(LocalDateTime createdAt, Member seller, Member buyer, Item item) {
 		this.createdAt = createdAt;
-		this.member = member;
+		this.seller = seller;
+		this.buyer = buyer;
 		this.item = item;
 	}
 }

@@ -1,6 +1,7 @@
 package pie.tomato.tomatomarket.application;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
 
@@ -17,6 +18,7 @@ import pie.tomato.tomatomarket.domain.Chatroom;
 import pie.tomato.tomatomarket.domain.Item;
 import pie.tomato.tomatomarket.domain.ItemStatus;
 import pie.tomato.tomatomarket.domain.Member;
+import pie.tomato.tomatomarket.presentation.chat.response.ChatroomIdResponse;
 import pie.tomato.tomatomarket.presentation.chat.response.ChatroomListResponse;
 import pie.tomato.tomatomarket.presentation.dto.CustomSlice;
 import pie.tomato.tomatomarket.presentation.support.Principal;
@@ -55,6 +57,30 @@ class ChatroomServiceTest {
 			.hasFieldOrProperty("lastSendTime")
 			.hasFieldOrProperty("lastSendMessage")
 			.hasFieldOrProperty("newMessageCount");
+	}
+
+	@DisplayName("채팅방 생성에 성공한다.")
+	@Test
+	void registerChatroom() {
+		// given
+		Member seller = setupMember("파이", "123@123", "profile");
+		Member buyer = setupMember("브루니", "2121@1211", "profile2");
+		Principal principal = setPrincipal(buyer);
+		Category category = setupCategory();
+		Item item = setupItem(seller, category);
+
+		// when
+		ChatroomIdResponse response = chatroomService.register(principal, item.getId());
+		Chatroom chatroom = supportRepository.findById(response.getChatroomId(), Chatroom.class);
+
+		// then
+		assertAll(
+			() -> assertThat(chatroom.getId()).isNotNull(),
+			() -> assertThat(chatroom).hasFieldOrProperty("buyer")
+				.hasFieldOrProperty("seller")
+				.hasFieldOrProperty("item")
+				.hasFieldOrProperty("createdAt")
+		);
 	}
 
 	Principal setPrincipal(Member member) {

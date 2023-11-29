@@ -43,6 +43,9 @@ public enum ErrorCode {
 	// Sales
 	INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
 
+	// Chatroom
+	NOT_FOUND_CHATROOM(HttpStatus.NOT_FOUND, "채팅방을 찾을 수 없습니다."),
+
 	// Auth
 	NOT_LOGIN(HttpStatus.UNAUTHORIZED, "로그인 상태가 아닙니다.");
 

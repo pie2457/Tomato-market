@@ -1,4 +1,4 @@
-package pie.tomato.tomatomarket.infrastructure.persistence.chatroom;
+package pie.tomato.tomatomarket.infrastructure.persistence.chat;
 
 import static pie.tomato.tomatomarket.domain.QChatLog.*;
 import static pie.tomato.tomatomarket.domain.QChatroom.*;

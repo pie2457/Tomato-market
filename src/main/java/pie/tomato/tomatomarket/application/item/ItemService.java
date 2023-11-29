@@ -21,7 +21,7 @@ import pie.tomato.tomatomarket.exception.ErrorCode;
 import pie.tomato.tomatomarket.exception.ForbiddenException;
 import pie.tomato.tomatomarket.exception.NotFoundException;
 import pie.tomato.tomatomarket.infrastructure.persistence.category.CategoryRepository;
-import pie.tomato.tomatomarket.infrastructure.persistence.chatroom.ChatroomRepository;
+import pie.tomato.tomatomarket.infrastructure.persistence.chat.ChatroomRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.image.ImageRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.item.ItemPaginationRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.item.ItemRepository;

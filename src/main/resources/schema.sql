@@ -377,8 +377,8 @@ CREATE TABLE IF NOT EXISTS `mydb`.`chat_log`
 (
     `id`           BIGINT       NOT NULL AUTO_INCREMENT,
     `message`      VARCHAR(512) NOT NULL,
-    `to`           VARCHAR(45)  NOT NULL,
-    `form`         VARCHAR(45)  NOT NULL,
+    `sender`       VARCHAR(45)  NOT NULL,
+    `receiver`     VARCHAR(45)  NOT NULL,
     `created_at`   TIMESTAMP    NOT NULL,
     `new_massage`  BIGINT       NOT NULL,
     `chat_room_id` BIGINT       NOT NULL,

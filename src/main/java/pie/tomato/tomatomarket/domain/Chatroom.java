@@ -44,7 +44,7 @@ public class Chatroom {
 		this.item = item;
 	}
 
-	public String isSender(Long memberId) {
+	public String getSenderName(Long memberId) {
 		if (memberId == seller.getId()) {
 			return seller.getNickname();
 		}

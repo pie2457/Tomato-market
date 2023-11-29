@@ -37,8 +37,8 @@ public class Chatroom {
 	@JoinColumn(name = "item_id")
 	private Item item;
 
-	public Chatroom(LocalDateTime createdAt, Member seller, Member buyer, Item item) {
-		this.createdAt = createdAt;
+	public Chatroom(Member seller, Member buyer, Item item) {
+		this.createdAt = LocalDateTime.now();
 		this.seller = seller;
 		this.buyer = buyer;
 		this.item = item;

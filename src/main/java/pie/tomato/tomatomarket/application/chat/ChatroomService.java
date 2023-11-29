@@ -1,6 +1,5 @@
 package pie.tomato.tomatomarket.application.chat;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Slice;
@@ -49,10 +48,10 @@ public class ChatroomService {
 		Item item = itemRepository.findById(itemId)
 			.orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_ITEM));
 		Member seller = getMember(item.getMember().getId());
-		
-		Chatroom saveChatroom = chatroomRepository.save(new Chatroom(LocalDateTime.now(), seller, buyer, item));
 
-		return new ChatroomIdResponse(saveChatroom.getId());
+		Chatroom savedChatroom = chatroomRepository.save(new Chatroom(seller, buyer, item));
+
+		return new ChatroomIdResponse(savedChatroom.getId());
 	}
 
 	private Member getMember(Long principal) {

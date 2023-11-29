@@ -42,7 +42,7 @@ class ChatroomServiceTest {
 		Principal principal = setPrincipal(seller);
 		Category category = setupCategory();
 		Item item = setupItem(seller, category);
-		Chatroom chatroom = new Chatroom(LocalDateTime.now().minusSeconds(5), seller, buyer, item);
+		Chatroom chatroom = new Chatroom(seller, buyer, item);
 		supportRepository.save(chatroom);
 		supportRepository.save(new ChatLog("얼마에요", "브루니", "파이", LocalDateTime.now(), 0L, chatroom));
 

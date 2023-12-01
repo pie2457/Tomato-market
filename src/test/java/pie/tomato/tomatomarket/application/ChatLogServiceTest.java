@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import pie.tomato.tomatomarket.application.chat.ChatroomService;
+import pie.tomato.tomatomarket.application.chat.ChatLogService;
 import pie.tomato.tomatomarket.domain.Category;
 import pie.tomato.tomatomarket.domain.ChatLog;
 import pie.tomato.tomatomarket.domain.Chatroom;
@@ -19,70 +20,41 @@ import pie.tomato.tomatomarket.domain.Item;
 import pie.tomato.tomatomarket.domain.ItemStatus;
 import pie.tomato.tomatomarket.domain.Member;
 import pie.tomato.tomatomarket.presentation.chat.request.PostMessageRequest;
-import pie.tomato.tomatomarket.presentation.chat.response.ChatroomIdResponse;
-import pie.tomato.tomatomarket.presentation.chat.response.ChatroomListResponse;
-import pie.tomato.tomatomarket.presentation.dto.CustomSlice;
 import pie.tomato.tomatomarket.presentation.support.Principal;
 import pie.tomato.tomatomarket.support.SupportRepository;
 
 @Transactional
 @SpringBootTest
-class ChatroomServiceTest {
+class ChatLogServiceTest {
 
 	@Autowired
 	private SupportRepository supportRepository;
 	@Autowired
-	private ChatroomService chatroomService;
+	private ChatLogService chatLogService;
 
-	@DisplayName("채팅방 목록을 불러오는데 성공한다.")
+	@DisplayName("채팅방 메세지 전송에 성공한다.")
 	@Test
-	void findAllChatroom() {
+	void postMessage() {
 		// given
 		Member seller = setupMember("파이", "123@123", "profile");
 		Member buyer = setupMember("브루니", "2121@1211", "profile2");
-		Principal principal = setPrincipal(seller);
 		Principal principalBuyer = setPrincipal(buyer);
 		Category category = setupCategory();
 		Item item = setupItem(seller, category);
 		Chatroom chatroom = new Chatroom(seller, buyer, item);
 		supportRepository.save(chatroom);
-
-		supportRepository.save(ChatLog.of(new PostMessageRequest("얼마에요"), principalBuyer, "파이", chatroom));
-
-		// when
-		CustomSlice<ChatroomListResponse> response = chatroomService.findAll(principal, 10, null);
-
-		// then
-		assertThat(response.getContents().get(0)).hasFieldOrProperty("chatroomId")
-			.hasFieldOrProperty("thumbnailUrl")
-			.hasFieldOrProperty("chatPartnerName")
-			.hasFieldOrProperty("chatPartnerProfile")
-			.hasFieldOrProperty("lastSendTime")
-			.hasFieldOrProperty("lastSendMessage")
-			.hasFieldOrProperty("newMessageCount");
-	}
-
-	@DisplayName("채팅방 생성에 성공한다.")
-	@Test
-	void registerChatroom() {
-		// given
-		Member seller = setupMember("파이", "123@123", "profile");
-		Member buyer = setupMember("브루니", "2121@1211", "profile2");
-		Principal principal = setPrincipal(buyer);
-		Category category = setupCategory();
-		Item item = setupItem(seller, category);
+		ChatLog chatLog = ChatLog.of(new PostMessageRequest("안녕하세요"), principalBuyer, "파이", chatroom);
+		supportRepository.save(chatLog);
 
 		// when
-		ChatroomIdResponse response = chatroomService.register(principal, item.getId());
-		Chatroom chatroom = supportRepository.findById(response.getChatroomId(), Chatroom.class);
+		chatLogService.postMessage(principalBuyer, chatroom.getId(), new PostMessageRequest("안녕하세요?"));
+		List<ChatLog> logs = supportRepository.findAll(ChatLog.class);
 
 		// then
 		assertAll(
-			() -> assertThat(chatroom.getId()).isNotNull(),
-			() -> assertThat(chatroom).hasFieldOrProperty("buyer")
-				.hasFieldOrProperty("seller")
-				.hasFieldOrProperty("item")
-				.hasFieldOrProperty("createdAt")
+			() -> assertThat(logs.size()).isEqualTo(2),
+			() -> assertThat(logs.get(0).getMessage()).isEqualTo("안녕하세요"),
+			() -> assertThat(logs.get(1).getMessage()).isEqualTo("안녕하세요?")
 		);
 	}
 

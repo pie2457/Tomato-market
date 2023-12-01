@@ -43,4 +43,11 @@ public class Chatroom {
 		this.buyer = buyer;
 		this.item = item;
 	}
+
+	public String getReceiverName(Long memberId) {
+		if (memberId == seller.getId()) {
+			return seller.getNickname();
+		}
+		return buyer.getNickname();
+	}
 }

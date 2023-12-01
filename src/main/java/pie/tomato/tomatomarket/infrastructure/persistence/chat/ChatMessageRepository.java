@@ -17,7 +17,7 @@ public class ChatMessageRepository {
 	private final JPAQueryFactory queryFactory;
 	private final ChatLogRepository chatLogRepository;
 
-	public List<String> getMessage(Long messageIndex, Long chatroomId) {
+	public List<String> getMessagesByChatroomId(Long messageIndex, Long chatroomId) {
 		return queryFactory.select(chatLog.message)
 			.from(chatLog)
 			.where(

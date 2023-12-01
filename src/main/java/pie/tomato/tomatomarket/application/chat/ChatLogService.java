@@ -34,12 +34,13 @@ public class ChatLogService {
 	public void postMessage(Principal principal, Long chatroomId, PostMessageRequest request) {
 		Chatroom chatroom = chatroomRepository.findById(chatroomId)
 			.orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_CHATROOM));
-		String receiver = chatroom.isSender(principal.getMemberId());
+		String receiver = chatroom.getReceiverName(principal.getMemberId());
 
 		chatLogRepository.save(ChatLog.of(request, principal, receiver, chatroom));
 
 		for (Entry<DeferredResult<List<String>>, Integer> entry : chat.entrySet()) {
-			List<String> messages = chatMessageRepository.getMessage(Long.valueOf(entry.getValue()), chatroomId);
+			List<String> messages = chatMessageRepository.getMessagesByChatroomId(Long.valueOf(entry.getValue()),
+				chatroomId);
 			entry.getKey().setResult(messages);
 		}
 	}

@@ -1,10 +1,12 @@
 package pie.tomato.tomatomarket.application.chat;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.async.DeferredResult;
@@ -12,12 +14,14 @@ import org.springframework.web.context.request.async.DeferredResult;
 import lombok.RequiredArgsConstructor;
 import pie.tomato.tomatomarket.domain.ChatLog;
 import pie.tomato.tomatomarket.domain.Chatroom;
+import pie.tomato.tomatomarket.domain.Item;
 import pie.tomato.tomatomarket.exception.ErrorCode;
 import pie.tomato.tomatomarket.exception.NotFoundException;
 import pie.tomato.tomatomarket.infrastructure.persistence.chat.ChatLogRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.chat.ChatMessageRepository;
 import pie.tomato.tomatomarket.infrastructure.persistence.chat.ChatroomRepository;
 import pie.tomato.tomatomarket.presentation.chat.request.PostMessageRequest;
+import pie.tomato.tomatomarket.presentation.chat.response.ChatMessageResponse;
 import pie.tomato.tomatomarket.presentation.support.Principal;
 
 @Service
@@ -43,5 +47,37 @@ public class ChatLogService {
 				chatroomId);
 			entry.getKey().setResult(messages);
 		}
+	}
+
+	public ChatMessageResponse getMessages(Principal principal, Long chatroomId,
+		int size, Long messageIndex) {
+		final DeferredResult<List<String>> deferredResult =
+			new DeferredResult<>(null, Collections.emptyList());
+		chat.put(deferredResult, Math.toIntExact(messageIndex));
+
+		deferredResult.onCompletion(() -> chat.remove(deferredResult));
+
+		Chatroom chatroom = chatroomRepository.findById(chatroomId)
+			.orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_CHATROOM));
+		Item item = chatroom.getItem();
+
+		Slice<ChatMessageResponse.Chat> readAllChat =
+			chatMessageRepository.readAll(principal.getNickname(), chatroomId, size, messageIndex);
+		
+		List<ChatMessageResponse.Chat> responses = readAllChat.getContent();
+
+		Long nextCursor = responses.isEmpty() ? null : responses.get(responses.size() - 1).getMessageId();
+
+		return new ChatMessageResponse(
+			getPartnerName(principal.getMemberId(), chatroom),
+			ChatMessageResponse.ChatItem.of(item),
+			responses, nextCursor);
+	}
+
+	private String getPartnerName(Long memberId, Chatroom chatroom) {
+		if (chatroom.getSeller().getId() == memberId) {
+			return chatroom.getBuyer().getNickname();
+		}
+		return chatroom.getSeller().getNickname();
 	}
 }

@@ -14,7 +14,6 @@ import org.springframework.web.context.request.async.DeferredResult;
 import lombok.RequiredArgsConstructor;
 import pie.tomato.tomatomarket.domain.ChatLog;
 import pie.tomato.tomatomarket.domain.Chatroom;
-import pie.tomato.tomatomarket.domain.Item;
 import pie.tomato.tomatomarket.exception.ErrorCode;
 import pie.tomato.tomatomarket.exception.NotFoundException;
 import pie.tomato.tomatomarket.infrastructure.persistence.chat.ChatLogRepository;
@@ -32,7 +31,7 @@ public class ChatLogService {
 	private final ChatLogRepository chatLogRepository;
 	private final ChatroomRepository chatroomRepository;
 	private final ChatMessageRepository chatMessageRepository;
-	private final Map<DeferredResult<List<String>>, Integer> chat = new ConcurrentHashMap<>();
+	private final Map<DeferredResult<List<String>>, Long> chat = new ConcurrentHashMap<>();
 
 	@Transactional
 	public void postMessage(Principal principal, Long chatroomId, PostMessageRequest request) {
@@ -42,9 +41,8 @@ public class ChatLogService {
 
 		chatLogRepository.save(ChatLog.of(request, principal, receiver, chatroom));
 
-		for (Entry<DeferredResult<List<String>>, Integer> entry : chat.entrySet()) {
-			List<String> messages = chatMessageRepository.getMessagesByChatroomId(Long.valueOf(entry.getValue()),
-				chatroomId);
+		for (Entry<DeferredResult<List<String>>, Long> entry : chat.entrySet()) {
+			List<String> messages = chatMessageRepository.getMessagesByChatroomId(entry.getValue(), chatroomId);
 			entry.getKey().setResult(messages);
 		}
 	}
@@ -53,24 +51,23 @@ public class ChatLogService {
 		int size, Long messageIndex) {
 		final DeferredResult<List<String>> deferredResult =
 			new DeferredResult<>(null, Collections.emptyList());
-		chat.put(deferredResult, Math.toIntExact(messageIndex));
+		chat.put(deferredResult, messageIndex);
 
 		deferredResult.onCompletion(() -> chat.remove(deferredResult));
 
-		Chatroom chatroom = chatroomRepository.findById(chatroomId)
-			.orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_CHATROOM));
-		Item item = chatroom.getItem();
-
-		Slice<ChatMessageResponse.Chat> readAllChat =
+		Slice<ChatMessageResponse.Chat> chatMessages =
 			chatMessageRepository.readAll(principal.getNickname(), chatroomId, size, messageIndex);
-		
-		List<ChatMessageResponse.Chat> responses = readAllChat.getContent();
+
+		List<ChatMessageResponse.Chat> responses = chatMessages.getContent();
 
 		Long nextCursor = responses.isEmpty() ? null : responses.get(responses.size() - 1).getMessageId();
 
+		Chatroom chatroom = chatroomRepository.findById(chatroomId)
+			.orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_CHATROOM));
+
 		return new ChatMessageResponse(
 			getPartnerName(principal.getMemberId(), chatroom),
-			ChatMessageResponse.ChatItem.of(item),
+			ChatMessageResponse.ChatItem.of(chatroom.getItem()),
 			responses, nextCursor);
 	}
 

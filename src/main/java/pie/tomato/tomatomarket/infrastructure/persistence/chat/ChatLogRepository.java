@@ -18,6 +18,14 @@ public interface ChatLogRepository extends JpaRepository<ChatLog, Long> {
 		return chatLog.id.lt(messageIndex);
 	}
 
+	default BooleanExpression greaterThanMessageIndex(Long messageIndex) {
+		if (messageIndex == null) {
+			return null;
+		}
+
+		return chatLog.id.gt(messageIndex);
+	}
+
 	default BooleanExpression equalChatroomId(Long chatroomId) {
 		if (chatroomId == null) {
 			return null;

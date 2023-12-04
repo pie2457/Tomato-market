@@ -20,6 +20,7 @@ import pie.tomato.tomatomarket.domain.Item;
 import pie.tomato.tomatomarket.domain.ItemStatus;
 import pie.tomato.tomatomarket.domain.Member;
 import pie.tomato.tomatomarket.presentation.chat.request.PostMessageRequest;
+import pie.tomato.tomatomarket.presentation.chat.response.ChatMessageResponse;
 import pie.tomato.tomatomarket.presentation.support.Principal;
 import pie.tomato.tomatomarket.support.SupportRepository;
 
@@ -55,6 +56,32 @@ class ChatLogServiceTest {
 			() -> assertThat(logs.size()).isEqualTo(2),
 			() -> assertThat(logs.get(0).getMessage()).isEqualTo("안녕하세요"),
 			() -> assertThat(logs.get(1).getMessage()).isEqualTo("안녕하세요?")
+		);
+	}
+
+	@DisplayName("채팅방의 메세지를 가져오는데 성공한다.")
+	@Test
+	void getMessages() {
+		// given
+		Member seller = setupMember("파이", "123@123", "profile");
+		Member buyer = setupMember("브루니", "2121@1211", "profile2");
+		Principal principalSeller = setPrincipal(seller);
+		Principal principalBuyer = setPrincipal(buyer);
+		Category category = setupCategory();
+		Item item = setupItem(seller, category);
+		Chatroom chatroom = new Chatroom(seller, buyer, item);
+		supportRepository.save(chatroom);
+		ChatLog chatLog = ChatLog.of(new PostMessageRequest("안녕하세요"), principalBuyer, "파이", chatroom);
+		supportRepository.save(chatLog);
+
+		// when
+		ChatMessageResponse messages = chatLogService.getMessages(principalSeller, chatroom.getId(), 20, 0L);
+
+		// then
+		assertAll(
+			() -> assertThat(messages.getChatPartnerName()).isEqualTo(buyer.getNickname()),
+			() -> assertThat(messages.getChat().size()).isEqualTo(1),
+			() -> assertThat(messages.getItem().getTitle()).isEqualTo(item.getTitle())
 		);
 	}
 

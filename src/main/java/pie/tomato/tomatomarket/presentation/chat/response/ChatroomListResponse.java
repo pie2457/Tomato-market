@@ -14,4 +14,8 @@ public class ChatroomListResponse {
 	private LocalDateTime lastSendTime;
 	private String lastSendMessage;
 	private Long newMessageCount;
+
+	public void assignNewMessageCount(Long newMessageCount) {
+		this.newMessageCount = newMessageCount;
+	}
 }

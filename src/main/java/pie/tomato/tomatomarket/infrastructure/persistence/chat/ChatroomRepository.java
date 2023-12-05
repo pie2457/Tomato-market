@@ -1,7 +1,6 @@
 package pie.tomato.tomatomarket.infrastructure.persistence.chat;
 
-import static pie.tomato.tomatomarket.domain.QItem.*;
-import static pie.tomato.tomatomarket.domain.QMember.*;
+import static pie.tomato.tomatomarket.domain.QChatroom.*;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -18,18 +17,21 @@ public interface ChatroomRepository extends JpaRepository<Chatroom, Long> {
 	@Query("delete from Chatroom chatroom where chatroom.item.id = :itemId")
 	void deleteAllByItemId(@Param("itemId") Long itemId);
 
-	default BooleanExpression lessThanItemId(Long itemId) {
-		if (itemId == null) {
+	@Query("SELECT COUNT(1) FROM ChatLog chatLog WHERE chatLog.chatroom.id = :chatroomId AND chatLog.newMessage = 1")
+	Long getNewMessageCount(@Param("chatroomId") Long chatroomId);
+
+	default BooleanExpression lessThanChatroomId(Long chatroomId) {
+		if (chatroomId == null) {
 			return null;
 		}
 
-		return item.id.lt(itemId);
+		return chatroom.id.lt(chatroomId);
 	}
 
 	default BooleanExpression equalMemberId(Long memberId) {
 		if (memberId == null) {
 			return null;
 		}
-		return member.id.eq(memberId);
+		return chatroom.buyer.id.eq(memberId).or(chatroom.seller.id.eq(memberId));
 	}
 }

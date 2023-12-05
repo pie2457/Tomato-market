@@ -37,6 +37,11 @@ public class ChatroomService {
 
 		List<ChatroomListResponse> content = responses.getContent();
 
+		for (ChatroomListResponse chatroomListResponse : content) {
+			Long messageCount = chatroomRepository.getNewMessageCount(chatroomListResponse.getChatroomId());
+			chatroomListResponse.assignNewMessageCount(messageCount);
+		}
+
 		Long nextCursor = content.isEmpty() ? null : content.get(content.size() - 1).getChatroomId();
 
 		return new CustomSlice<>(content, nextCursor, responses.hasNext());

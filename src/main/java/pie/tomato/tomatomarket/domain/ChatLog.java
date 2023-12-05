@@ -47,6 +47,6 @@ public class ChatLog {
 
 	public static ChatLog of(PostMessageRequest request, Principal principal, String receiver, Chatroom chatroom) {
 		return new ChatLog(
-			request.getMessage(), principal.getNickname(), receiver, LocalDateTime.now(), 0L, chatroom);
+			request.getMessage(), principal.getNickname(), receiver, LocalDateTime.now(), 1L, chatroom);
 	}
 }

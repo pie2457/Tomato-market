@@ -47,6 +47,7 @@ public class ChatLogService {
 		}
 	}
 
+	@Transactional
 	public ChatMessageResponse getMessages(Principal principal, Long chatroomId,
 		int size, Long messageIndex) {
 		final DeferredResult<List<String>> deferredResult =
@@ -64,6 +65,8 @@ public class ChatLogService {
 
 		Chatroom chatroom = chatroomRepository.findById(chatroomId)
 			.orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_CHATROOM));
+
+		chatLogRepository.changeToReadState(chatroomId, messageIndex);
 
 		return new ChatMessageResponse(
 			getPartnerName(principal.getMemberId(), chatroom),

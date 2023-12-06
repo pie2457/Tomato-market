@@ -71,8 +71,14 @@ class ChatLogServiceTest {
 		Item item = setupItem(seller, category);
 		Chatroom chatroom = new Chatroom(seller, buyer, item);
 		supportRepository.save(chatroom);
-		ChatLog chatLog = ChatLog.of(new PostMessageRequest("안녕하세요"), principalBuyer, "파이", chatroom);
-		supportRepository.save(chatLog);
+		ChatLog chat1 = ChatLog.of(new PostMessageRequest("안녕하세요"), principalBuyer, "파이", chatroom);
+		ChatLog chat2 = ChatLog.of(new PostMessageRequest("안녕하세요1"), principalBuyer, "파이", chatroom);
+		ChatLog chat3 = ChatLog.of(new PostMessageRequest("안녕하세요2"), principalBuyer, "파이", chatroom);
+		ChatLog chat4 = ChatLog.of(new PostMessageRequest("안녕하세요3"), principalBuyer, "파이", chatroom);
+		setupChatLog(chat1);
+		setupChatLog(chat2);
+		setupChatLog(chat3);
+		setupChatLog(chat4);
 
 		// when
 		ChatMessageResponse messages = chatLogService.getMessages(principalSeller, chatroom.getId(), 20, 0L);
@@ -80,7 +86,7 @@ class ChatLogServiceTest {
 		// then
 		assertAll(
 			() -> assertThat(messages.getChatPartnerName()).isEqualTo(buyer.getNickname()),
-			() -> assertThat(messages.getChat().size()).isEqualTo(1),
+			() -> assertThat(messages.getChat().size()).isEqualTo(4),
 			() -> assertThat(messages.getItem().getTitle()).isEqualTo(item.getTitle())
 		);
 	}
@@ -105,5 +111,9 @@ class ChatLogServiceTest {
 	Item setupItem(Member member, Category category) {
 		return supportRepository.save(new Item("1번", "내용1", 3000L, "thumbnail", ItemStatus.ON_SALE,
 			"역삼1동", 0L, 0L, 0L, LocalDateTime.now(), member, category));
+	}
+
+	void setupChatLog(ChatLog chatLog) {
+		supportRepository.save(chatLog);
 	}
 }

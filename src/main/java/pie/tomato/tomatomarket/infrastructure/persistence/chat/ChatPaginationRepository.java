@@ -24,21 +24,20 @@ public class ChatPaginationRepository {
 	private final JPAQueryFactory queryFactory;
 	private final ChatroomRepository chatroomRepository;
 
-	public Slice<ChatroomListResponse> findAll(Long memberId, int size, Long itemId) {
+	public Slice<ChatroomListResponse> findAll(Long memberId, int size, Long chatroomId) {
 		List<ChatroomListResponse> responses = queryFactory.select(Projections.fields(ChatroomListResponse.class,
-				chatLog.id.as("chatroomId"),
+				chatLog.chatroom.id.as("chatroomId"),
 				item.thumbnail.as("thumbnailUrl"),
 				member.nickname.as("chatPartnerName"),
 				member.profile.as("chatPartnerProfile"),
 				chatLog.createdAt.as("lastSendTime"),
-				chatLog.message.as("lastSendMessage"),
-				chatLog.newMessage.as("newMessageCount")))
+				chatLog.message.as("lastSendMessage")))
 			.from(chatLog)
 			.innerJoin(chatLog.chatroom, chatroom)
 			.innerJoin(chatroom.item, item)
 			.innerJoin(item.member, member)
 			.where(
-				chatroomRepository.lessThanItemId(itemId),
+				chatroomRepository.lessThanChatroomId(chatroomId),
 				chatroomRepository.equalMemberId(memberId)
 			)
 			.orderBy(chatLog.createdAt.desc())

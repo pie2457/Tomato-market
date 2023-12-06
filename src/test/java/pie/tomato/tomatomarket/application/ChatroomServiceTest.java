@@ -40,7 +40,7 @@ class ChatroomServiceTest {
 		// given
 		Member seller = setupMember("파이", "123@123", "profile");
 		Member buyer = setupMember("브루니", "2121@1211", "profile2");
-		Principal principal = setPrincipal(seller);
+		Principal principalSeller = setPrincipal(seller);
 		Principal principalBuyer = setPrincipal(buyer);
 		Category category = setupCategory();
 		Item item = setupItem(seller, category);
@@ -50,7 +50,7 @@ class ChatroomServiceTest {
 		supportRepository.save(ChatLog.of(new PostMessageRequest("얼마에요"), principalBuyer, "파이", chatroom));
 
 		// when
-		CustomSlice<ChatroomListResponse> response = chatroomService.findAll(principal, 10, null);
+		CustomSlice<ChatroomListResponse> response = chatroomService.findAll(principalSeller, 10, null);
 
 		// then
 		assertThat(response.getContents().get(0)).hasFieldOrProperty("chatroomId")
@@ -84,6 +84,31 @@ class ChatroomServiceTest {
 				.hasFieldOrProperty("item")
 				.hasFieldOrProperty("createdAt")
 		);
+	}
+
+	@DisplayName("안읽은 채팅 메세지 개수를 확인한다.")
+	@Test
+	void countUnreadMessage() {
+		// given
+		Member seller = setupMember("파이", "123@123", "profile");
+		Member buyer = setupMember("브루니", "2121@1211", "profile2");
+		Principal principalSeller = setPrincipal(seller);
+		Principal principalBuyer = setPrincipal(buyer);
+		Category category = setupCategory();
+		Item item = setupItem(seller, category);
+		Chatroom chatroom = new Chatroom(seller, buyer, item);
+		supportRepository.save(chatroom);
+
+		supportRepository.save(ChatLog.of(new PostMessageRequest("안녕하세요"), principalBuyer, "파이", chatroom));
+		supportRepository.save(ChatLog.of(new PostMessageRequest("물건"), principalBuyer, "파이", chatroom));
+		supportRepository.save(ChatLog.of(new PostMessageRequest("팔렸나요"), principalBuyer, "파이", chatroom));
+		supportRepository.save(ChatLog.of(new PostMessageRequest("얼마에요"), principalBuyer, "파이", chatroom));
+
+		// when
+		CustomSlice<ChatroomListResponse> all = chatroomService.findAll(principalSeller, 10, null);
+
+		// then
+		assertThat(all.getContents().get(0).getNewMessageCount()).isEqualTo(4);
 	}
 
 	Principal setPrincipal(Member member) {

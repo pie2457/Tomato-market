@@ -88,7 +88,7 @@ class ChatroomServiceTest {
 
 	@DisplayName("안읽은 채팅 메세지 개수를 확인한다.")
 	@Test
-	void newMessageCount() {
+	void countUnreadMessage() {
 		// given
 		Member seller = setupMember("파이", "123@123", "profile");
 		Member buyer = setupMember("브루니", "2121@1211", "profile2");

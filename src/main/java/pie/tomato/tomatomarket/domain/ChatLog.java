@@ -22,6 +22,8 @@ import pie.tomato.tomatomarket.presentation.support.Principal;
 @NoArgsConstructor(access = PROTECTED)
 public class ChatLog {
 
+	private static final Long UNREAD_MESSAGE_COUNT = 1L;
+
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
 	private Long id;
@@ -47,6 +49,7 @@ public class ChatLog {
 
 	public static ChatLog of(PostMessageRequest request, Principal principal, String receiver, Chatroom chatroom) {
 		return new ChatLog(
-			request.getMessage(), principal.getNickname(), receiver, LocalDateTime.now(), 1L, chatroom);
+			request.getMessage(), principal.getNickname(), receiver, LocalDateTime.now(), UNREAD_MESSAGE_COUNT,
+			chatroom);
 	}
 }

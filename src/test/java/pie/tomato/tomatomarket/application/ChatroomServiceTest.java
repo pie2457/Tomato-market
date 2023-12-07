@@ -53,13 +53,16 @@ class ChatroomServiceTest {
 		CustomSlice<ChatroomListResponse> response = chatroomService.findAll(principalSeller, 10, null);
 
 		// then
-		assertThat(response.getContents().get(0)).hasFieldOrProperty("chatroomId")
-			.hasFieldOrProperty("thumbnailUrl")
-			.hasFieldOrProperty("chatPartnerName")
-			.hasFieldOrProperty("chatPartnerProfile")
-			.hasFieldOrProperty("lastSendTime")
-			.hasFieldOrProperty("lastSendMessage")
-			.hasFieldOrProperty("newMessageCount");
+		assertAll(
+			() -> assertThat(response.getContents().get(0)).hasFieldOrProperty("chatroomId")
+				.hasFieldOrProperty("thumbnailUrl")
+				.hasFieldOrProperty("chatPartnerName")
+				.hasFieldOrProperty("chatPartnerProfile")
+				.hasFieldOrProperty("lastSendTime")
+				.hasFieldOrProperty("lastSendMessage")
+				.hasFieldOrProperty("newMessageCount"),
+			() -> assertThat(response.getContents().get(0).getChatPartnerName()).isEqualTo("브루니")
+		);
 	}
 
 	@DisplayName("채팅방 생성에 성공한다.")

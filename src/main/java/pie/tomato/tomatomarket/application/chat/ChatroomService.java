@@ -50,8 +50,9 @@ public class ChatroomService {
 	}
 
 	private void assignResponseInfo(Principal principal, ChatroomListResponse chatroomListResponse) {
-		ChatLog findChatLog = chatLogRepository.findFirstByChatroomId(chatroomListResponse.getChatroomId());
-		chatroomListResponse.assignLastMessageInfo(findChatLog);
+		ChatLog acquiredChatLog =
+			chatLogRepository.findTopByChatroomIdOrderByChatroomIdDesc(chatroomListResponse.getChatroomId());
+		chatroomListResponse.assignLastMessageInfo(acquiredChatLog);
 
 		Long messageCount = chatroomRepository.getNewMessageCount(chatroomListResponse.getChatroomId());
 		chatroomListResponse.assignNewMessageCount(messageCount);

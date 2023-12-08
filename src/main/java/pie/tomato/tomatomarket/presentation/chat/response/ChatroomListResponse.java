@@ -28,7 +28,7 @@ public class ChatroomListResponse {
 	}
 
 	public void assignPartnerInfo(Chatroom chatroom, Principal principal) {
-		if (chatroom.getSeller().getId() == principal.getMemberId()) {
+		if (chatroom.isSeller(principal.getMemberId())) {
 			this.chatPartnerName = chatroom.getBuyer().getNickname();
 			this.chatPartnerProfile = chatroom.getBuyer().getProfile();
 		} else {

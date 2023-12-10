@@ -18,6 +18,8 @@ public interface ChatLogRepository extends JpaRepository<ChatLog, Long> {
 		+ "where chatLog.chatroom.id = :chatroomId and chatLog.id >= :messageIndex")
 	void changeToReadState(@Param("chatroomId") Long chatroomId, @Param("messageIndex") Long messageIndex);
 
+	ChatLog findTopByChatroomIdOrderByChatroomIdDesc(Long chatroomId);
+
 	default BooleanExpression lessThanMessageIndex(Long messageIndex) {
 		if (messageIndex == null) {
 			return null;

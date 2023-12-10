@@ -50,4 +50,8 @@ public class Chatroom {
 		}
 		return buyer.getNickname();
 	}
+
+	public boolean isSeller(Long memberId) {
+		return seller.getId() == memberId;
+	}
 }

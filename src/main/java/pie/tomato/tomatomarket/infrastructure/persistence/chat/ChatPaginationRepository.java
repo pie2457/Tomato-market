@@ -1,9 +1,7 @@
 package pie.tomato.tomatomarket.infrastructure.persistence.chat;
 
-import static pie.tomato.tomatomarket.domain.QChatLog.*;
 import static pie.tomato.tomatomarket.domain.QChatroom.*;
 import static pie.tomato.tomatomarket.domain.QItem.*;
-import static pie.tomato.tomatomarket.domain.QMember.*;
 
 import java.util.List;
 
@@ -26,21 +24,14 @@ public class ChatPaginationRepository {
 
 	public Slice<ChatroomListResponse> findAll(Long memberId, int size, Long chatroomId) {
 		List<ChatroomListResponse> responses = queryFactory.select(Projections.fields(ChatroomListResponse.class,
-				chatLog.chatroom.id.as("chatroomId"),
-				item.thumbnail.as("thumbnailUrl"),
-				member.nickname.as("chatPartnerName"),
-				member.profile.as("chatPartnerProfile"),
-				chatLog.createdAt.as("lastSendTime"),
-				chatLog.message.as("lastSendMessage")))
-			.from(chatLog)
-			.innerJoin(chatLog.chatroom, chatroom)
+				chatroom.id.as("chatroomId"),
+				item.thumbnail.as("thumbnailUrl")))
+			.from(chatroom)
 			.innerJoin(chatroom.item, item)
-			.innerJoin(item.member, member)
 			.where(
 				chatroomRepository.lessThanChatroomId(chatroomId),
 				chatroomRepository.equalMemberId(memberId)
 			)
-			.orderBy(chatLog.createdAt.desc())
 			.limit(size + 1)
 			.fetch();
 		return PaginationUtil.checkLastPage(size, responses);

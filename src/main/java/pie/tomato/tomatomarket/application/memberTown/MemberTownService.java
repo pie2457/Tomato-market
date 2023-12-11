@@ -1,7 +1,6 @@
 package pie.tomato.tomatomarket.application.memberTown;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -52,16 +51,17 @@ public class MemberTownService {
 	private void validateMemberTownSizeAndDuplicateRegion(
 		Principal principal, AddMemberTownRequest memberTownRequest) {
 		List<MemberTown> memberTowns = getMemberTowns(principal);
-		Optional<MemberTown> duplicated = memberTowns.stream()
+
+		memberTowns.stream()
 			.filter(memberTown -> memberTown.isSameRegionId(memberTownRequest.getAddressId()))
-			.findAny();
+			.findAny()
+			.ifPresent(memberTown -> {
+				throw new BadRequestException(ErrorCode.ALREADY_ADDRESS);
+			});
+
 		if (memberTowns.size() == MEMBER_TOWN_MINIMUM_SIZE) {
 			changeIsSelectedFalse(memberTowns, memberTownRequest.getAddressId());
 			return;
-		}
-
-		if (duplicated.isPresent()) {
-			throw new BadRequestException(ErrorCode.ALREADY_ADDRESS);
 		}
 
 		if (memberTowns.size() > MEMBER_TOWN_MINIMUM_SIZE) {

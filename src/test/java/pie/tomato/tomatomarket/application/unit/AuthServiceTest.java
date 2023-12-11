@@ -14,9 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import pie.tomato.tomatomarket.application.oauth.AuthService;
 import pie.tomato.tomatomarket.application.oauth.KakaoClient;
+import pie.tomato.tomatomarket.domain.Member;
 import pie.tomato.tomatomarket.domain.OAuthUser;
 import pie.tomato.tomatomarket.exception.BadRequestException;
 import pie.tomato.tomatomarket.exception.ErrorCode;
+import pie.tomato.tomatomarket.exception.NotFoundException;
 import pie.tomato.tomatomarket.infrastructure.persistence.member.MemberRepository;
 
 @SpringBootTest
@@ -47,6 +49,7 @@ class AuthServiceTest {
 	@Test
 	void duplicateEmailSignupFail() {
 		// given
+		memberRepository.save(new Member("pie123", "pie-choco@pie.com", "pie/image.jpg"));
 		accessTokenAndUserInfo();
 
 		// when & then
@@ -60,6 +63,7 @@ class AuthServiceTest {
 	@Test
 	void login() {
 		// given
+		memberRepository.save(new Member("pie123", "pie-choco@pie.com", "pie/image.jpg"));
 		accessTokenAndUserInfo();
 
 		// when & then
@@ -76,7 +80,7 @@ class AuthServiceTest {
 		// when & then
 		assertThatThrownBy(
 			() -> authService.login("code"))
-			.isInstanceOf(BadRequestException.class)
+			.isInstanceOf(NotFoundException.class)
 			.extracting("errorCode").isEqualTo(ErrorCode.NOT_FOUND_MEMBER);
 	}
 

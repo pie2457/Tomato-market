@@ -13,6 +13,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
@@ -44,7 +45,7 @@ class ItemServiceTest {
 	private ItemService itemService;
 	@Autowired
 	private ImageRepository imageRepository;
-	@Autowired
+	@MockBean
 	private FakeImageUploader imageUploader;
 	@Autowired
 	private SupportRepository supportRepository;
@@ -271,19 +272,20 @@ class ItemServiceTest {
 
 		// then
 		assertAll(
-			() -> assertThat(itemDetailResponse).hasFieldOrProperty("title"),
-			() -> assertThat(itemDetailResponse).hasFieldOrProperty("nickname"),
-			() -> assertThat(itemDetailResponse).hasFieldOrProperty("status"),
-			() -> assertThat(itemDetailResponse).hasFieldOrProperty("createdAt"),
-			() -> assertThat(itemDetailResponse).hasFieldOrProperty("content"),
-			() -> assertThat(itemDetailResponse).hasFieldOrProperty("chatCount"),
-			() -> assertThat(itemDetailResponse).hasFieldOrProperty("wishCount"),
-			() -> assertThat(itemDetailResponse).hasFieldOrProperty("viewCount"),
-			() -> assertThat(itemDetailResponse).hasFieldOrProperty("price"),
-			() -> assertThat(itemDetailResponse).hasFieldOrProperty("thumbnail"),
-			() -> assertThat(itemDetailResponse).hasFieldOrProperty("images"),
+			() -> assertThat(itemDetailResponse).hasFieldOrProperty("title")
+				.hasFieldOrProperty("nickname")
+				.hasFieldOrProperty("status")
+				.hasFieldOrProperty("createdAt")
+				.hasFieldOrProperty("content")
+				.hasFieldOrProperty("chatCount")
+				.hasFieldOrProperty("wishCount")
+				.hasFieldOrProperty("viewCount")
+				.hasFieldOrProperty("price")
+				.hasFieldOrProperty("thumbnail")
+				.hasFieldOrProperty("images"),
 			() -> assertThat(itemDetailResponse.isInWishList()).isFalse()
 		);
+		redisTemplate.getConnectionFactory().getConnection().flushAll();
 	}
 
 	@DisplayName("한 사람이 상품을 중복 조회해도 뷰카운트는 증가하지 않는다.")
@@ -305,7 +307,7 @@ class ItemServiceTest {
 
 		// then
 		assertThat(s).isEqualTo("1");
-		redisTemplate.delete("파이파이");
+		redisTemplate.delete("파이파이1");
 	}
 
 	@DisplayName("판매내역 조회에 성공한다. : 전체조회")

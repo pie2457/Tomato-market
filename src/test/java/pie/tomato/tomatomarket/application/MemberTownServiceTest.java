@@ -40,12 +40,12 @@ class MemberTownServiceTest {
 		// given
 		Member member = setupMember();
 		Principal principal = setPrincipal(member);
-		setupRegion("서울특별시 강남구 역삼1동", "역삼1동");
+		Region region = setupRegion("서울특별시 강남구 역삼1동", "역삼1동");
 		setupRegion("서울특별시 강남구 역삼2동", "역삼2동");
 		setupRegion("서울특별시 강남구 신사동", "신사동");
 
 		// when
-		memberTownService.addMemberTown(principal, new AddMemberTownRequest(1L));
+		memberTownService.addMemberTown(principal, new AddMemberTownRequest(region.getId()));
 
 		// then
 		List<MemberTown> towns = supportRepository.findAll(MemberTown.class);
@@ -58,17 +58,17 @@ class MemberTownServiceTest {
 		// given
 		Member member = setupMember();
 		Principal principal = setPrincipal(member);
-		setupRegion("서울특별시 강남구 역삼1동", "역삼1동");
-		setupRegion("서울특별시 강남구 역삼2동", "역삼2동");
-		setupRegion("서울특별시 강남구 신사동", "신사동");
+		Region region1 = setupRegion("서울특별시 강남구 역삼1동", "역삼1동");
+		Region region2 = setupRegion("서울특별시 강남구 역삼2동", "역삼2동");
+		Region region3 = setupRegion("서울특별시 강남구 신사동", "신사동");
 
 		// when
-		memberTownService.addMemberTown(principal, new AddMemberTownRequest(1L));
-		memberTownService.addMemberTown(principal, new AddMemberTownRequest(2L));
+		memberTownService.addMemberTown(principal, new AddMemberTownRequest(region1.getId()));
+		memberTownService.addMemberTown(principal, new AddMemberTownRequest(region2.getId()));
 
 		// then
 		assertThatThrownBy(
-			() -> memberTownService.addMemberTown(principal, new AddMemberTownRequest(3L)))
+			() -> memberTownService.addMemberTown(principal, new AddMemberTownRequest(region3.getId())))
 			.isInstanceOf(BadRequestException.class)
 			.extracting("ErrorCode")
 			.isEqualTo(ErrorCode.MAXIMUM_MEMBER_TOWN_SIZE);
@@ -80,16 +80,14 @@ class MemberTownServiceTest {
 		// given
 		Member member = setupMember();
 		Principal principal = setPrincipal(member);
-		setupRegion("서울특별시 강남구 역삼1동", "역삼1동");
-		setupRegion("서울특별시 강남구 역삼2동", "역삼2동");
-		setupRegion("서울특별시 강남구 신사동", "신사동");
+		Region region = setupRegion("서울특별시 강남구 역삼1동", "역삼1동");
 
 		// when
-		memberTownService.addMemberTown(principal, new AddMemberTownRequest(1L));
+		memberTownService.addMemberTown(principal, new AddMemberTownRequest(region.getId()));
 
 		// then
 		assertThatThrownBy(
-			() -> memberTownService.addMemberTown(principal, new AddMemberTownRequest(1L)))
+			() -> memberTownService.addMemberTown(principal, new AddMemberTownRequest(region.getId())))
 			.isInstanceOf(BadRequestException.class)
 			.extracting("ErrorCode")
 			.isEqualTo(ErrorCode.ALREADY_ADDRESS);
@@ -101,18 +99,18 @@ class MemberTownServiceTest {
 		// given
 		Member member = setupMember();
 		Principal principal = setPrincipal(member);
-		setupRegion("서울특별시 강남구 역삼1동", "역삼1동");
-		setupRegion("서울특별시 강남구 역삼2동", "역삼2동");
+		Region region1 = setupRegion("서울특별시 강남구 역삼1동", "역삼1동");
+		Region region2 = setupRegion("서울특별시 강남구 역삼2동", "역삼2동");
 		setupRegion("서울특별시 강남구 신사동", "신사동");
-		memberTownService.addMemberTown(principal, new AddMemberTownRequest(1L));
-		memberTownService.addMemberTown(principal, new AddMemberTownRequest(2L));
+		memberTownService.addMemberTown(principal, new AddMemberTownRequest(region1.getId()));
+		memberTownService.addMemberTown(principal, new AddMemberTownRequest(region2.getId()));
 
 		// when
-		memberTownService.selectMemberTown(principal, new SelectMemberTownRequest(1L));
+		memberTownService.selectMemberTown(principal, new SelectMemberTownRequest(region1.getId()));
 
 		// then
-		MemberTown SelectMemberTown = supportRepository.findById(1L, MemberTown.class);
-		MemberTown nonSelectMemberTown = supportRepository.findById(2L, MemberTown.class);
+		MemberTown SelectMemberTown = supportRepository.findById(region1.getId(), MemberTown.class);
+		MemberTown nonSelectMemberTown = supportRepository.findById(region2.getId(), MemberTown.class);
 		assertAll(
 			() -> assertThat(SelectMemberTown.isSelected()).isTrue(),
 			() -> assertThat(nonSelectMemberTown.isSelected()).isFalse()
@@ -143,21 +141,20 @@ class MemberTownServiceTest {
 		// given
 		Member member = setupMember();
 		Principal principal = setPrincipal(member);
-		setupRegion("서울특별시 강남구 역삼1동", "역삼1동");
-		setupRegion("서울특별시 강남구 역삼2동", "역삼2동");
+		Region region1 = setupRegion("서울특별시 강남구 역삼1동", "역삼1동");
+		Region region2 = setupRegion("서울특별시 강남구 역삼2동", "역삼2동");
 		setupRegion("서울특별시 강남구 신사동", "신사동");
-		memberTownService.addMemberTown(principal, new AddMemberTownRequest(1L));
-		memberTownService.addMemberTown(principal, new AddMemberTownRequest(2L));
-		memberTownService.selectMemberTown(principal, new SelectMemberTownRequest(1L));
+		memberTownService.addMemberTown(principal, new AddMemberTownRequest(region1.getId()));
+		memberTownService.addMemberTown(principal, new AddMemberTownRequest(region2.getId()));
+		memberTownService.selectMemberTown(principal, new SelectMemberTownRequest(region1.getId()));
 
 		// when
-		memberTownService.deleteMemberTown(principal, new DeleteMemberTownRequest(1L));
-		MemberTown memberTown = supportRepository.findById(2L, MemberTown.class);
+		memberTownService.deleteMemberTown(principal, new DeleteMemberTownRequest(region1.getId()));
 		List<MemberTown> memberTowns = supportRepository.findAll(MemberTown.class);
 
 		// then
 		assertAll(
-			() -> assertThat(memberTown.isSelected()).isTrue(),
+			() -> assertThat(memberTowns.get(0).isSelected()).isTrue(),
 			() -> assertThat(memberTowns.size()).isEqualTo(1)
 		);
 	}
@@ -168,14 +165,14 @@ class MemberTownServiceTest {
 		// given
 		Member member = setupMember();
 		Principal principal = setPrincipal(member);
-		setupRegion("서울특별시 강남구 역삼1동", "역삼1동");
+		Region region = setupRegion("서울특별시 강남구 역삼1동", "역삼1동");
 		setupRegion("서울특별시 강남구 역삼2동", "역삼2동");
 		setupRegion("서울특별시 강남구 신사동", "신사동");
-		memberTownService.addMemberTown(principal, new AddMemberTownRequest(1L));
+		memberTownService.addMemberTown(principal, new AddMemberTownRequest(region.getId()));
 
 		// when & then
 		assertThatThrownBy(
-			() -> memberTownService.deleteMemberTown(principal, new DeleteMemberTownRequest(1L)))
+			() -> memberTownService.deleteMemberTown(principal, new DeleteMemberTownRequest(region.getId())))
 			.isInstanceOf(BadRequestException.class)
 			.extracting("ErrorCode")
 			.isEqualTo(ErrorCode.MINIMUM_MEMBER_TOWN_SIZE);

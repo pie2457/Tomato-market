@@ -39,7 +39,7 @@ public class ItemViewCountRedisService {
 			return;
 		}
 
-		value.set(nicknameKey, String.valueOf(itemId));
+		value.set(nicknameKey, String.valueOf(itemId), Duration.ofDays(1L));
 		value.set(itemViewCountKey, "1", Duration.ofMinutes(2));
 	}
 

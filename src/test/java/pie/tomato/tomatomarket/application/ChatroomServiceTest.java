@@ -40,12 +40,15 @@ class ChatroomServiceTest {
 		// given
 		Member seller = setupMember("파이", "123@123", "profile");
 		Member buyer = setupMember("브루니", "2121@1211", "profile2");
+
 		Principal principalSeller = setPrincipal(seller);
 		Principal principalBuyer = setPrincipal(buyer);
+
 		Category category = setupCategory();
+
 		Item item = setupItem(seller, category);
-		Chatroom chatroom = new Chatroom(seller, buyer, item);
-		supportRepository.save(chatroom);
+
+		Chatroom chatroom = supportRepository.save(new Chatroom(seller, buyer, item));
 
 		supportRepository.save(ChatLog.of(new PostMessageRequest("얼마에요"), principalBuyer, "파이", chatroom));
 
@@ -62,6 +65,50 @@ class ChatroomServiceTest {
 				.hasFieldOrProperty("lastSendMessage")
 				.hasFieldOrProperty("newMessageCount"),
 			() -> assertThat(response.getContents().get(0).getChatPartnerName()).isEqualTo("브루니")
+		);
+	}
+
+	@DisplayName("아이템 아이디에 해당하는 채팅방 목록을 불러오는데 성공한다.")
+	@Test
+	void findAllChatroomByItemId() {
+		// given
+		Member seller = setupMember("파이", "123@123", "profile");
+		Member buyer1 = setupMember("브루니", "2121@1211", "profile2");
+		Member buyer2 = setupMember("지구", "111@1211", "profile3");
+		Member buyer3 = setupMember("시오", "222@1211", "profile4");
+
+		Principal principalSeller = setPrincipal(seller);
+		Principal principalBuyer1 = setPrincipal(buyer1);
+		Principal principalBuyer2 = setPrincipal(buyer2);
+		Principal principalBuyer3 = setPrincipal(buyer3);
+
+		Category category = setupCategory();
+
+		Item item = setupItem(seller, category);
+		Item item1 = setupItem(seller, category);
+
+		Chatroom chatroom1 = supportRepository.save(new Chatroom(seller, buyer1, item));
+		Chatroom chatroom2 = supportRepository.save(new Chatroom(seller, buyer2, item));
+		Chatroom chatroom3 = supportRepository.save(new Chatroom(seller, buyer3, item1));
+
+		supportRepository.save(ChatLog.of(new PostMessageRequest("얼마에요"), principalBuyer1, "파이", chatroom1));
+		supportRepository.save(ChatLog.of(new PostMessageRequest("ㅎㅇ"), principalBuyer2, "파이", chatroom2));
+		supportRepository.save(ChatLog.of(new PostMessageRequest("물건있나요"), principalBuyer3, "파이", chatroom3));
+
+		// when
+		CustomSlice<ChatroomListResponse> response =
+			chatroomService.findAllByItemId(principalSeller, 10, null, item.getId());
+
+		// then
+		assertAll(
+			() -> assertThat(response.getContents().get(0)).hasFieldOrProperty("chatroomId")
+				.hasFieldOrProperty("thumbnailUrl")
+				.hasFieldOrProperty("chatPartnerName")
+				.hasFieldOrProperty("chatPartnerProfile")
+				.hasFieldOrProperty("lastSendTime")
+				.hasFieldOrProperty("lastSendMessage")
+				.hasFieldOrProperty("newMessageCount"),
+			() -> assertThat(response.getContents().size()).isEqualTo(2)
 		);
 	}
 

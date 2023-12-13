@@ -36,4 +36,20 @@ public class ChatPaginationRepository {
 			.fetch();
 		return PaginationUtil.checkLastPage(size, responses);
 	}
+
+	public Slice<ChatroomListResponse> findAllByItemId(Long memberId, int size, Long chatroomId, Long itemId) {
+		List<ChatroomListResponse> responses = queryFactory.select(Projections.fields(ChatroomListResponse.class,
+				chatroom.id.as("chatroomId"),
+				item.thumbnail.as("thumbnailUrl")))
+			.from(chatroom)
+			.innerJoin(chatroom.item, item)
+			.where(
+				chatroomRepository.lessThanChatroomId(chatroomId),
+				chatroomRepository.equalMemberId(memberId),
+				chatroomRepository.equalItemId(itemId)
+			)
+			.limit(size + 1)
+			.fetch();
+		return PaginationUtil.checkLastPage(size, responses);
+	}
 }

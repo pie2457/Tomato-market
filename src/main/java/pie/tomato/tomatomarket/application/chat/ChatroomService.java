@@ -38,6 +38,11 @@ public class ChatroomService {
 		Slice<ChatroomListResponse> responses =
 			chatPaginationRepository.findAll(principal.getMemberId(), size, cursor);
 
+		return getCustomSliceByChatroomListResponse(principal, responses);
+	}
+
+	private CustomSlice<ChatroomListResponse> getCustomSliceByChatroomListResponse(Principal principal,
+		Slice<ChatroomListResponse> responses) {
 		List<ChatroomListResponse> content = responses.getContent();
 
 		for (ChatroomListResponse chatroomListResponse : content) {
@@ -81,5 +86,13 @@ public class ChatroomService {
 	private Member getMember(Long principal) {
 		return memberRepository.findById(principal)
 			.orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_MEMBER));
+	}
+
+	public CustomSlice<ChatroomListResponse> findAllByItemId(Principal principal,
+		int size, Long cursor, Long itemId) {
+		Slice<ChatroomListResponse> responses = chatPaginationRepository.findAllByItemId(principal.getMemberId(),
+			size, cursor, itemId);
+
+		return getCustomSliceByChatroomListResponse(principal, responses);
 	}
 }

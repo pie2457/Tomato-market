@@ -24,7 +24,7 @@ import pie.tomato.tomatomarket.presentation.chat.response.ChatMessageResponse;
 import pie.tomato.tomatomarket.presentation.support.Principal;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 public class ChatLogService {
 
@@ -33,7 +33,6 @@ public class ChatLogService {
 	private final ChatMessageRepository chatMessageRepository;
 	private final Map<DeferredResult<List<String>>, Long> chat = new ConcurrentHashMap<>();
 
-	@Transactional
 	public void postMessage(Principal principal, Long chatroomId, PostMessageRequest request) {
 		Chatroom chatroom = chatroomRepository.findById(chatroomId)
 			.orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_CHATROOM));
@@ -47,7 +46,6 @@ public class ChatLogService {
 		}
 	}
 
-	@Transactional
 	public ChatMessageResponse getMessages(Principal principal, Long chatroomId,
 		int size, Long messageIndex) {
 		final DeferredResult<List<String>> deferredResult =

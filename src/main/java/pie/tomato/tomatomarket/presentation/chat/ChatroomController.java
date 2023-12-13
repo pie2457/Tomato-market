@@ -35,4 +35,12 @@ public class ChatroomController {
 		@PathVariable Long itemId) {
 		return ResponseEntity.ok(chatroomService.register(principal, itemId));
 	}
+
+	@GetMapping("/items/{itemId}")
+	public ResponseEntity<CustomSlice<ChatroomListResponse>> findAllByItemId(@AuthPrincipal Principal principal,
+		@RequestParam(required = false, defaultValue = "10") int size,
+		@RequestParam(required = false) Long cursor,
+		@PathVariable Long itemId) {
+		return ResponseEntity.ok(chatroomService.findAllByItemId(principal, size, cursor, itemId));
+	}
 }

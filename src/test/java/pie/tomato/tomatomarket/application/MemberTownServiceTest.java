@@ -40,12 +40,12 @@ class MemberTownServiceTest {
 		// given
 		Member member = setupMember();
 		Principal principal = setPrincipal(member);
-		Region region1 = setupRegion("서울특별시 강남구 역삼1동", "역삼1동");
+		Region region = setupRegion("서울특별시 강남구 역삼1동", "역삼1동");
 		setupRegion("서울특별시 강남구 역삼2동", "역삼2동");
 		setupRegion("서울특별시 강남구 신사동", "신사동");
 
 		// when
-		memberTownService.addMemberTown(principal, new AddMemberTownRequest(region1.getId()));
+		memberTownService.addMemberTown(principal, new AddMemberTownRequest(region.getId()));
 
 		// then
 		List<MemberTown> towns = supportRepository.findAll(MemberTown.class);
@@ -165,14 +165,14 @@ class MemberTownServiceTest {
 		// given
 		Member member = setupMember();
 		Principal principal = setPrincipal(member);
-		Region region1 = setupRegion("서울특별시 강남구 역삼1동", "역삼1동");
+		Region region = setupRegion("서울특별시 강남구 역삼1동", "역삼1동");
 		setupRegion("서울특별시 강남구 역삼2동", "역삼2동");
 		setupRegion("서울특별시 강남구 신사동", "신사동");
-		memberTownService.addMemberTown(principal, new AddMemberTownRequest(region1.getId()));
+		memberTownService.addMemberTown(principal, new AddMemberTownRequest(region.getId()));
 
 		// when & then
 		assertThatThrownBy(
-			() -> memberTownService.deleteMemberTown(principal, new DeleteMemberTownRequest(region1.getId())))
+			() -> memberTownService.deleteMemberTown(principal, new DeleteMemberTownRequest(region.getId())))
 			.isInstanceOf(BadRequestException.class)
 			.extracting("ErrorCode")
 			.isEqualTo(ErrorCode.MINIMUM_MEMBER_TOWN_SIZE);

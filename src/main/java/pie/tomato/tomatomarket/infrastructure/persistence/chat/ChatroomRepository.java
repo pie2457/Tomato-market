@@ -1,6 +1,7 @@
 package pie.tomato.tomatomarket.infrastructure.persistence.chat;
 
 import static pie.tomato.tomatomarket.domain.QChatroom.*;
+import static pie.tomato.tomatomarket.domain.QItem.*;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -33,5 +34,12 @@ public interface ChatroomRepository extends JpaRepository<Chatroom, Long> {
 			return null;
 		}
 		return chatroom.buyer.id.eq(memberId).or(chatroom.seller.id.eq(memberId));
+	}
+
+	default BooleanExpression equalItemId(Long itemId) {
+		if (itemId == null) {
+			return null;
+		}
+		return item.id.eq(itemId);
 	}
 }

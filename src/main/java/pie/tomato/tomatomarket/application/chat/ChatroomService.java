@@ -41,19 +41,6 @@ public class ChatroomService {
 		return getCustomSliceByChatroomListResponse(principal, responses);
 	}
 
-	private CustomSlice<ChatroomListResponse> getCustomSliceByChatroomListResponse(Principal principal,
-		Slice<ChatroomListResponse> responses) {
-		List<ChatroomListResponse> content = responses.getContent();
-
-		for (ChatroomListResponse chatroomListResponse : content) {
-			assignResponseInfo(principal, chatroomListResponse);
-		}
-
-		Long nextCursor = content.isEmpty() ? null : content.get(content.size() - 1).getChatroomId();
-
-		return new CustomSlice<>(content, nextCursor, responses.hasNext());
-	}
-
 	private void assignResponseInfo(Principal principal, ChatroomListResponse chatroomListResponse) {
 		ChatLog acquiredChatLog =
 			chatLogRepository.findTopByChatroomIdOrderByChatroomIdDesc(chatroomListResponse.getChatroomId());
@@ -94,5 +81,18 @@ public class ChatroomService {
 			size, cursor, itemId);
 
 		return getCustomSliceByChatroomListResponse(principal, responses);
+	}
+
+	private CustomSlice<ChatroomListResponse> getCustomSliceByChatroomListResponse(Principal principal,
+		Slice<ChatroomListResponse> responses) {
+		List<ChatroomListResponse> content = responses.getContent();
+
+		for (ChatroomListResponse chatroomListResponse : content) {
+			assignResponseInfo(principal, chatroomListResponse);
+		}
+
+		Long nextCursor = content.isEmpty() ? null : content.get(content.size() - 1).getChatroomId();
+
+		return new CustomSlice<>(content, nextCursor, responses.hasNext());
 	}
 }

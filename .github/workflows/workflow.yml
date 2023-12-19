@@ -39,6 +39,7 @@ jobs:
 
   backend-deploy:
     runs-on: ubuntu-latest
+    needs: build-jar
     steps:
       # SOURCE 단계 - 저장소 checkout
       - name: Checkout-source code

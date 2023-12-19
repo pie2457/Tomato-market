@@ -33,7 +33,7 @@ jobs:
 
       # docker image 빌드
       - name: Build docker image
-        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/app .
+        run: docker build --no-cache -t ${{ secrets.DOCKER_HUB_USERNAME }}/app .
 
       # docker hub 로그인
       - name: Login docker hub

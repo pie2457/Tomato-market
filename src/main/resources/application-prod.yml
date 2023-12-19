@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    url: ${db.prod.datasource.url}
+    username: ${db.prod.datasource.username}
+    password: ${db.prod.datasource.password}
+  redis:
+    host: ${redis.host}
+    port: ${redis.port}
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${aws.credentials.access-key}
+      secret-key: ${aws.credentials.secret-key}
+    s3:
+      bucket: ${aws.s3.bucket}
+    region:
+      static: ${aws.region.static}
+  stack:
+    auto: false

@@ -76,3 +76,21 @@ compileQuerydsl {
     options.annotationProcessorPath = configurations.querydsl
 }
 /** QueryDSL end **/
+
+/** Submodule start **/
+processResources.dependsOn('copySecret')
+
+tasks.register('copySecret', Copy) {
+    description = 'Copy submodules to project'
+
+    from('./tomato-secret') {
+        include('*.yml')
+    }
+    into('src/main/resources')
+}
+/** Submodule end **/
+
+/**
+ *  ./gradlew -x test clean build
+ **/
+

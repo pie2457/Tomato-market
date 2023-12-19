@@ -1,0 +1,3 @@
+[submodule "tomato-secret"]
+	path = tomato-secret
+	url = https://github.com/pie2457/tomato-secret.git

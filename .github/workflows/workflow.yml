@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  backend-deploy:
+  build-jar:
     runs-on: ubuntu-latest
     steps:
       # SOURCE 단계 - 저장소 checkout
@@ -31,9 +31,31 @@ jobs:
       - name: Build with gradle
         run: ./gradlew -x test clean build
 
+      - name: Cache PhysicalTheraphy build directory
+        uses: actions/cache@v3
+        with:
+          path: ./
+          key: ${{ runner.os }}-physicaltheraphy-build-cache-${{ steps.short-sha.outputs.sha }}
+
+  backend-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # SOURCE 단계 - 저장소 checkout
+      - name: Checkout-source code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.ACCESS_TOKEN_FOR_GITHUB_ACTIONS }}
+          submodules: true
+
+      - name: Restore Gradle cache directory
+        uses: actions/cache@v3
+        with:
+          path: ./
+          key: ${{ runner.os }}-physicaltheraphy-build-cache-${{ steps.short-sha.outputs.sha }}
+
       # docker image 빌드
       - name: Build docker image
-        run: docker build --no-cache -t ${{ secrets.DOCKER_HUB_USERNAME }}/app .
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/app .
 
       # docker hub 로그인
       - name: Login docker hub

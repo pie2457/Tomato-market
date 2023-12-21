@@ -57,5 +57,7 @@ jobs:
           script: |
             docker stop $(docker ps -a -q)
             docker rm $(docker ps -a -q)
+            docker pull redis:alpine
+            docker run -d -p 6379:6379 --name=redis redis:alpine
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_IMAGE_NAME }}
             docker run -d -p 8080:8080 --name app ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_IMAGE_NAME }}:${{ secrets.DOCKER_HUB_USERNAME }}

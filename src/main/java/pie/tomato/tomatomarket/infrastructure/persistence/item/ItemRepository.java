@@ -4,7 +4,12 @@ import static pie.tomato.tomatomarket.domain.QItem.*;
 
 import java.util.Optional;
 
+import javax.persistence.LockModeType;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 
@@ -14,6 +19,10 @@ import pie.tomato.tomatomarket.domain.ItemStatus;
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
 	Optional<Item> findByIdAndMemberId(Long itemId, Long memberId);
+
+	@Lock(LockModeType.PESSIMISTIC_WRITE)
+	@Query("select item from Item item where item.id = :itemId")
+	Optional<Item> findByIdWithPessimisticLock(@Param("itemId") Long itemId);
 
 	boolean existsItemById(Long itemId);
 

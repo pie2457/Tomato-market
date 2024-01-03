@@ -109,10 +109,9 @@ public class ItemService {
 		if (itemImages == null || itemImages.isEmpty()) {
 			return;
 		}
-		if (!itemImages.isEmpty()) {
-			List<String> updateImageUrls = imageService.uploadImagesToS3(itemImages);
-			imageRepository.saveAllImages(Image.createImage(updateImageUrls, findItem));
-		}
+
+		List<String> updateImageUrls = imageService.uploadImagesToS3(itemImages);
+		imageRepository.saveAllImages(Image.createImage(updateImageUrls, findItem));
 	}
 
 	private String updateThumbnail(Item item, String thumbnailUrl, MultipartFile thumbnail) {
@@ -170,8 +169,9 @@ public class ItemService {
 		}
 	}
 
+	@Transactional
 	public ItemDetailResponse itemDetails(Principal principal, Long itemId) {
-		Item findItem = itemRepository.findById(itemId)
+		Item findItem = itemRepository.findByIdWithPessimisticLock(itemId)
 			.orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_ITEM));
 
 		itemViewCountRedisService.addViewCount(principal.getNickname(), itemId);

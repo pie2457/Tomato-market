@@ -1,5 +1,5 @@
-# Tomato-market
-중고거래 프로젝트
+# 🍅 Tomato-market 🍅
+이 프로젝트는 당근 마켓을 모티브로 한 서비스로, 중고 마켓에서 다양한 기능을 제공하는 애플리케이션을 개발하는 것을 목표로 합니다. 프로젝트에서는 중고 상품 등록, 수정, 조회, 삭제와 판매자와 구매자간의 채팅 등 다양한 기능을 구현하고 있으며, 사용자에게 편리한 중고 거래 플랫폼을 제공합니다.
 
 ## 기술 스택
 
@@ -21,3 +21,5 @@
 <img width="750" alt="image" src="https://github.com/pie2457/Tomato-market/assets/104147789/35dacf91-8442-47aa-9890-eea8eca386c0">
 
 ## ERD
+![untitle](https://github.com/pie2457/Tomato-market/assets/104147789/9bb8cd7c-33fc-422b-a5ae-5f77a295a58f)
+

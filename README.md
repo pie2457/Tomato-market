@@ -18,7 +18,7 @@
 ![oauth2](https://img.shields.io/badge/oauth2-EB5424?style=flat&logo=auth0&logoColor=white)
 
 ## 배포 프로세스
-<img width="750" alt="image" src="https://github.com/pie2457/Tomato-market/assets/104147789/35dacf91-8442-47aa-9890-eea8eca386c0">
+<img width="750" alt="image" src="https://github.com/pie2457/Tomato-market/assets/104147789/10307a60-d52e-428f-9665-4195161407d0">
 
 ## ERD
 ![untitle](https://github.com/pie2457/Tomato-market/assets/104147789/9bb8cd7c-33fc-422b-a5ae-5f77a295a58f)

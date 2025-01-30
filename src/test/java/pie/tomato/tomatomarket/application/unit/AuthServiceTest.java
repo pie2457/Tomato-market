@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pie.tomato.tomatomarket.application.oauth.AuthService;
 import pie.tomato.tomatomarket.application.oauth.KakaoClient;
 import pie.tomato.tomatomarket.domain.Member;
+import pie.tomato.tomatomarket.domain.OAuthProvider;
 import pie.tomato.tomatomarket.domain.OAuthUser;
 import pie.tomato.tomatomarket.exception.BadRequestException;
 import pie.tomato.tomatomarket.exception.ErrorCode;
@@ -25,76 +26,76 @@ import pie.tomato.tomatomarket.infrastructure.persistence.member.MemberRepositor
 @Transactional
 class AuthServiceTest {
 
-	@Autowired
-	private AuthService authService;
-	@Autowired
-	private MemberRepository memberRepository;
-	@MockBean
-	private KakaoClient kakaoClient;
+    @Autowired
+    private AuthService authService;
+    @Autowired
+    private MemberRepository memberRepository;
+    @MockBean
+    private KakaoClient kakaoClient;
 
-	@DisplayName("회원가입에 성공한다.")
-	@Test
-	void signup() {
-		// given
-		accessTokenAndUserInfo();
+    @DisplayName("회원가입에 성공한다.")
+    @Test
+    void signup() {
+        // given
+        accessTokenAndUserInfo();
 
-		// when
-		authService.signup("code");
+        // when
+        authService.signup("code", OAuthProvider.KAKAO);
 
-		// then
-		assertThat(memberRepository.existsMemberByEmail("pie-choco@pie.com")).isTrue();
-	}
+        // then
+        assertThat(memberRepository.existsMemberByEmail("pie-choco@pie.com")).isTrue();
+    }
 
-	@DisplayName("중복된 email로 회원가입 요청 시 실패한다.")
-	@Test
-	void duplicateEmailSignupFail() {
-		// given
-		memberRepository.save(new Member("pie123", "pie-choco@pie.com", "pie/image.jpg"));
-		accessTokenAndUserInfo();
+    @DisplayName("중복된 email로 회원가입 요청 시 실패한다.")
+    @Test
+    void duplicateEmailSignupFail() {
+        // given
+        memberRepository.save(new Member("pie123", "pie-choco@pie.com", "pie/image.jpg"));
+        accessTokenAndUserInfo();
 
-		// when & then
-		assertThatThrownBy(
-			() -> authService.signup("code"))
-			.isInstanceOf(BadRequestException.class)
-			.extracting("errorCode").isEqualTo(ErrorCode.ALREADY_EXIST_MEMBER);
-	}
+        // when & then
+        assertThatThrownBy(
+            () -> authService.signup("code", OAuthProvider.KAKAO))
+            .isInstanceOf(BadRequestException.class)
+            .extracting("errorCode").isEqualTo(ErrorCode.ALREADY_EXIST_MEMBER);
+    }
 
-	@DisplayName("로그인에 성공한다.")
-	@Test
-	void login() {
-		// given
-		memberRepository.save(new Member("pie123", "pie-choco@pie.com", "pie/image.jpg"));
-		accessTokenAndUserInfo();
+    @DisplayName("로그인에 성공한다.")
+    @Test
+    void login() {
+        // given
+        memberRepository.save(new Member("pie123", "pie-choco@pie.com", "pie/image.jpg"));
+        accessTokenAndUserInfo();
 
-		// when & then
-		assertThat(authService.login("code")).isNotBlank();
+        // when & then
+        assertThat(authService.login("code", OAuthProvider.KAKAO)).isNotBlank();
 
-	}
+    }
 
-	@DisplayName("회원가입을 하지 않은 상태에서 로그인 시도 시 실패한다.")
-	@Test
-	void loginFail() {
-		// given
-		accessTokenAndUserInfo();
+    @DisplayName("회원가입을 하지 않은 상태에서 로그인 시도 시 실패한다.")
+    @Test
+    void loginFail() {
+        // given
+        accessTokenAndUserInfo();
 
-		// when & then
-		assertThatThrownBy(
-			() -> authService.login("code"))
-			.isInstanceOf(NotFoundException.class)
-			.extracting("errorCode").isEqualTo(ErrorCode.NOT_FOUND_MEMBER);
-	}
+        // when & then
+        assertThatThrownBy(
+            () -> authService.login("code", OAuthProvider.KAKAO))
+            .isInstanceOf(NotFoundException.class)
+            .extracting("errorCode").isEqualTo(ErrorCode.NOT_FOUND_MEMBER);
+    }
 
-	void accessTokenAndUserInfo() {
-		Map<String, Object> response = Map.of("kakao_account", Map.of(
-			"email", "pie-choco@pie.com",
-			"profile", Map.of(
-				"nickname", "pie123",
-				"profile_image_url", "pie/image.jpg"
-			)));
+    void accessTokenAndUserInfo() {
+        Map<String, Object> response = Map.of("kakao_account", Map.of(
+            "email", "pie-choco@pie.com",
+            "profile", Map.of(
+                "nickname", "pie123",
+                "profile_image_url", "pie/image.jpg"
+            )));
 
-		OAuthUser oAuthUser = OAuthUser.from(response);
+        OAuthUser oAuthUser = OAuthUser.from(response);
 
-		given(kakaoClient.getAccessToken(anyString())).willReturn("abc.abc.abc");
-		given(kakaoClient.getUserInfo(anyString())).willReturn(oAuthUser);
-	}
+        given(kakaoClient.getAccessToken(anyString())).willReturn("abc.abc.abc");
+        given(kakaoClient.getUserInfo(anyString())).willReturn(oAuthUser);
+    }
 }

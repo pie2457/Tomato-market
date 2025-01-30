@@ -17,13 +17,13 @@ import pie.tomato.tomatomarket.infrastructure.config.properties.OauthProperties;
 
 @Component
 @RequiredArgsConstructor
-public class KakaoClient implements OAuthClient {
+public class NaverClient implements OAuthClient {
     private final OauthProperties properties;
     private final RestTemplate restTemplate;
 
     @Override
     public boolean isSupport(OAuthProvider provider) {
-        return OAuthProvider.KAKAO == provider;
+        return OAuthProvider.NAVER == provider;
     }
 
     @Override
@@ -31,19 +31,18 @@ public class KakaoClient implements OAuthClient {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         HttpEntity request = new HttpEntity<>(createTokenRequestBody(code), headers);
-        Map<String, Object> response = restTemplate.postForObject(properties.getKakao().getProvider().getTokenUrl(),
-            request,
-            Map.class);
+        Map<String, Object> response = restTemplate.postForObject(properties.getNaver().getProvider().getTokenUrl(),
+            request, Map.class);
         return response.get("access_token").toString();
     }
 
     private MultiValueMap<String, String> createTokenRequestBody(final String code) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
-        params.add("client_id", properties.getKakao().getUser().getClientId());
+        params.add("client_id", properties.getNaver().getUser().getClientId());
         params.add("redirect_uri", "http://localhost:8080/api/auth/kakao/oauth");
         params.add("code", code);
-        params.add("client_secret", properties.getKakao().getUser().getClientSecret());
+        params.add("client_secret", properties.getNaver().getUser().getClientSecret());
         return params;
     }
 
@@ -54,7 +53,7 @@ public class KakaoClient implements OAuthClient {
         headers.setBearerAuth(accessToken);
 
         HttpEntity request = new HttpEntity<>(headers);
-        Map<String, Object> response = restTemplate.postForObject(properties.getKakao().getProvider().getUserInfoUrl(),
+        Map<String, Object> response = restTemplate.postForObject(properties.getNaver().getProvider().getUserInfoUrl(),
             request, Map.class);
 
         return OAuthUser.from(response);

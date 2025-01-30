@@ -4,8 +4,9 @@ spring:
     username: ${db.dev.datasource.username}
     password: ${db.dev.datasource.password}
   redis:
-    host: localhost
-    port: 6379
+    sentinel:
+      master: mymaster
+      nodes: localhost:25379,localhost:25380,localhost:25381
 
 cloud:
   aws:
